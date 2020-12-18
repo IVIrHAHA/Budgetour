@@ -1,7 +1,10 @@
 import 'package:budgetour/objects/FinanceObject.dart';
+import 'package:budgetour/objects/interfaces/TransactionMixin.dart';
 import 'package:flutter/material.dart';
 
-class BudgetObject extends FinanceObject {
+import 'Transaction.dart';
+
+class BudgetObject extends FinanceObject with TransactionMixin {
   double allocatedAmount;
   double currentBalance;
 
@@ -18,8 +21,10 @@ class BudgetObject extends FinanceObject {
     this.currentBalance = this.allocatedAmount;
   }
 
-  logTransaction(double amount) {
-    currentBalance = currentBalance - amount;
+  @override
+  logTransaction(Transaction transaction) {
+    currentBalance = currentBalance - transaction.amount;
+    this.list.add(transaction);
   }
 
   isOverbudget() {

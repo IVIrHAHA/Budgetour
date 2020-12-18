@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FinanceObject {
+abstract class FinanceObject {
   String affirmation;
   String title, label_1, label_2;
 
