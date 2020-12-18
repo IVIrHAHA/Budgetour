@@ -15,9 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primaryColor: ColorGenerator.createMaterialColor('000000'),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+          primaryColor: ColorGenerator.createMaterialColor('000000'),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: ThemeData.light().textTheme.copyWith(
+                  headline5: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ))),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -82,7 +86,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           controller: controller,
           children: [
             BudgetPage([
-              BudgetObject(title: 'Food', allocatedAmount: 50, label1: 'Remaining',),
+              BudgetObject(
+                title: 'Food',
+                allocatedAmount: 50,
+                label1: 'Remaining',
+              ),
               // FinanceObject(title: 'Gas'),
               // FinanceObject(title: 'Groceries'),
             ]),

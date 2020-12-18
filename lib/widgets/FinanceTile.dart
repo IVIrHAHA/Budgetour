@@ -1,5 +1,6 @@
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
+import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/common_tools.dart';
 import 'package:flutter/material.dart';
@@ -11,17 +12,22 @@ class FinanceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: ColorGenerator.fromHex(GlobalValues.neutralColor),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-        side: BorderSide(
-            style: BorderStyle.solid,
-            width: 1,
-            color: ColorGenerator.fromHex(GlobalValues.borderColor)),
+    return InkWell(
+      onTap: () {
+        openTile(context);
+      },
+      child: Card(
+        color: ColorGenerator.fromHex(GlobalValues.neutralColor),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+          side: BorderSide(
+              style: BorderStyle.solid,
+              width: 1,
+              color: ColorGenerator.fromHex(GlobalValues.borderColor)),
+        ),
+        margin: EdgeInsets.all(8.0),
+        child: buildContents(),
       ),
-      margin: EdgeInsets.all(8.0),
-      child: buildContents(),
     );
   }
 
@@ -37,5 +43,13 @@ class FinanceTile extends StatelessWidget {
         Text(tile.label_2 ?? ''),
       ],
     );
+  }
+
+  openTile(BuildContext ctx) {
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) {
+        return BudgetObjRoute();
+      },
+    ));
   }
 }
