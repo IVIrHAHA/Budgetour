@@ -1,3 +1,4 @@
+import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/common_tools.dart';
@@ -11,13 +12,13 @@ class FinanceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: ColorGenerator.fromHex('#FCFCFC'),
+      color: ColorGenerator.fromHex(GlobalValues.neutralColor),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
         side: BorderSide(
             style: BorderStyle.solid,
             width: 1,
-            color: ColorGenerator.fromHex('#DCDCDC')),
+            color: ColorGenerator.fromHex(GlobalValues.borderColor)),
       ),
       margin: EdgeInsets.all(8.0),
       child: buildContents(),
@@ -28,7 +29,10 @@ class FinanceTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListTile(leading: Text(tile.title), trailing: Icon(Icons.drag_handle),),
+        ListTile(
+          leading: Text(tile.title),
+          trailing: Icon(Icons.more_vert),
+        ),
         Text(tile.label_1 ?? ''),
         Text(tile.label_2 ?? ''),
       ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FinanceObject {
+  String affirmation;
   String title, label_1, label_2;
 
   FinanceObject({

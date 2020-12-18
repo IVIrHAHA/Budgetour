@@ -1,4 +1,5 @@
 import 'package:budgetour/Widgets/FinanceTile.dart';
+import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/common_tools.dart';
@@ -81,9 +82,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           controller: controller,
           children: [
             BudgetPage([
-              FinanceObject(title: 'Food'),
-              FinanceObject(title: 'Gas'),
-              FinanceObject(title: 'Groceries'),
+              BudgetObject(title: 'Food', allocatedAmount: 50, label1: 'Remaining',),
+              // FinanceObject(title: 'Gas'),
+              // FinanceObject(title: 'Groceries'),
             ]),
             buildPage('Security'),
             buildPage('Goals'),
