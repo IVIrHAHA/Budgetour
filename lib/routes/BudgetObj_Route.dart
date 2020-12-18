@@ -1,7 +1,9 @@
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:common_tools/common_tools.dart';
+import 'package:budgetour/widgets/standardized/EnhancedListTIle.dart';
+import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
+import '../widgets/TransactionTile.dart';
 
 class BudgetObjRoute extends StatefulWidget {
   final BudgetObject budgetObject;
@@ -15,6 +17,7 @@ class BudgetObjRoute extends StatefulWidget {
 class _BudgetObjRouteState extends State<BudgetObjRoute>
     with TickerProviderStateMixin {
   TabController _controller;
+  double _screenHeight;
 
   @override
   void initState() {
@@ -65,6 +68,11 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
         ],
       ),
     );
+
+    _screenHeight = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
     return Scaffold(
       appBar: appBar,
       body: buildBody(),
@@ -79,14 +87,49 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           alignment: Alignment.center,
           child: Text('Withdraw'),
         ),
-        Container(
-          child: Text('History'),
-        ),
+        buildHistoryPage(),
       ],
     );
   }
 
   Widget buildHistoryPage() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
 
+          // Heading
+          Flexible(
+            flex: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Transaction Hisotry'),
+                EnhancedListTile(
+                  leading: Text('date'),
+                  center: Text('note'),
+                  trailing: Text('amount'),
+                )
+              ],
+            )),
+          ),
+
+          // Transaction List
+          Flexible(
+            flex: 1,
+            child: SingleChildScrollView(
+              child: Column(
+                children:
+                    widget.budgetObject.getTransactions.map((transaction) {
+                  return TransactionTile(transaction: transaction);
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

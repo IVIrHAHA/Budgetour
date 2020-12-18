@@ -11,13 +11,13 @@ class Transaction {
   Key key;
   String description;
   double amount;
-  TimeOfDay date;
+  DateTime date;
 
   Transaction(
       {this.description = defaultMessage, @required this.amount, this.date});
 
   Transaction.fillDate(
       {this.description = defaultMessage, @required this.amount}) {
-    this.date = TimeOfDay.now();
+    this.date = DateTime.now();
   }
 }

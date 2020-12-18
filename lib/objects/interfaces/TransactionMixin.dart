@@ -7,7 +7,7 @@ mixin TransactionMixin {
     _list.add(transaction);
   }
 
-  get getList => _list;
+  List<Transaction> get getTransactions => _list;
 
   // deleteTransaction(Transaction transaction);
 }
