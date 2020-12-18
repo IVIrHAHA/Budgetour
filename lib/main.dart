@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: TabBarView(
           controller: _controller,
           children: [
-            BudgetPage(InitTestData.dummyFOList),
+            EssentialPage(InitTestData.dummyFOList),
             buildPage('Security'),
             buildPage('Goals'),
             buildPage('Lifestyle'),
@@ -122,10 +122,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
-class BudgetPage extends StatelessWidget {
+class EssentialPage extends StatelessWidget {
   final List<FinanceObject> financeList;
 
-  BudgetPage(this.financeList);
+  EssentialPage(this.financeList);
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,9 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTIle.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../widgets/TransactionTile.dart';
+import '../objects/Transaction.dart';
 
 class BudgetObjRoute extends StatefulWidget {
   final BudgetObject budgetObject;
@@ -17,7 +19,6 @@ class BudgetObjRoute extends StatefulWidget {
 class _BudgetObjRouteState extends State<BudgetObjRoute>
     with TickerProviderStateMixin {
   TabController _controller;
-  double _screenHeight;
 
   @override
   void initState() {
@@ -69,10 +70,6 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
       ),
     );
 
-    _screenHeight = MediaQuery.of(context).size.height -
-        appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
-
     return Scaffold(
       appBar: appBar,
       body: buildBody(),
@@ -93,42 +90,74 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
   }
 
   Widget buildHistoryPage() {
+    int workingMonth;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-
           // Heading
           Flexible(
             flex: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Transaction Hisotry'),
-                EnhancedListTile(
-                  leading: Text('date'),
-                  center: Text('note'),
-                  trailing: Text('amount'),
-                )
-              ],
-            )),
+                  children: [
+                    Text('Transaction Hisotry'),
+                    EnhancedListTile(
+                      leading: Text('date'),
+                      center: Text('note'),
+                      trailing: Text('amount'),
+                    )
+                  ],
+                )),
           ),
 
           // Transaction List
           Flexible(
             flex: 1,
-            child: SingleChildScrollView(
-              child: Column(
-                children:
-                    widget.budgetObject.getTransactions.map((transaction) {
-                  return TransactionTile(transaction: transaction);
-                }).toList(),
-              ),
-            ),
+            child: _buildTransactionListView(workingMonth),
           ),
         ],
+      ),
+    );
+  }
+
+  /*
+   *  Builds transaction list view. A list of all transactions 
+   *  seperated by Month.
+   */
+  SingleChildScrollView _buildTransactionListView(int workingMonth) {
+    return SingleChildScrollView(
+      child: Column(
+        children: widget.budgetObject.getTransactions.map((transaction) {
+          // Keep working month the same if already assigned
+          // otherwise working month goes to first element in list
+          workingMonth = workingMonth ?? transaction.date.month;
+
+          bool monthChanged = false;
+          // Month has changed
+          if (transaction.date.month != workingMonth) {
+            monthChanged = true;
+            workingMonth = transaction.date.month;
+          }
+
+          return monthChanged
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child:
+                          Text(DateFormat('LLLL y').format(transaction.date)),
+                    ),
+                    TransactionTile(
+                      transaction: transaction,
+                    ),
+                  ],
+                )
+              : TransactionTile(transaction: transaction);
+        }).toList(),
       ),
     );
   }
