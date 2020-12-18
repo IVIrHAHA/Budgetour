@@ -1,3 +1,4 @@
+import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
@@ -37,13 +38,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  TabController _controller;
+  
   @override
-  Widget build(BuildContext context) {
-    var controller = TabController(
+  void initState() {
+    _controller = TabController(
       initialIndex: 0,
       length: 5,
       vsync: this,
     );
+    InitTestData.initTileList();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           trailing: Text('Pending'),
         ),
         bottom: TabBar(
-          controller: controller,
+          controller: _controller,
           tabs: [
             Text(
               'Essentials',
@@ -83,17 +99,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       body: Container(
         child: TabBarView(
-          controller: controller,
+          controller: _controller,
           children: [
-            BudgetPage([
-              BudgetObject(
-                title: 'Food',
-                allocatedAmount: 50,
-                label1: 'Remaining',
-              ),
-              // FinanceObject(title: 'Gas'),
-              // FinanceObject(title: 'Groceries'),
-            ]),
+            BudgetPage(InitTestData.dummyFOList),
             buildPage('Security'),
             buildPage('Goals'),
             buildPage('Lifestyle'),

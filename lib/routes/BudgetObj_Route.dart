@@ -1,8 +1,13 @@
+import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/common_tools.dart';
 import 'package:flutter/material.dart';
 
 class BudgetObjRoute extends StatefulWidget {
+  final BudgetObject budgetObject;
+
+  BudgetObjRoute(this.budgetObject);
+
   @override
   _BudgetObjRouteState createState() => _BudgetObjRouteState();
 }
@@ -35,7 +40,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              'Food',
+              widget.budgetObject.name,
               style: Theme.of(context).textTheme.headline5,
             ),
           ),
@@ -79,5 +84,9 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
         ),
       ],
     );
+  }
+
+  Widget buildHistoryPage() {
+
   }
 }

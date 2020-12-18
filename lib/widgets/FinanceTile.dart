@@ -1,4 +1,3 @@
-import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
@@ -6,9 +5,9 @@ import 'package:common_tools/common_tools.dart';
 import 'package:flutter/material.dart';
 
 class FinanceTile extends StatelessWidget {
-  final FinanceObject tile;
+  final FinanceObject financeObj;
 
-  FinanceTile(this.tile);
+  FinanceTile(this.financeObj);
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +35,11 @@ class FinanceTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          leading: Text(tile.title),
+          leading: Text(financeObj.name),
           trailing: Icon(Icons.more_vert),
         ),
-        Text(tile.label_1 ?? ''),
-        Text(tile.label_2 ?? ''),
+        Text(financeObj.label_1 ?? ''),
+        Text(financeObj.label_2 ?? ''),
       ],
     );
   }
@@ -48,7 +47,7 @@ class FinanceTile extends StatelessWidget {
   openTile(BuildContext ctx) {
     Navigator.of(ctx).push(MaterialPageRoute(
       builder: (_) {
-        return BudgetObjRoute();
+        return BudgetObjRoute(financeObj);
       },
     ));
   }

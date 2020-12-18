@@ -10,11 +10,11 @@ class BudgetObject extends FinanceObject with TransactionMixin {
 
   BudgetObject({
     @required String title,
+    this.allocatedAmount = 0,
     String label1,
     String label2,
-    this.allocatedAmount = 0,
   }) : super(
-          title: title,
+          name: title,
           label_1: label1,
           label_2: label2,
         ) {
@@ -24,7 +24,7 @@ class BudgetObject extends FinanceObject with TransactionMixin {
   @override
   logTransaction(Transaction transaction) {
     currentBalance = currentBalance - transaction.amount;
-    this.list.add(transaction);
+    super.logTransaction(transaction);
   }
 
   isOverbudget() {
