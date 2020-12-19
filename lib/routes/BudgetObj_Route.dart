@@ -1,12 +1,11 @@
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/widgets/standardized/CalculatorView.dart';
+import 'package:budgetour/widgets/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTIle.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/TransactionTile.dart';
-import '../objects/Transaction.dart';
 
 class BudgetObjRoute extends StatefulWidget {
   final BudgetObject budgetObject;
@@ -87,35 +86,11 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
       controller: _controller,
       children: [
         // Withdraw Page
-        buildWithdrawPage(),
+        EnterTransactionPage(),
 
         // History Page
         buildHistoryPage(ctx),
       ],
-    );
-  }
-
-  Widget buildWithdrawPage() {
-    CalculatorController controller = CalculatorController();
-
-    controller.addListener((v) {
-      print('this was pressed $v');
-    });
-
-    return Container(
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('test'),
-          Container(
-            width: double.infinity,
-            height: _screenSize / 2,
-            color: Colors.teal,
-            child: CalculatorView(controller),
-          ),
-        ],
-      ),
     );
   }
 

@@ -1,7 +1,7 @@
 import 'package:budgetour/objects/FinanceObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:common_tools/common_tools.dart';
+import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class FinanceTile extends StatelessWidget {
