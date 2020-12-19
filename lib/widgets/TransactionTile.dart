@@ -25,7 +25,7 @@ class TransactionTile extends StatelessWidget {
             trailing: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text('\$ ' + Format.formatDouble(transaction.amount, 2)),
+                buildAmountText(transaction.amount),
                 Flexible(
                   fit: FlexFit.tight,
                   child: Container(),
@@ -40,6 +40,22 @@ class TransactionTile extends StatelessWidget {
           thickness: 2,
         )
       ],
+    );
+  }
+
+  Text buildAmountText(double amount) {
+    Color color;
+
+    if (amount < 0) {
+      color = ColorGenerator.fromHex('#48C144');
+      amount = amount * -1;
+    } else {
+      color = ColorGenerator.fromHex('#FF6868');
+    }
+
+    return Text(
+      '\$ ' + Format.formatDouble(amount, 2),
+      style: TextStyle(color: color),
     );
   }
 }

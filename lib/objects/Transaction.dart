@@ -1,6 +1,9 @@
 /*
  * When exchanging money from any Finance Object it will be done
  * with a Transaction object.
+ * 
+ * In this case a deposit into the account is negative
+ * while a withdrawal is negative.
  */
 
 import 'package:flutter/material.dart';

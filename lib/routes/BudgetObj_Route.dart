@@ -72,11 +72,11 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
 
     return Scaffold(
       appBar: appBar,
-      body: buildBody(),
+      body: buildBody(context),
     );
   }
 
-  Widget buildBody() {
+  Widget buildBody(BuildContext ctx) {
     return TabBarView(
       controller: _controller,
       children: [
@@ -84,12 +84,12 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           alignment: Alignment.center,
           child: Text('Withdraw'),
         ),
-        buildHistoryPage(),
+        buildHistoryPage(ctx),
       ],
     );
   }
 
-  Widget buildHistoryPage() {
+  Widget buildHistoryPage(BuildContext ctx) {
     int workingMonth;
 
     return Container(
@@ -100,11 +100,22 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           Flexible(
             flex: 0,
             child: Container(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Transaction Hisotry'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Transaction History',
+                            style: Theme.of(ctx).textTheme.headline6,
+                          ),
+                          Icon(Icons.unfold_more)
+                        ],
+                      ),
+                    ),
                     EnhancedListTile(
                       leading: Text('date'),
                       center: Text('note'),
