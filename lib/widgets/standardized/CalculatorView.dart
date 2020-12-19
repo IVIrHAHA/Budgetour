@@ -1,4 +1,5 @@
 import 'package:budgetour/tools/GlobalValues.dart';
+import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorView extends StatelessWidget {
@@ -10,34 +11,106 @@ class CalculatorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height / 2,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildButton('1', context),
-              buildButton('2', context),
-              buildButton('3', context),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildButton('4', context),
-              buildButton('5', context),
-              buildButton('6', context),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildButton('7', context),
-              buildButton('8', context),
-              buildButton('9', context),
-            ],
-          ),
-        ],
+      width: double.infinity,
+      color: ColorGenerator.fromHex('#393939'),
+      child: Container(
+        padding: EdgeInsets.all(4.0),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 4,
+              child: buildNumPad(context),
+            ),
+            Expanded(
+              flex: 1,
+              child: buildEnterButton('Enter', context, onTap: () {
+                print('pressed enter');
+              }),
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+/*
+ * Build number pad 
+ */
+  Row buildNumPad(BuildContext context) {
+    return Row(
+      children: [
+        // Plus Minus buttons
+        Expanded(
+          flex: 1,
+          child: Column(
+            children: [
+              buildButton('+', context, onTap: () {
+                print('plus');
+              }),
+              buildButton('-', context, onTap: () {
+                print('minus');
+              }),
+            ],
+          ),
+        ),
+
+        // Numerical pad
+        Expanded(
+          flex: 4,
+          child: Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildButton('1', context),
+                    buildButton('2', context),
+                    buildButton('3', context),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildButton('4', context),
+                    buildButton('5', context),
+                    buildButton('6', context),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildButton('7', context),
+                    buildButton('8', context),
+                    buildButton('9', context),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildButton('.', context, onTap: () {
+                      print('pressed .');
+                    }),
+                    buildButton('0', context),
+                    buildButton('bks', context, onTap: () {
+                      print('pressed backspace');
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -45,29 +118,57 @@ class CalculatorView extends StatelessWidget {
    * If text is not an integeter then an onTap function must be passed. 
    */
   Widget buildButton(String text, BuildContext ctx, {Function onTap}) {
-    return Flexible(
-      fit: FlexFit.tight,
+    return Expanded(
+      flex: 1,
       child: GestureDetector(
         onTap: onTap ??
             () {
               controller.updateValue(text);
             },
-        child: Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-            GlobalValues.roundedEdges,
-          )),
-          color: Colors.black,
-          child: Container(
-            child: Text(
-              text,
-              style: Theme.of(ctx)
-                  .textTheme
-                  .headline6
-                  .copyWith(color: Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.all(1.5),
+          child: Card(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+              GlobalValues.roundedEdges,
+            )),
+            color: Colors.black,
+            child: Container(
+              child: Text(
+                text,
+                style: Theme.of(ctx).textTheme.headline6.copyWith(
+                      color: ColorGenerator.fromHex('#D1D1D1'),
+                    ),
+              ),
+              alignment: Alignment.center,
             ),
-            alignment: Alignment.center,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildEnterButton(String text, BuildContext ctx, {Function onTap}) {
+    return GestureDetector(
+      onTap: onTap ??
+          () {
+            controller.updateValue(text);
+          },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            GlobalValues.roundedEdges,
+          ),
+        ),
+        color: Colors.black,
+        child: Container(
+          child: Text(
+            text,
+            style: Theme.of(ctx).textTheme.headline6.copyWith(
+                  color: ColorGenerator.fromHex('#D1D1D1'),
+                ),
+          ),
+          alignment: Alignment.center,
         ),
       ),
     );

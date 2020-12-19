@@ -44,14 +44,16 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Flexible(flex: 2, child: buildContent()),
+          Flexible(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: buildContent(),
+            ),
+          ),
           Flexible(
             flex: 3,
-            child: Container(
-              width: double.infinity,
-              color: Colors.black87,
-              child: CalculatorView(controller),
-            ),
+            child: CalculatorView(controller),
           ),
         ],
       ),
