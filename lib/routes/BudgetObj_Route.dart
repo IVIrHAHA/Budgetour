@@ -19,7 +19,6 @@ class BudgetObjRoute extends StatefulWidget {
 class _BudgetObjRouteState extends State<BudgetObjRoute>
     with TickerProviderStateMixin {
   TabController _controller;
-  var _screenSize;
 
   @override
   void initState() {
@@ -70,10 +69,6 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
         ],
       ),
     );
-
-    _screenSize = MediaQuery.of(context).size.height -
-        appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
 
     return Scaffold(
       appBar: appBar,
