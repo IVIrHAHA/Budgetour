@@ -1,5 +1,6 @@
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
+import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTIle.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class BudgetObjRoute extends StatefulWidget {
 class _BudgetObjRouteState extends State<BudgetObjRoute>
     with TickerProviderStateMixin {
   TabController _controller;
+  var _screenSize;
 
   @override
   void initState() {
@@ -70,6 +72,10 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
       ),
     );
 
+    _screenSize = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
     return Scaffold(
       appBar: appBar,
       body: buildBody(context),
@@ -80,15 +86,42 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
     return TabBarView(
       controller: _controller,
       children: [
-        Container(
-          alignment: Alignment.center,
-          child: Text('Withdraw'),
-        ),
+        // Withdraw Page
+        buildWithdrawPage(),
+
+        // History Page
         buildHistoryPage(ctx),
       ],
     );
   }
 
+  Widget buildWithdrawPage() {
+    CalculatorController controller = CalculatorController();
+
+    controller.addListener((v) {
+      print('this was pressed $v');
+    });
+
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('test'),
+          Container(
+            width: double.infinity,
+            height: _screenSize / 2,
+            color: Colors.teal,
+            child: CalculatorView(controller),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*
+   *  Contents of Transaction History Page
+   */
   Widget buildHistoryPage(BuildContext ctx) {
     int workingMonth;
 
