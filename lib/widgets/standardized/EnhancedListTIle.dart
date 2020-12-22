@@ -13,18 +13,18 @@ class EnhancedListTile extends StatelessWidget {
         children: [
           Expanded(
             child: leading,
-            flex: 1,
-          ),
-          Expanded(
-            child: center,
             flex: 3,
           ),
           Expanded(
+            child: center,
+            flex: 6,
+          ),
+          Expanded(
             child: Container(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.centerLeft,
               child: trailing,
             ),
-            flex: 1,
+            flex: 3,
           ),
         ],
       ),

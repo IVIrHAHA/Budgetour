@@ -17,7 +17,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
   String enteredText;
 
   _EnterTransactionPageState() {
-    this.enteredText = '30';
+    this.enteredText = '0';
   }
 
   @override
@@ -25,7 +25,8 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
     controller = CalculatorController();
     controller.addListener((v) {
       setState(() {
-        enteredText += v.toString();
+        // TODO: Move this capability to the calculator controller
+        enteredText = v.length == 0 ? '0' : v;
       });
     });
     super.initState();

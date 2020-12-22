@@ -1,7 +1,7 @@
 import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/EnterTransactionPage.dart';
-import 'package:budgetour/widgets/standardized/EnhancedListTIle.dart';
+import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

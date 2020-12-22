@@ -24,7 +24,7 @@ class CalculatorView extends StatelessWidget {
             Expanded(
               flex: 1,
               child: buildEnterButton('Enter', context, onTap: () {
-                print('pressed enter');
+                // print('pressed enter');
               }),
             )
           ],
@@ -44,12 +44,8 @@ class CalculatorView extends StatelessWidget {
           flex: 1,
           child: Column(
             children: [
-              buildButton('+', context, onTap: () {
-                print('plus');
-              }),
-              buildButton('-', context, onTap: () {
-                print('minus');
-              }),
+              buildButton('+', context),
+              buildButton('-', context),
             ],
           ),
         ),
@@ -98,11 +94,11 @@ class CalculatorView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     buildButton('.', context, onTap: () {
-                      print('pressed .');
+                      controller.updateValue('.');
                     }),
                     buildButton('0', context),
                     buildButton('bks', context, onTap: () {
-                      print('pressed backspace');
+                      controller.updateValue('<');
                     }),
                   ],
                 ),
@@ -177,22 +173,100 @@ class CalculatorView extends StatelessWidget {
 
 class CalculatorController {
   double value;
+  String enteredValue;
   List<Function> listeners;
+
+  bool periodInUse;
 
   CalculatorController() {
     listeners = new List<Function>();
+    enteredValue = '';
+    periodInUse = false;
   }
 
-  addListener(Function(double v) listener) {
+  addListener(Function(String v) listener) {
     listeners.add(listener);
   }
 
   _notifyListeners() {
-    listeners[0](this.value);
+    listeners[0](enteredValue.length != 0 ? enteredValue : '0');
   }
 
   updateValue(String v) {
-    this.value = double.parse(v);
+    switch (v) {
+      // Backspace pressed
+      case '<':
+        if (enteredValue.length > 0) {
+          if (enteredValue.endsWith('.')) {
+            periodInUse = false;
+          }
+          enteredValue = enteredValue.substring(0, enteredValue.length - 1);
+        } else
+          enteredValue = '';
+
+        break;
+
+      case '1':
+        enteredValue += 1.toString();
+        break;
+
+      case '2':
+        enteredValue += 2.toString();
+        break;
+
+      case '3':
+        enteredValue += 3.toString();
+        break;
+
+      case '4':
+        enteredValue += 4.toString();
+        break;
+
+      case '5':
+        enteredValue += 5.toString();
+        break;
+
+      case '6':
+        enteredValue += 6.toString();
+        break;
+
+      case '7':
+        enteredValue += 7.toString();
+        break;
+
+      case '8':
+        enteredValue += 8.toString();
+        break;
+
+      case '9':
+        enteredValue += 9.toString();
+        break;
+
+      case '0':
+        if (enteredValue.length > 0) enteredValue += 0.toString();
+        break;
+
+      case '.':
+        if (!periodInUse) {
+          enteredValue += '.';
+          periodInUse = true;
+        }
+        break;
+
+      case '+':
+        //TODO: Add Addition functionality
+        print('Addition coming soon');
+        break;
+
+      case '-':
+        print('Subtraction coming soon');
+        //TODO: Add Substraction functionality
+        break;
+
+      default:
+        throw Exception('INVALID CALCULATOR ENTRY');
+    }
+
     _notifyListeners();
   }
 
