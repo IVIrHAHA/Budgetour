@@ -173,14 +173,14 @@ class CalculatorView extends StatelessWidget {
 
 class CalculatorController {
   double value;
-  String enteredValue;
+  String _enteredValue;
   List<Function> listeners;
 
   bool decimalInUse;
 
   CalculatorController() {
     listeners = new List<Function>();
-    enteredValue = '';
+    _enteredValue = '';
     decimalInUse = false;
   }
 
@@ -193,29 +193,56 @@ class CalculatorController {
 
   /*
    *  Notifies all functions in the Listeners list 
+   * 
    */
   _notifyListeners() {
     for (Function listener in listeners) {
-      // This is the String which will be passed/available to the addListener method.
-      var listenersText = enteredValue.length != 0 ? enteredValue : '0';
-      listener(listenersText);
+      listener(_prepareListenersText());
     }
   }
 
+  /* 
+   * Prepares text for an appealing visual.
+   *
+   *  Plausbile flaw is that _enteredValue can at some point
+   *  only equal to '.'
+   */
+  String _prepareListenersText() {
+    var listenersText = _enteredValue.length != 0 ? _enteredValue : '0';
+
+    // Checks whether to add a zero in front or not, without interfering with
+    // _enteredText
+    if (decimalInUse) {
+      String firstWord = _enteredValue.split('.').first;
+
+      // This adds a zero to the beginning if user inputs a decimal
+      // to begin with
+      if (firstWord.length == 0) {
+        return listenersText.padLeft(listenersText.length + 1, '0');
+      }
+    }
+
+    return listenersText;
+  }
+
+  /*
+   *  Removes and returns the last char in _enteredText
+   *  Returns an empty String if nothing to remove.
+   */
   _backspace() {
     String removedChar;
 
-    if (enteredValue.length > 0) {
+    if (_enteredValue.length > 0) {
       // Allows the decimal to be used again
-      if (enteredValue.endsWith('.')) {
+      if (_enteredValue.endsWith('.')) {
         decimalInUse = false;
       }
-      removedChar =
-          String.fromCharCode(enteredValue.codeUnitAt(enteredValue.length - 1));
-      enteredValue = enteredValue.substring(0, enteredValue.length - 1);
+      removedChar = String.fromCharCode(
+          _enteredValue.codeUnitAt(_enteredValue.length - 1));
+      _enteredValue = _enteredValue.substring(0, _enteredValue.length - 1);
       return removedChar;
     } else {
-      enteredValue = '';
+      _enteredValue = '';
       return '';
     }
   }
@@ -231,48 +258,48 @@ class CalculatorController {
         break;
 
       case '1':
-        enteredValue += 1.toString();
+        _enteredValue += 1.toString();
         break;
 
       case '2':
-        enteredValue += 2.toString();
+        _enteredValue += 2.toString();
         break;
 
       case '3':
-        enteredValue += 3.toString();
+        _enteredValue += 3.toString();
         break;
 
       case '4':
-        enteredValue += 4.toString();
+        _enteredValue += 4.toString();
         break;
 
       case '5':
-        enteredValue += 5.toString();
+        _enteredValue += 5.toString();
         break;
 
       case '6':
-        enteredValue += 6.toString();
+        _enteredValue += 6.toString();
         break;
 
       case '7':
-        enteredValue += 7.toString();
+        _enteredValue += 7.toString();
         break;
 
       case '8':
-        enteredValue += 8.toString();
+        _enteredValue += 8.toString();
         break;
 
       case '9':
-        enteredValue += 9.toString();
+        _enteredValue += 9.toString();
         break;
 
       case '0':
-        if (enteredValue.length > 0) enteredValue += 0.toString();
+        if (_enteredValue.length > 0) _enteredValue += 0.toString();
         break;
 
       case '.':
         if (!decimalInUse) {
-          enteredValue += '.';
+          _enteredValue += '.';
           decimalInUse = true;
         }
         break;
