@@ -25,8 +25,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
     controller = CalculatorController();
     controller.addListener((v) {
       setState(() {
-        // TODO: Move this capability to the calculator controller
-        enteredText = v.length == 0 ? '0' : v;
+        enteredText = v;
       });
     });
     super.initState();
@@ -49,7 +48,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
             flex: 2,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: buildContent(),
+              child: buildDisplay(),
             ),
           ),
           Flexible(
@@ -61,7 +60,8 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
     );
   }
 
-  Widget buildContent() {
+  // Builds the middle section. ie (not the calculator)
+  Widget buildDisplay() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(

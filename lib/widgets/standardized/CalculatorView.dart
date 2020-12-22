@@ -176,34 +176,58 @@ class CalculatorController {
   String enteredValue;
   List<Function> listeners;
 
-  bool periodInUse;
+  bool decimalInUse;
 
   CalculatorController() {
     listeners = new List<Function>();
     enteredValue = '';
-    periodInUse = false;
+    decimalInUse = false;
   }
 
-  addListener(Function(String v) listener) {
-    listeners.add(listener);
+  addListener(Function(String enteredText) function) {
+    if (function != null)
+      listeners.add(function);
+    else
+      throw Exception('LISTENER CANNOT NOTIFY NULL FUNCTION');
   }
 
+  /*
+   *  Notifies all functions in the Listeners list 
+   */
   _notifyListeners() {
-    listeners[0](enteredValue.length != 0 ? enteredValue : '0');
+    for (Function listener in listeners) {
+      // This is the String which will be passed/available to the addListener method.
+      var listenersText = enteredValue.length != 0 ? enteredValue : '0';
+      listener(listenersText);
+    }
   }
 
+  _backspace() {
+    String removedChar;
+
+    if (enteredValue.length > 0) {
+      // Allows the decimal to be used again
+      if (enteredValue.endsWith('.')) {
+        decimalInUse = false;
+      }
+      removedChar =
+          String.fromCharCode(enteredValue.codeUnitAt(enteredValue.length - 1));
+      enteredValue = enteredValue.substring(0, enteredValue.length - 1);
+      return removedChar;
+    } else {
+      enteredValue = '';
+      return '';
+    }
+  }
+
+  /*
+   * Really only used by CalculatorView. Updates enteredText with the passed (v)alue
+   */
   updateValue(String v) {
     switch (v) {
       // Backspace pressed
       case '<':
-        if (enteredValue.length > 0) {
-          if (enteredValue.endsWith('.')) {
-            periodInUse = false;
-          }
-          enteredValue = enteredValue.substring(0, enteredValue.length - 1);
-        } else
-          enteredValue = '';
-
+        _backspace();
         break;
 
       case '1':
@@ -247,9 +271,9 @@ class CalculatorController {
         break;
 
       case '.':
-        if (!periodInUse) {
+        if (!decimalInUse) {
           enteredValue += '.';
-          periodInUse = true;
+          decimalInUse = true;
         }
         break;
 
