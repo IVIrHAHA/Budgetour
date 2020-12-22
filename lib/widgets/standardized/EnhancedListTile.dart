@@ -5,6 +5,7 @@ class EnhancedListTile extends StatelessWidget {
 
   EnhancedListTile({this.leading, this.center, this.trailing});
 
+  // nothing really just trying something, can delete whenever
   @override
   Widget build(BuildContext context) {
     return Container(
