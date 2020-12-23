@@ -2,10 +2,17 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class CalculatorView extends StatelessWidget {
+class CalculatorView extends StatefulWidget {
   final CalculatorController controller;
 
   CalculatorView(this.controller);
+
+  @override
+  _CalculatorViewState createState() => _CalculatorViewState();
+}
+
+class _CalculatorViewState extends State<CalculatorView> {
+  Color decimalColor;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +30,7 @@ class CalculatorView extends StatelessWidget {
             ),
             Expanded(
               flex: 1,
-              child: buildEnterButton('Enter', context, onTap: () {
-
-              }),
+              child: buildEnterButton('Enter', context, onTap: () {}),
             )
           ],
         ),
@@ -33,9 +38,6 @@ class CalculatorView extends StatelessWidget {
     );
   }
 
-/*
- * Build number pad 
- */
   Row buildNumPad(BuildContext context) {
     return Row(
       children: [
@@ -93,12 +95,20 @@ class CalculatorView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildButton('.', context, onTap: () {
-                      controller.updateValue('.');
+                    buildButton('.', context, optionalColor: decimalColor,
+                        onTap: () {
+                      widget.controller.updateValue('.');
+                      setState(() {
+                        if (widget.controller.decimalUsed())
+                          decimalColor = Colors.grey;
+                      });
                     }),
                     buildButton('0', context),
                     buildButton('bks', context, onTap: () {
-                      controller.updateValue('<');
+                      widget.controller.updateValue('<');
+                      if (!widget.controller.decimalUsed()) {
+                        decimalColor = Colors.black;
+                      }
                     }),
                   ],
                 ),
@@ -110,16 +120,14 @@ class CalculatorView extends StatelessWidget {
     );
   }
 
-  /*
-   * If text is not an integeter then an onTap function must be passed. 
-   */
-  Widget buildButton(String text, BuildContext ctx, {Function onTap}) {
+  Widget buildButton(String text, BuildContext ctx,
+      {Function onTap, Color optionalColor}) {
     return Expanded(
       flex: 1,
       child: GestureDetector(
         onTap: onTap ??
             () {
-              controller.updateValue(text);
+              widget.controller.updateValue(text);
             },
         child: Padding(
           padding: const EdgeInsets.all(1.5),
@@ -128,7 +136,7 @@ class CalculatorView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
               GlobalValues.roundedEdges,
             )),
-            color: Colors.black,
+            color: optionalColor ?? Colors.black,
             child: Container(
               child: Text(
                 text,
@@ -148,7 +156,7 @@ class CalculatorView extends StatelessWidget {
     return GestureDetector(
       onTap: onTap ??
           () {
-            controller.updateValue(text);
+            widget.controller.updateValue(text);
           },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -156,7 +164,9 @@ class CalculatorView extends StatelessWidget {
             GlobalValues.roundedEdges,
           ),
         ),
-        color: text == '.' && controller.decimalUsed() ? Colors.grey : Colors.black,
+        color: text == '.' && widget.controller.decimalUsed()
+            ? Colors.grey
+            : Colors.black,
         child: Container(
           child: Text(
             text,
@@ -218,7 +228,7 @@ class CalculatorController {
     // _enteredText
     if (_decimalInUse) {
       List<String> words = _enteredValue.split('.');
-      
+
       String firstWord = words.first;
       String secondWord = words.last;
 
@@ -226,12 +236,10 @@ class CalculatorController {
       // to begin with
       if (firstWord.length == 0) {
         listenersText = '0.' + secondWord.padRight(2, '0');
-      }
-      else {
+      } else {
         listenersText = firstWord + '.' + secondWord.padRight(2, '0');
       }
-    }
-    else if(_enteredValue.length != 0) {
+    } else if (_enteredValue.length != 0) {
       listenersText += '.00';
     }
 
@@ -263,75 +271,86 @@ class CalculatorController {
   /*
    * Really only used by CalculatorView. Updates enteredText with the passed (v)alue
    */
-  updateValue(String v) {
-    switch (v) {
-      // Backspace pressed
-      case '<':
-        _backspace();
-        break;
+  updateValue(String entry) {
+    bool allowEntry = true;
 
-      case '1':
-        _enteredValue += 1.toString();
-        break;
-
-      case '2':
-        _enteredValue += 2.toString();
-        break;
-
-      case '3':
-        _enteredValue += 3.toString();
-        break;
-
-      case '4':
-        _enteredValue += 4.toString();
-        break;
-
-      case '5':
-        _enteredValue += 5.toString();
-        break;
-
-      case '6':
-        _enteredValue += 6.toString();
-        break;
-
-      case '7':
-        _enteredValue += 7.toString();
-        break;
-
-      case '8':
-        _enteredValue += 8.toString();
-        break;
-
-      case '9':
-        _enteredValue += 9.toString();
-        break;
-
-      case '0':
-        if (_enteredValue.length > 0) _enteredValue += 0.toString();
-        break;
-
-      case '.':
-        if (!_decimalInUse) {
-          _enteredValue += '.';
-          _decimalInUse = true;
-        }
-        break;
-
-      case '+':
-        //TODO: Add Addition functionality
-        print('Addition coming soon');
-        break;
-
-      case '-':
-        print('Subtraction coming soon');
-        //TODO: Add Substraction functionality
-        break;
-
-      default:
-        throw Exception('INVALID CALCULATOR ENTRY');
+    if (_decimalInUse && entry != '<') {
+      String secondWord = _enteredValue.split('.').last;
+      if (secondWord.length >= 2) {
+        allowEntry = false;
+      }
     }
 
-    _notifyListeners();
+    if (allowEntry) {
+      switch (entry) {
+        // Backspace pressed
+        case '<':
+          _backspace();
+          break;
+
+        case '1':
+          _enteredValue += 1.toString();
+          break;
+
+        case '2':
+          _enteredValue += 2.toString();
+          break;
+
+        case '3':
+          _enteredValue += 3.toString();
+          break;
+
+        case '4':
+          _enteredValue += 4.toString();
+          break;
+
+        case '5':
+          _enteredValue += 5.toString();
+          break;
+
+        case '6':
+          _enteredValue += 6.toString();
+          break;
+
+        case '7':
+          _enteredValue += 7.toString();
+          break;
+
+        case '8':
+          _enteredValue += 8.toString();
+          break;
+
+        case '9':
+          _enteredValue += 9.toString();
+          break;
+
+        case '0':
+          if (_enteredValue.length > 0) _enteredValue += 0.toString();
+          break;
+
+        case '.':
+          if (!_decimalInUse) {
+            _enteredValue += '.';
+            _decimalInUse = true;
+          }
+          break;
+
+        case '+':
+          //TODO: Add Addition functionality
+          print('Addition coming soon');
+          break;
+
+        case '-':
+          print('Subtraction coming soon');
+          //TODO: Add Substraction functionality
+          break;
+
+        default:
+          throw Exception('INVALID CALCULATOR ENTRY');
+      }
+
+      _notifyListeners();
+    }
   }
 
   dispose() {
