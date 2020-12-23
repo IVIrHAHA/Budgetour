@@ -15,18 +15,20 @@ class CalculatorView extends StatefulWidget {
 }
 
 class _CalculatorViewState extends State<CalculatorView>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   Color decimalColor;
-  Color splashcolor;
+  Color dynamicSplashColor;
 
   @override
   void initState() {
     widget.controller.attachSplashNotifier((entryPassed) {
       setState(() {
         if (entryPassed)
-          splashcolor = Colors.grey;
+          dynamicSplashColor =
+              ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor);
         else
-          splashcolor = Colors.red;
+          dynamicSplashColor =
+              ColorGenerator.fromHex(GlobalValues.calcButtonNoSplashColor);
       });
     });
     super.initState();
@@ -126,7 +128,15 @@ class _CalculatorViewState extends State<CalculatorView>
                       });
                     }),
                     buildButton('0', context),
-                    buildBackspaceButton('bks', context, onTap: () {}),
+                    buildButton('bks', context,
+                        splashColor: ColorGenerator.fromHex(
+                            GlobalValues.calcButtonSplashColor), onTap: () {
+                      widget.controller.updateValue('<');
+                      if (!widget.controller.decimalInUse) {
+                        decimalColor = ColorGenerator.fromHex(
+                            GlobalValues.calcButtonColor);
+                      }
+                    }),
                   ],
                 ),
               ),
@@ -138,66 +148,26 @@ class _CalculatorViewState extends State<CalculatorView>
   }
 
   Widget buildButton(String text, BuildContext ctx,
-      {Function onTap, Color optionalColor}) {
+      {Function onTap, Color optionalColor, Color splashColor}) {
     return Expanded(
       flex: 1,
-      child: Material(
-        color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
-        child: InkWell(
-          splashColor: splashcolor,
-          onTap: onTap ??
-              () {
-                widget.controller.updateValue(text);
-              },
-          child: Padding(
-            padding: const EdgeInsets.all(1.5),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                GlobalValues.roundedEdges,
-              )),
-              color: optionalColor ??
-                  ColorGenerator.fromHex(GlobalValues.calcButtonColor),
-              child: Container(
-                child: Text(
-                  text,
-                  style: Theme.of(ctx).textTheme.headline6.copyWith(
-                        color: ColorGenerator.fromHex('#D1D1D1'),
-                      ),
-                ),
-                alignment: Alignment.center,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildBackspaceButton(String text, BuildContext ctx,
-      {Function onTap, Color optionalColor}) {
-    return Expanded(
-      flex: 1,
-      child: Material(
-        color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
-        child: InkWell(
-          splashColor: Colors.grey,
-          onTap: () {
-            widget.controller.updateValue('<');
-            if (!widget.controller.decimalInUse) {
-              decimalColor =
-                  ColorGenerator.fromHex(GlobalValues.calcButtonColor);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(1.5),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                GlobalValues.roundedEdges,
-              )),
-              color: optionalColor ??
-                  ColorGenerator.fromHex(GlobalValues.calcButtonColor),
+      child: Padding(
+        padding: const EdgeInsets.all(1.5),
+        child: Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+            GlobalValues.roundedEdges,
+          )),
+          color: optionalColor ??
+              ColorGenerator.fromHex(GlobalValues.calcButtonColor),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              splashColor: splashColor ?? dynamicSplashColor,
+              onTap: onTap ??
+                  () {
+                    widget.controller.updateValue(text);
+                  },
               child: Container(
                 child: Text(
                   text,
@@ -261,6 +231,9 @@ class CalculatorController {
     _entryGate = true;
   }
 
+  /*
+   *  Listeners to be notified about text changes 
+   */
   void addListener(Function(String formatedText) function) {
     if (function != null)
       listeners.add(function);
@@ -268,7 +241,12 @@ class CalculatorController {
       throw Exception('LISTENER CANNOT NOTIFY NULL FUNCTION');
   }
 
+  /*
+   *  This outputs parsed double. 
+   */
   double getEntry() {
+    // _enteredValue can equal to just '.', so ensure case is included
+    // in if statement
     if (_enteredValue != '.' || _enteredValue != '') {
       try {
         double entry = double.parse(_enteredValue);
@@ -293,6 +271,9 @@ class CalculatorController {
     }
   }
 
+  /*
+   *  Only used by the CalculatorView to properly display splash colors 
+   */
   Function(bool allowEntry) _notifySplash;
   attachSplashNotifier(Function(bool entryPassed) function) {
     _notifySplash = function;
@@ -300,9 +281,6 @@ class CalculatorController {
 
   /* 
    * Prepares text for an appealing visual.
-   *
-   *  TODO: Plausbile flaw is that _enteredValue can at some point
-   *  only equal to '.'
    */
   String _prepareListenersText() {
     var listenersText = _enteredValue.length != 0 ? _enteredValue : '0.00';
@@ -457,5 +435,6 @@ class CalculatorController {
     this.value = null;
     listeners.clear();
     listeners = null;
+    _notifySplash = null;
   }
 }
