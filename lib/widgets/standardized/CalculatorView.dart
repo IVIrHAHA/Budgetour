@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +14,23 @@ class CalculatorView extends StatefulWidget {
   _CalculatorViewState createState() => _CalculatorViewState();
 }
 
-class _CalculatorViewState extends State<CalculatorView> {
+class _CalculatorViewState extends State<CalculatorView>
+    with TickerProviderStateMixin {
   Color decimalColor;
-  Color splashcolor = Colors.amber;
+  Color splashcolor;
+
+  @override
+  void initState() {
+    widget.controller.attachSplashNotifier((entryPassed) {
+      setState(() {
+        if (entryPassed)
+          splashcolor = Colors.grey;
+        else
+          splashcolor = Colors.red;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,16 +153,6 @@ class _CalculatorViewState extends State<CalculatorView> {
           splashColor: splashcolor,
           onTap: onTap ??
               () {
-                if (!widget.controller.allowEntry) {
-                  setState(() {
-                    splashcolor = Colors.red;
-                  });
-                }
-                else {
-                  setState(() {
-                    splashcolor = Colors.amber;
-                  });
-                }
                 widget.controller.updateValue(text);
               },
           child: Padding(
@@ -221,7 +227,7 @@ class CalculatorController {
     allowEntry = true;
   }
 
-  addListener(Function(String formatedText) function) {
+  void addListener(Function(String formatedText) function) {
     if (function != null)
       listeners.add(function);
     else
@@ -247,10 +253,15 @@ class CalculatorController {
    *  Notifies all functions in the Listeners list 
    * 
    */
-  _notifyListeners() {
+  void _notifyListeners() {
     for (Function listener in listeners) {
       listener(_prepareListenersText());
     }
+  }
+
+  Function(bool allowEntry) _notifySplash;
+  attachSplashNotifier(Function(bool entryPassed) function) {
+    _notifySplash = function;
   }
 
   /* 
@@ -274,14 +285,30 @@ class CalculatorController {
       // to begin with
       if (firstWord.length == 0) {
         listenersText = '0.' + secondWord.padRight(2, '0');
-      } else {
+      }
+      // User inputed values in front of decimal
+      else {
         listenersText = firstWord + '.' + secondWord.padRight(2, '0');
       }
-    } else if (_enteredValue.length != 0) {
+
+      if (secondWord.length >= 2) {
+        _openGate(false);
+      } else
+        _openGate(true);
+    }
+
+    // Decimal not in use
+    else if (_enteredValue.length != 0) {
       listenersText += '.00';
+      _openGate(true);
     }
 
     return listenersText;
+  }
+
+  _openGate(bool isOpen) {
+    allowEntry = isOpen;
+    _notifySplash(isOpen);
   }
 
   /*
@@ -307,20 +334,25 @@ class CalculatorController {
   }
 
   /*
-   * Really only used by CalculatorView. Updates enteredText with the passed (v)alue
+   *  Determines if entry is eligible to be amended to _enteredValue 
    */
-  updateValue(String entry) {
+  bool _entryGate(String entry) {
     if (decimalInUse && entry != '<') {
       String secondWord = _enteredValue.split('.').last;
       if (secondWord.length >= 2) {
-        allowEntry = false;
+        return false;
       }
-    } else
-      allowEntry = true;
+    }
+    return true;
+  }
 
-    if (allowEntry) {
+  /*
+   * Really only used by CalculatorView. Updates _enteredValue with the passed (v)alue
+   */
+  updateValue(String entryChar) {
+    if (_entryGate(entryChar)) {
       HapticFeedback.vibrate();
-      switch (entry) {
+      switch (entryChar) {
         // Backspace pressed
         case '<':
           _backspace();
