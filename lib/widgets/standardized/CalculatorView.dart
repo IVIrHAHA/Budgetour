@@ -126,13 +126,7 @@ class _CalculatorViewState extends State<CalculatorView>
                       });
                     }),
                     buildButton('0', context),
-                    buildButton('bks', context, onTap: () {
-                      widget.controller.updateValue('<');
-                      if (!widget.controller.decimalInUse) {
-                        decimalColor = ColorGenerator.fromHex(
-                            GlobalValues.calcButtonColor);
-                      }
-                    }),
+                    buildBackspaceButton('bks', context, onTap: () {}),
                   ],
                 ),
               ),
@@ -155,6 +149,46 @@ class _CalculatorViewState extends State<CalculatorView>
               () {
                 widget.controller.updateValue(text);
               },
+          child: Padding(
+            padding: const EdgeInsets.all(1.5),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                GlobalValues.roundedEdges,
+              )),
+              color: optionalColor ??
+                  ColorGenerator.fromHex(GlobalValues.calcButtonColor),
+              child: Container(
+                child: Text(
+                  text,
+                  style: Theme.of(ctx).textTheme.headline6.copyWith(
+                        color: ColorGenerator.fromHex('#D1D1D1'),
+                      ),
+                ),
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildBackspaceButton(String text, BuildContext ctx,
+      {Function onTap, Color optionalColor}) {
+    return Expanded(
+      flex: 1,
+      child: Material(
+        color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
+        child: InkWell(
+          splashColor: Colors.grey,
+          onTap: () {
+            widget.controller.updateValue('<');
+            if (!widget.controller.decimalInUse) {
+              decimalColor =
+                  ColorGenerator.fromHex(GlobalValues.calcButtonColor);
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.all(1.5),
             child: Card(
@@ -218,13 +252,13 @@ class CalculatorController {
   List<Function> listeners;
 
   bool decimalInUse;
-  bool allowEntry;
+  bool _entryGate;
 
   CalculatorController() {
     listeners = new List<Function>();
     _enteredValue = '';
     decimalInUse = false;
-    allowEntry = true;
+    _entryGate = true;
   }
 
   void addListener(Function(String formatedText) function) {
@@ -291,24 +325,27 @@ class CalculatorController {
         listenersText = firstWord + '.' + secondWord.padRight(2, '0');
       }
 
+      // This closes the entryGate the second no more entries are allowed.
+      // Only backspace can reopen it.
       if (secondWord.length >= 2) {
         _openGate(false);
-      } else
-        _openGate(true);
+      }
     }
 
     // Decimal not in use
     else if (_enteredValue.length != 0) {
       listenersText += '.00';
-      _openGate(true);
     }
 
     return listenersText;
   }
 
-  _openGate(bool isOpen) {
-    allowEntry = isOpen;
-    _notifySplash(isOpen);
+  /*
+   *  This allows/disallows any entries into the controller. 
+   */
+  _openGate(bool openGate) {
+    _entryGate = openGate;
+    _notifySplash(openGate);
   }
 
   /*
@@ -318,39 +355,32 @@ class CalculatorController {
   _backspace() {
     String removedChar;
 
+    // Open entryGate if closed
+    if (!_entryGate) _openGate(true);
+
     if (_enteredValue.length > 0) {
-      // Allows the decimal to be used again
-      if (_enteredValue.endsWith('.')) {
-        decimalInUse = false;
-      }
       removedChar = String.fromCharCode(
           _enteredValue.codeUnitAt(_enteredValue.length - 1));
+
+      // re-enable decimal button
+      if (removedChar == '.') {
+        decimalInUse = false;
+      }
       _enteredValue = _enteredValue.substring(0, _enteredValue.length - 1);
       return removedChar;
-    } else {
+    }
+    // Nothing to delete
+    else {
       _enteredValue = '';
       return '';
     }
   }
 
   /*
-   *  Determines if entry is eligible to be amended to _enteredValue 
-   */
-  bool _entryGate(String entry) {
-    if (decimalInUse && entry != '<') {
-      String secondWord = _enteredValue.split('.').last;
-      if (secondWord.length >= 2) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /*
    * Really only used by CalculatorView. Updates _enteredValue with the passed (v)alue
    */
   updateValue(String entryChar) {
-    if (_entryGate(entryChar)) {
+    if (_entryGate || entryChar == '<') {
       HapticFeedback.vibrate();
       switch (entryChar) {
         // Backspace pressed
