@@ -24,7 +24,7 @@ class CalculatorView extends StatelessWidget {
             Expanded(
               flex: 1,
               child: buildEnterButton('Enter', context, onTap: () {
-                // print('pressed enter');
+
               }),
             )
           ],
@@ -156,7 +156,7 @@ class CalculatorView extends StatelessWidget {
             GlobalValues.roundedEdges,
           ),
         ),
-        color: Colors.black,
+        color: text == '.' && controller.decimalUsed() ? Colors.grey : Colors.black,
         child: Container(
           child: Text(
             text,
@@ -176,12 +176,12 @@ class CalculatorController {
   String _enteredValue;
   List<Function> listeners;
 
-  bool decimalInUse;
+  bool _decimalInUse;
 
   CalculatorController() {
     listeners = new List<Function>();
     _enteredValue = '';
-    decimalInUse = false;
+    _decimalInUse = false;
   }
 
   addListener(Function(String enteredText) function) {
@@ -189,6 +189,10 @@ class CalculatorController {
       listeners.add(function);
     else
       throw Exception('LISTENER CANNOT NOTIFY NULL FUNCTION');
+  }
+
+  bool decimalUsed() {
+    return _decimalInUse;
   }
 
   /*
@@ -204,22 +208,31 @@ class CalculatorController {
   /* 
    * Prepares text for an appealing visual.
    *
-   *  Plausbile flaw is that _enteredValue can at some point
+   *  TODO: Plausbile flaw is that _enteredValue can at some point
    *  only equal to '.'
    */
   String _prepareListenersText() {
-    var listenersText = _enteredValue.length != 0 ? _enteredValue : '0';
+    var listenersText = _enteredValue.length != 0 ? _enteredValue : '0.00';
 
     // Checks whether to add a zero in front or not, without interfering with
     // _enteredText
-    if (decimalInUse) {
-      String firstWord = _enteredValue.split('.').first;
+    if (_decimalInUse) {
+      List<String> words = _enteredValue.split('.');
+      
+      String firstWord = words.first;
+      String secondWord = words.last;
 
       // This adds a zero to the beginning if user inputs a decimal
       // to begin with
       if (firstWord.length == 0) {
-        return listenersText.padLeft(listenersText.length + 1, '0');
+        listenersText = '0.' + secondWord.padRight(2, '0');
       }
+      else {
+        listenersText = firstWord + '.' + secondWord.padRight(2, '0');
+      }
+    }
+    else if(_enteredValue.length != 0) {
+      listenersText += '.00';
     }
 
     return listenersText;
@@ -235,7 +248,7 @@ class CalculatorController {
     if (_enteredValue.length > 0) {
       // Allows the decimal to be used again
       if (_enteredValue.endsWith('.')) {
-        decimalInUse = false;
+        _decimalInUse = false;
       }
       removedChar = String.fromCharCode(
           _enteredValue.codeUnitAt(_enteredValue.length - 1));
@@ -298,9 +311,9 @@ class CalculatorController {
         break;
 
       case '.':
-        if (!decimalInUse) {
+        if (!_decimalInUse) {
           _enteredValue += '.';
-          decimalInUse = true;
+          _decimalInUse = true;
         }
         break;
 
