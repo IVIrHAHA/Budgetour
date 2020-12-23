@@ -11,6 +11,6 @@ class GlobalValues {
   static const String calcButtonColor = '#000000';
   static const String calcDisabledButtonColor = '#1F1F1F';
   static const String calcBackgroundColor = '#393939';
-  static const String calcButtonSplashColor = calcDisabledButtonColor;
+  static const String calcButtonSplashColor = neutralColor;
   static const String calcButtonNoSplashColor = '#F93838';
 }

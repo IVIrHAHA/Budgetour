@@ -17,7 +17,7 @@ class CalculatorView extends StatefulWidget {
 class _CalculatorViewState extends State<CalculatorView>
     with SingleTickerProviderStateMixin {
   Color decimalColor;
-  Color dynamicSplashColor;
+  Color dynamicSplashColor = ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor);
 
   @override
   void initState() {
@@ -151,23 +151,23 @@ class _CalculatorViewState extends State<CalculatorView>
       {Function onTap, Color optionalColor, Color splashColor}) {
     return Expanded(
       flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(1.5),
-        child: Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-            GlobalValues.roundedEdges,
-          )),
-          color: optionalColor ??
-              ColorGenerator.fromHex(GlobalValues.calcButtonColor),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              splashColor: splashColor ?? dynamicSplashColor,
-              onTap: onTap ??
-                  () {
-                    widget.controller.updateValue(text);
-                  },
+      child: Material(
+        color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
+        child: InkWell(
+          splashColor: splashColor ?? dynamicSplashColor,
+          onTap: onTap ??
+              () {
+                widget.controller.updateValue(text);
+              },
+          child: Padding(
+            padding: const EdgeInsets.all(1.5),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                GlobalValues.roundedEdges,
+              )),
+              color: optionalColor ??
+                  ColorGenerator.fromHex(GlobalValues.calcButtonColor),
               child: Container(
                 child: Text(
                   text,
@@ -281,9 +281,12 @@ class CalculatorController {
 
   /* 
    * Prepares text for an appealing visual.
+   * 
+   * Problem with this method. This method builds the string from scratch
+   * everytime it executes.
    */
   String _prepareListenersText() {
-    var listenersText = _enteredValue.length != 0 ? _enteredValue : '0.00';
+    String listenersText = _enteredValue.length != 0 ? _enteredValue : '0.00';
 
     // Checks whether to add a zero in front or not, without interfering with
     // _enteredText
@@ -298,7 +301,7 @@ class CalculatorController {
       if (firstWord.length == 0) {
         listenersText = '0.' + secondWord.padRight(2, '0');
       }
-      // User inputed values in front of decimal
+      // User inputed values in front of decimal, appends zeros at the end
       else {
         listenersText = firstWord + '.' + secondWord.padRight(2, '0');
       }
@@ -317,6 +320,7 @@ class CalculatorController {
 
     return listenersText;
   }
+
 
   /*
    *  This allows/disallows any entries into the controller. 
