@@ -1,6 +1,6 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
-import 'package:budgetour/objects/FinanceObject.dart';
+import './models/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 

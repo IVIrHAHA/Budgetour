@@ -1,8 +1,8 @@
-import 'package:budgetour/objects/BudgetObject.dart';
-import 'package:budgetour/objects/Transaction.dart';
-import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/widgets/EnterTransactionPage.dart';
-import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
+import '../models/BudgetObject.dart';
+import '../models/Transaction.dart';
+import '../tools/GlobalValues.dart';
+import '../pages/EnterTransactionPage.dart';
+import '../widgets/standardized/EnhancedListTile.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';

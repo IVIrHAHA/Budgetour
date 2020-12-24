@@ -1,4 +1,4 @@
-import 'package:budgetour/objects/Transaction.dart';
+import '../models/Transaction.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
 import 'package:common_tools/ColorGenerator.dart';

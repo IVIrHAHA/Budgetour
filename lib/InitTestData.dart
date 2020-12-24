@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:budgetour/objects/BudgetObject.dart';
-import 'package:budgetour/objects/FinanceObject.dart';
-import 'package:budgetour/objects/Transaction.dart';
+import './models/BudgetObject.dart';
+import './models/FinanceObject.dart';
+import './models/Transaction.dart';
 
 class InitTestData {
   static final List<FinanceObject> dummyFOList = List<FinanceObject>();

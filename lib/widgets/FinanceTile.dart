@@ -1,5 +1,5 @@
-import 'package:budgetour/objects/BudgetObject.dart';
-import 'package:budgetour/objects/FinanceObject.dart';
+import '../models/BudgetObject.dart';
+import '../models/FinanceObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';

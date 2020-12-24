@@ -1,4 +1,4 @@
-import 'package:budgetour/objects/Transaction.dart';
+import '../models/Transaction.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
 import 'package:budgetour/widgets/standardized/EnteredInput.dart';
