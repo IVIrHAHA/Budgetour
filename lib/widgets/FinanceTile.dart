@@ -1,3 +1,4 @@
+import 'package:budgetour/objects/BudgetObject.dart';
 import 'package:budgetour/objects/FinanceObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
@@ -9,6 +10,16 @@ class FinanceTile extends StatelessWidget {
 
   FinanceTile(this.financeObj);
 
+  Color _determineTileColor() {
+    if (financeObj is BudgetObject) {
+      BudgetObject obj = financeObj;
+      if (obj.isOverbudget())
+        return ColorGenerator.fromHex(GlobalValues.warningColor);
+    }
+
+    return ColorGenerator.fromHex(GlobalValues.neutralColor);
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -16,7 +27,7 @@ class FinanceTile extends StatelessWidget {
         openTile(context);
       },
       child: Card(
-        color: ColorGenerator.fromHex(GlobalValues.neutralColor),
+        color: _determineTileColor(),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
           side: BorderSide(

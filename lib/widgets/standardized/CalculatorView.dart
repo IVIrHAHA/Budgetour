@@ -7,17 +7,17 @@ import 'package:flutter/services.dart';
 
 class CalculatorView extends StatefulWidget {
   final CalculatorController controller;
+  final Function(double numberEntered) onEnterPressed;
 
-  CalculatorView(this.controller);
+  CalculatorView(this.controller, this.onEnterPressed);
 
   @override
   _CalculatorViewState createState() => _CalculatorViewState();
 }
 
-class _CalculatorViewState extends State<CalculatorView>
-    with SingleTickerProviderStateMixin {
+class _CalculatorViewState extends State<CalculatorView> {
   Color decimalColor;
-  Color dynamicSplashColor = ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor);
+  Color dynamicSplashColor;
 
   @override
   void initState() {
@@ -36,6 +36,10 @@ class _CalculatorViewState extends State<CalculatorView>
 
   @override
   Widget build(BuildContext context) {
+    dynamicSplashColor = widget.controller._entryGate
+        ? ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor)
+        : ColorGenerator.fromHex(GlobalValues.calcButtonNoSplashColor);
+
     return Container(
       height: MediaQuery.of(context).size.height / 2,
       width: double.infinity,
@@ -118,24 +122,28 @@ class _CalculatorViewState extends State<CalculatorView>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildButton('.', context, optionalColor: decimalColor,
-                        onTap: () {
-                      widget.controller.updateValue('.');
-                      setState(() {
-                        if (widget.controller.decimalInUse)
-                          decimalColor = ColorGenerator.fromHex(
-                              GlobalValues.calcDisabledButtonColor);
-                      });
-                    }),
+                    buildButton(
+                      '.',
+                      context,
+                      optionalColor: decimalColor = !widget
+                              .controller.decimalInUse
+                          ? ColorGenerator.fromHex(GlobalValues.calcButtonColor)
+                          : ColorGenerator.fromHex(
+                              GlobalValues.calcDisabledButtonColor),
+                      onTap: () {
+                        widget.controller.updateValue('.');
+                        setState(() {
+                          if (widget.controller.decimalInUse)
+                            decimalColor = ColorGenerator.fromHex(
+                                GlobalValues.calcDisabledButtonColor);
+                        });
+                      },
+                    ),
                     buildButton('0', context),
                     buildButton('bks', context,
                         splashColor: ColorGenerator.fromHex(
                             GlobalValues.calcButtonSplashColor), onTap: () {
                       widget.controller.updateValue('<');
-                      if (!widget.controller.decimalInUse) {
-                        decimalColor = ColorGenerator.fromHex(
-                            GlobalValues.calcButtonColor);
-                      }
                     }),
                   ],
                 ),
@@ -187,13 +195,13 @@ class _CalculatorViewState extends State<CalculatorView>
   Widget buildEnterButton(String text, BuildContext ctx) {
     return InkWell(
       onTap: () {
-        HapticFeedback.vibrate();
-        double number = widget.controller.getEntry();
-
-        if (number != null) {
-          print('This amount was entered ' + number.toString());
-        } else
-          print('nothing eligible was entered');
+        // Passed entry back to EnterTransactionPage
+        widget.onEnterPressed(widget.controller.getEntry());
+        // Reset Calculator
+        setState(() {
+          widget.controller.reset();
+        });
+        print('transaction approved');
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -321,7 +329,6 @@ class CalculatorController {
     return listenersText;
   }
 
-
   /*
    *  This allows/disallows any entries into the controller. 
    */
@@ -440,5 +447,14 @@ class CalculatorController {
     listeners.clear();
     listeners = null;
     _notifySplash = null;
+  }
+
+  reset() {
+    this.value = null;
+    this._entryGate = true;
+    this._enteredValue = '';
+    this.decimalInUse = false;
+
+    _notifyListeners();
   }
 }

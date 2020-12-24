@@ -23,7 +23,9 @@ class BudgetObject extends FinanceObject with TransactionMixin {
 
   @override
   logTransaction(Transaction transaction) {
-    currentBalance = currentBalance - transaction.amount;
+    if (transaction.date.month == DateTime.now().month) {
+      currentBalance = currentBalance - transaction.amount;
+    }
     super.logTransaction(transaction);
   }
 

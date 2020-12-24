@@ -1,3 +1,4 @@
+import 'package:budgetour/objects/Transaction.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
 import 'package:budgetour/widgets/standardized/EnteredInput.dart';
@@ -5,14 +6,15 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class EnterTransactionPage extends StatefulWidget {
-  EnterTransactionPage();
+  final Function(Transaction transaction) addTransactionFunction;
+
+  EnterTransactionPage(this.addTransactionFunction);
 
   @override
   _EnterTransactionPageState createState() => _EnterTransactionPageState();
 }
 
-class _EnterTransactionPageState extends State<EnterTransactionPage>
-    with TickerProviderStateMixin {
+class _EnterTransactionPageState extends State<EnterTransactionPage>{
   CalculatorController controller;
   String enteredText;
 
@@ -53,7 +55,10 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>
           ),
           Flexible(
             flex: 3,
-            child: CalculatorView(controller),
+            child: CalculatorView(controller, (entry) {
+              print('creating new transaction');
+              widget.addTransactionFunction(Transaction.fillDate(amount: entry));
+            })
           ),
         ],
       ),

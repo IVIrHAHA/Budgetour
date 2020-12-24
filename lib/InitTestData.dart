@@ -8,7 +8,7 @@ class InitTestData {
   static final List<FinanceObject> dummyFOList = List<FinanceObject>();
 
   static initTileList() {
-    dummyFOList.add(_buildBudgetObj('Food', 150, 20));
+    dummyFOList.add(_buildBudgetObj('Food', 150, 10));
     dummyFOList.add(_buildBudgetObj('Gas', 135, 4));
     dummyFOList.add(_buildBudgetObj('Weed', 30, 2));
 
@@ -26,7 +26,7 @@ class InitTestData {
       obj.logTransaction(
         Transaction(
           description: 'Tran_${i+1}',
-          amount: _doubleInRange(Random(), 5, 50),
+          amount: _doubleInRange(Random(), 5, 25),
           date: DateTime.now().subtract(Duration(days: i * 3)),
         ),
       );

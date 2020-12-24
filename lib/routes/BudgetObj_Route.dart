@@ -1,8 +1,10 @@
 import 'package:budgetour/objects/BudgetObject.dart';
+import 'package:budgetour/objects/Transaction.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
 import 'package:common_tools/ColorGenerator.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/TransactionTile.dart';
@@ -36,6 +38,14 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
     super.dispose();
   }
 
+  _addTransaction(Transaction transaction) {
+    print('processing transaction...');
+    setState(() {
+      transaction.description = 'new transaction';
+      widget.budgetObject.logTransaction(transaction);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
@@ -58,7 +68,12 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
         ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [Text('Remaining'), Text('\$100')],
+          children: [
+            Text('Remaining'),
+            Text(
+              '\$${Format.formatDouble(widget.budgetObject.currentBalance, 2)}',
+            )
+          ],
         ),
       ),
       bottom: TabBar(
@@ -81,7 +96,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
       controller: _controller,
       children: [
         // Withdraw Page
-        EnterTransactionPage(),
+        EnterTransactionPage(_addTransaction),
 
         // History Page
         buildHistoryPage(ctx),
