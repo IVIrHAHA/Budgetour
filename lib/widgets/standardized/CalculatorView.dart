@@ -201,7 +201,6 @@ class _CalculatorViewState extends State<CalculatorView> {
         setState(() {
           widget.controller.reset();
         });
-        print('transaction approved');
       },
       child: Card(
         shape: RoundedRectangleBorder(

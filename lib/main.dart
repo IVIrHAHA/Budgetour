@@ -1,5 +1,6 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
+import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import './models/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -38,7 +39,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   TabController _controller;
-  
+
   @override
   void initState() {
     _controller = TabController(
@@ -55,11 +56,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _controller.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
@@ -97,14 +96,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
       ),
       body: Container(
-        child: TabBarView(
-          controller: _controller,
+        child: Column(
           children: [
-            EssentialPage(InitTestData.dummyFOList),
-            buildPage('Security'),
-            buildPage('Goals'),
-            buildPage('Lifestyle'),
-            buildPage('Misc'),
+            Expanded(
+              flex: 1,
+              child: InfoTile(
+                title: 'Unallocated',
+                infoText: '\$ 100',
+              ),
+            ),
+            Expanded(
+              flex: 12,
+              child: TabBarView(
+                controller: _controller,
+                children: [
+                  EssentialPage(InitTestData.dummyFOList),
+                  buildPage('Security'),
+                  buildPage('Goals'),
+                  buildPage('Lifestyle'),
+                  buildPage('Misc'),
+                ],
+              ),
+            ),
           ],
         ),
       ),

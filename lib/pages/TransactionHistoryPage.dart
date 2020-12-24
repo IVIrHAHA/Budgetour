@@ -20,9 +20,8 @@ class TransactionHistoryPage extends StatelessWidget {
         Expanded(
           flex: 1,
           child: InfoTile(
-            budgetObject: budgetObject,
             infoText:
-                '${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
+                '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
             title: 'Total Spent',
           ),
         ),

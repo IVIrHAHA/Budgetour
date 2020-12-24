@@ -8,11 +8,9 @@ import 'EnhancedListTile.dart';
 class InfoTile extends StatelessWidget {
   final String title;
   final String infoText;
-  final BudgetObject budgetObject;
 
   const InfoTile({
     Key key,
-    @required this.budgetObject,
     this.infoText,
     this.title,
   }) : super(key: key);
