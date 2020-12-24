@@ -19,7 +19,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>{
   String enteredText;
 
   _EnterTransactionPageState() {
-    this.enteredText = '0';
+    this.enteredText = '0.00';
   }
 
   @override

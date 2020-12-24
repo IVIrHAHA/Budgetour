@@ -75,13 +75,6 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           ],
         ),
       ),
-      bottom: TabBar(
-        controller: _controller,
-        tabs: [
-          Text('Withdraw'),
-          Text('History'),
-        ],
-      ),
     );
 
     return Scaffold(
@@ -91,14 +84,43 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
   }
 
   Widget buildBody(BuildContext ctx) {
-    return TabBarView(
-      controller: _controller,
+    const TextStyle style = TextStyle(color: Colors.black);
+    return Column(
       children: [
-        // Withdraw Page
-        EnterTransactionPage(_addTransaction),
+        Expanded(
+          flex: 1,
+          child: Material(
+            elevation: 3,
+            color: Colors.white,
+            child: TabBar(
+              indicatorColor: Colors.grey,
+              controller: _controller,
+              tabs: [
+                Text(
+                  'Withdraw',
+                  style: style,
+                ),
+                Text(
+                  'History',
+                  style: style,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 12,
+          child: TabBarView(
+            controller: _controller,
+            children: [
+              // Withdraw Page
+              EnterTransactionPage(_addTransaction),
 
-        // History Page
-        buildHistoryPage(ctx),
+              // History Page
+              buildHistoryPage(ctx),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -130,9 +152,9 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
                 Text(
                   '${Format.formatDouble(widget.budgetObject.getMonthlyExpenses(), 2)}',
                   style: TextStyle(
-                    color: ColorGenerator.fromHex(GlobalValues.negativeNumber),
-                    fontWeight: FontWeight.bold
-                  ),
+                      color:
+                          ColorGenerator.fromHex(GlobalValues.negativeNumber),
+                      fontWeight: FontWeight.bold),
                 ),
                 Flexible(
                   fit: FlexFit.tight,
