@@ -47,10 +47,10 @@ class TransactionTile extends StatelessWidget {
     Color color;
 
     if (amount < 0) {
-      color = ColorGenerator.fromHex('#48C144');
+      color = ColorGenerator.fromHex(GlobalValues.positiveNumber);
       amount = amount * -1;
     } else {
-      color = ColorGenerator.fromHex('#FF6868');
+      color = ColorGenerator.fromHex(GlobalValues.negativeNumber);
     }
 
     return Text(

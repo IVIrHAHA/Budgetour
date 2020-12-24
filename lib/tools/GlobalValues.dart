@@ -13,4 +13,8 @@ class GlobalValues {
   static const String calcBackgroundColor = '#393939';
   static const String calcButtonSplashColor = neutralColor;
   static const String calcButtonNoSplashColor = '#F93838';
+
+  // Text Colors
+  static const String positiveNumber = '#48C144';
+  static const String negativeNumber = '#FF6868';
 }

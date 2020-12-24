@@ -39,7 +39,6 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
   }
 
   _addTransaction(Transaction transaction) {
-    print('processing transaction...');
     setState(() {
       transaction.description = 'new transaction';
       widget.budgetObject.logTransaction(transaction);
@@ -71,7 +70,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
           children: [
             Text('Remaining'),
             Text(
-              '\$${Format.formatDouble(widget.budgetObject.currentBalance, 2)}',
+              '\$${Format.formatDouble(widget.budgetObject.currentBalance, 0)}',
             )
           ],
         ),
@@ -110,46 +109,88 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
   Widget buildHistoryPage(BuildContext ctx) {
     int workingMonth;
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          // Heading
-          Flexible(
-            flex: 0,
-            child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: EnhancedListTile(
+            backgroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            leading: Container(
+              child: Text(
+                'Total Spent',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            trailing: Row(
+              children: [
+                Text(
+                  '${Format.formatDouble(widget.budgetObject.getMonthlyExpenses(), 2)}',
+                  style: TextStyle(
+                    color: ColorGenerator.fromHex(GlobalValues.negativeNumber),
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Container(),
+                ),
+                Icon(
+                  Icons.more_vert,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 12,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                // Heading
+                Flexible(
+                  flex: 0,
+                  child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Transaction History',
-                            style: Theme.of(ctx).textTheme.headline6,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Transaction History',
+                                  style: Theme.of(ctx).textTheme.headline6,
+                                ),
+                                Icon(Icons.unfold_more)
+                              ],
+                            ),
                           ),
-                          Icon(Icons.unfold_more)
+                          EnhancedListTile(
+                            leading: Text('date'),
+                            center: Text('note'),
+                            trailing: Text('amount'),
+                          )
                         ],
-                      ),
-                    ),
-                    EnhancedListTile(
-                      leading: Text('date'),
-                      center: Text('note'),
-                      trailing: Text('amount'),
-                    )
-                  ],
-                )),
-          ),
+                      )),
+                ),
 
-          // Transaction List
-          Flexible(
-            flex: 1,
-            child: _buildTransactionListView(workingMonth),
+                // Transaction List
+                Flexible(
+                  flex: 1,
+                  child: _buildTransactionListView(workingMonth),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
