@@ -1,3 +1,5 @@
+import 'package:budgetour/pages/TransactionHistoryPage.dart';
+
 import '../models/BudgetObject.dart';
 import '../models/Transaction.dart';
 import '../tools/GlobalValues.dart';
@@ -117,7 +119,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
               EnterTransactionPage(_addTransaction),
 
               // History Page
-              buildHistoryPage(ctx),
+              TransactionHistoryPage(widget.budgetObject),
             ],
           ),
         ),
@@ -125,132 +127,5 @@ class _BudgetObjRouteState extends State<BudgetObjRoute>
     );
   }
 
-  /*
-   *  Contents of Transaction History Page
-   */
-  Widget buildHistoryPage(BuildContext ctx) {
-    int workingMonth;
-
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: EnhancedListTile(
-            backgroundColor: Colors.black,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            leading: Container(
-              child: Text(
-                'Total Spent',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            trailing: Row(
-              children: [
-                Text(
-                  '${Format.formatDouble(widget.budgetObject.getMonthlyExpenses(), 2)}',
-                  style: TextStyle(
-                      color:
-                          ColorGenerator.fromHex(GlobalValues.negativeNumber),
-                      fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Container(),
-                ),
-                Icon(
-                  Icons.more_vert,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 12,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                // Heading
-                Flexible(
-                  flex: 0,
-                  child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Transaction History',
-                                  style: Theme.of(ctx).textTheme.headline6,
-                                ),
-                                Icon(Icons.unfold_more)
-                              ],
-                            ),
-                          ),
-                          EnhancedListTile(
-                            leading: Text('date'),
-                            center: Text('note'),
-                            trailing: Text('amount'),
-                          )
-                        ],
-                      )),
-                ),
-
-                // Transaction List
-                Flexible(
-                  flex: 1,
-                  child: _buildTransactionListView(workingMonth),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  /*
-   *  Builds transaction list view. A list of all transactions 
-   *  seperated by Month.
-   */
-  SingleChildScrollView _buildTransactionListView(int workingMonth) {
-    return SingleChildScrollView(
-      child: Column(
-        children: widget.budgetObject.getTransactions.map((transaction) {
-          // Keep working month the same if already assigned
-          // otherwise working month goes to first element in list
-          workingMonth = workingMonth ?? transaction.date.month;
-
-          bool monthChanged = false;
-          // Month has changed
-          if (transaction.date.month != workingMonth) {
-            monthChanged = true;
-            workingMonth = transaction.date.month;
-          }
-
-          return monthChanged
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child:
-                          Text(DateFormat('LLLL y').format(transaction.date)),
-                    ),
-                    TransactionTile(
-                      transaction: transaction,
-                    ),
-                  ],
-                )
-              : TransactionTile(transaction: transaction);
-        }).toList(),
-      ),
-    );
-  }
+  
 }
