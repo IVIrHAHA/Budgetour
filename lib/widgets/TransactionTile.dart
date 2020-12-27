@@ -36,7 +36,7 @@ class TransactionTile extends StatelessWidget {
           ),
         ),
         Divider(
-          color: ColorGenerator.fromHex(GlobalValues.borderColor),
+          color: ColorGenerator.fromHex(GColors.borderColor),
           thickness: 2,
         )
       ],
@@ -47,10 +47,10 @@ class TransactionTile extends StatelessWidget {
     Color color;
 
     if (amount < 0) {
-      color = ColorGenerator.fromHex(GlobalValues.positiveNumber);
+      color = ColorGenerator.fromHex(GColors.positiveNumber);
       amount = amount * -1;
     } else {
-      color = ColorGenerator.fromHex(GlobalValues.negativeNumber);
+      color = ColorGenerator.fromHex(GColors.negativeNumber);
     }
 
     return Text(

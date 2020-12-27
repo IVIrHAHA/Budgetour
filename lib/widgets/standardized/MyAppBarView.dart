@@ -5,17 +5,17 @@
 
 import 'package:budgetour/models/FinanceObject.dart';
 
-import '../tools/GlobalValues.dart';
+import '../../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class FinanceObjRoute extends StatefulWidget {
+class MyAppBarView extends StatefulWidget {
   final FinanceObject financeObject;
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
   final String quickStatTitle, quickStatInfo;
 
-  FinanceObjRoute({
+  MyAppBarView({
     @required this.financeObject,
     this.tabPages,
     this.tabTitles,
@@ -24,10 +24,10 @@ class FinanceObjRoute extends StatefulWidget {
   });
 
   @override
-  _FinanceObjRouteState createState() => _FinanceObjRouteState();
+  _MyAppBarViewState createState() => _MyAppBarViewState();
 }
 
-class _FinanceObjRouteState extends State<FinanceObjRoute>
+class _MyAppBarViewState extends State<MyAppBarView>
     with TickerProviderStateMixin {
   TabController _controller;
 
@@ -63,7 +63,7 @@ class _FinanceObjRouteState extends State<FinanceObjRoute>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
             side: BorderSide(
-                color: ColorGenerator.fromHex(GlobalValues.borderColor),
+                color: ColorGenerator.fromHex(GColors.borderColor),
                 width: 1),
           ),
         ),

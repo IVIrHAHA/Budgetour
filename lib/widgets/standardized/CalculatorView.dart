@@ -25,10 +25,10 @@ class _CalculatorViewState extends State<CalculatorView> {
       setState(() {
         if (entryPassed)
           dynamicSplashColor =
-              ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor);
+              ColorGenerator.fromHex(GColors.calcButtonSplashColor);
         else
           dynamicSplashColor =
-              ColorGenerator.fromHex(GlobalValues.calcButtonNoSplashColor);
+              ColorGenerator.fromHex(GColors.calcButtonNoSplashColor);
       });
     });
     super.initState();
@@ -37,13 +37,13 @@ class _CalculatorViewState extends State<CalculatorView> {
   @override
   Widget build(BuildContext context) {
     dynamicSplashColor = widget.controller._entryGate
-        ? ColorGenerator.fromHex(GlobalValues.calcButtonSplashColor)
-        : ColorGenerator.fromHex(GlobalValues.calcButtonNoSplashColor);
+        ? ColorGenerator.fromHex(GColors.calcButtonSplashColor)
+        : ColorGenerator.fromHex(GColors.calcButtonNoSplashColor);
 
     return Container(
       height: MediaQuery.of(context).size.height / 2,
       width: double.infinity,
-      color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
+      color: ColorGenerator.fromHex(GColors.calcBackgroundColor),
       child: Container(
         padding: EdgeInsets.all(4.0),
         child: Column(
@@ -127,22 +127,22 @@ class _CalculatorViewState extends State<CalculatorView> {
                       context,
                       optionalColor: decimalColor = !widget
                               .controller.decimalInUse
-                          ? ColorGenerator.fromHex(GlobalValues.calcButtonColor)
+                          ? ColorGenerator.fromHex(GColors.calcButtonColor)
                           : ColorGenerator.fromHex(
-                              GlobalValues.calcDisabledButtonColor),
+                              GColors.calcDisabledButtonColor),
                       onTap: () {
                         widget.controller.updateValue('.');
                         setState(() {
                           if (widget.controller.decimalInUse)
                             decimalColor = ColorGenerator.fromHex(
-                                GlobalValues.calcDisabledButtonColor);
+                                GColors.calcDisabledButtonColor);
                         });
                       },
                     ),
                     buildButton('0', context),
                     buildButton('bks', context,
                         splashColor: ColorGenerator.fromHex(
-                            GlobalValues.calcButtonSplashColor), onTap: () {
+                            GColors.calcButtonSplashColor), onTap: () {
                       widget.controller.updateValue('<');
                     }),
                   ],
@@ -160,7 +160,7 @@ class _CalculatorViewState extends State<CalculatorView> {
     return Expanded(
       flex: 1,
       child: Material(
-        color: ColorGenerator.fromHex(GlobalValues.calcBackgroundColor),
+        color: ColorGenerator.fromHex(GColors.calcBackgroundColor),
         child: InkWell(
           splashColor: splashColor ?? dynamicSplashColor,
           onTap: onTap ??
@@ -175,7 +175,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                 GlobalValues.roundedEdges,
               )),
               color: optionalColor ??
-                  ColorGenerator.fromHex(GlobalValues.calcButtonColor),
+                  ColorGenerator.fromHex(GColors.calcButtonColor),
               child: Container(
                 child: Text(
                   text,
@@ -208,7 +208,7 @@ class _CalculatorViewState extends State<CalculatorView> {
             GlobalValues.roundedEdges,
           ),
         ),
-        color: ColorGenerator.fromHex(GlobalValues.calcButtonColor),
+        color: ColorGenerator.fromHex(GColors.calcButtonColor),
         child: Container(
           child: Text(
             text,

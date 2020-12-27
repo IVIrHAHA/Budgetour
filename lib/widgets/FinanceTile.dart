@@ -14,10 +14,10 @@ class FinanceTile extends StatelessWidget {
     if (financeObj is BudgetObject) {
       BudgetObject obj = financeObj;
       if (obj.isOverbudget())
-        return ColorGenerator.fromHex(GlobalValues.warningColor);
+        return ColorGenerator.fromHex(GColors.warningColor);
     }
 
-    return ColorGenerator.fromHex(GlobalValues.neutralColor);
+    return ColorGenerator.fromHex(GColors.neutralColor);
   }
 
   @override
@@ -33,7 +33,7 @@ class FinanceTile extends StatelessWidget {
           side: BorderSide(
               style: BorderStyle.solid,
               width: 1,
-              color: ColorGenerator.fromHex(GlobalValues.borderColor)),
+              color: ColorGenerator.fromHex(GColors.borderColor)),
         ),
         margin: EdgeInsets.all(8.0),
         child: buildContents(),

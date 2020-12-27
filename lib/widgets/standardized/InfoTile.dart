@@ -34,7 +34,7 @@ class InfoTile extends StatelessWidget {
           Text(
             infoText,
             style: TextStyle(
-                color: ColorGenerator.fromHex(GlobalValues.negativeNumber),
+                color: ColorGenerator.fromHex(GColors.negativeNumber),
                 fontWeight: FontWeight.bold),
           ),
           Flexible(

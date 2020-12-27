@@ -22,7 +22,7 @@ class EnteredInput extends StatelessWidget {
                 ),
           ),
           Divider(
-            color: ColorGenerator.fromHex(GlobalValues.borderColor),
+            color: ColorGenerator.fromHex(GColors.borderColor),
             thickness: 2,
           ),
         ],
