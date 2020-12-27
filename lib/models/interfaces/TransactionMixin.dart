@@ -4,9 +4,12 @@
 
 import '../Transaction.dart';
 
-mixin TransactionMixin {
+mixin TransactionHistory {
   List<Transaction> _list = List<Transaction>();
 
+  /*
+   *  Logs transactions according to date. Latest to oldest. 
+   */
   logTransaction(Transaction transaction) {
     if (_list.isEmpty) {
       _list.add(transaction);
@@ -18,6 +21,9 @@ mixin TransactionMixin {
     }
   }
 
+  /*
+   *  Gives total transaction amount for the month. 
+   */
   getMonthlyExpenses() {
     double amount = 0;
     _list.where((element) => element.date.month == DateTime.now().month).forEach((element) {

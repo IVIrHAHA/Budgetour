@@ -1,21 +1,23 @@
 import 'dart:math';
 
+import 'package:budgetour/models/FixedPaymentObject.dart';
+
 import './models/BudgetObject.dart';
 import './models/FinanceObject.dart';
 import './models/Transaction.dart';
 
 class InitTestData {
-  static final List<FinanceObject> dummyFOList = List<FinanceObject>();
+  static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();
 
   static initTileList() {
-    dummyFOList.add(_buildBudgetObj('Food', 150, 10));
-    dummyFOList.add(_buildBudgetObj('Gas', 135, 4));
-    dummyFOList.add(_buildBudgetObj('Rent', 30, 2));
+    dummyEssentialList.add(_buildBudgetObjects('Food', 150, 10));
+    dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
+    dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
 
-    return dummyFOList;
+    return dummyEssentialList;
   }
 
-  static BudgetObject _buildBudgetObj(
+  static BudgetObject _buildBudgetObjects(
       String title, double allocationAmount, int transactionQTY,) {
 
     BudgetObject obj =
@@ -26,7 +28,7 @@ class InitTestData {
       obj.logTransaction(
         Transaction(
           description: 'Tran_${i+1}',
-          amount: _doubleInRange(Random(), 5, 25),
+          amount: _doubleInRange(5, 25),
           date: DateTime.now().subtract(Duration(days: i * 3)),
         ),
       );
@@ -35,6 +37,11 @@ class InitTestData {
     return obj;
   }
 
-  static double _doubleInRange(Random source, num start, num end) =>
-      source.nextDouble() * (end - start) + start;
+  // Eventually have history, labels and due dates
+  static FixedPaymentObject _buildFixedPaymentObject (String title, double amount) {
+    return FixedPaymentObject(title: title, paymentAmount: amount);
+  }
+
+  static double _doubleInRange(num start, num end) =>
+      Random().nextDouble() * (end - start) + start;
 }

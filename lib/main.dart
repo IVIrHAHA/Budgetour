@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: TabBarView(
                 controller: _controller,
                 children: [
-                  EssentialPage(InitTestData.dummyFOList),
+                  EssentialPage(InitTestData.dummyEssentialList),
                   buildPage('Security'),
                   buildPage('Goals'),
                   buildPage('Lifestyle'),

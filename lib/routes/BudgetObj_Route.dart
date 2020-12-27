@@ -1,5 +1,6 @@
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
+import 'package:common_tools/ColorGenerator.dart';
 
 import '../models/BudgetObject.dart';
 import '../models/Transaction.dart';
@@ -17,8 +18,9 @@ class BudgetObjRoute extends StatefulWidget {
 }
 
 class _BudgetObjRouteState extends State<BudgetObjRoute> {
-  void _addTransaction(Transaction transaction, BuildContext ctx) {
+  void _addTransaction(double valueEntered, BuildContext ctx) {
     setState(() {
+      Transaction transaction = Transaction.fillDate(amount: valueEntered);
       widget.budgetObject.logTransaction(transaction);
     });
 
@@ -46,7 +48,11 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
       ],
       tabPages: [
         // Transaction Page
-        EnterTransactionPage(_addTransaction),
+        EnterTransactionPage(
+          onEnterPressed: _addTransaction,
+          processName: 'Withdraw',
+          processNameColor: ColorGenerator.fromHex('#FF6868'),
+        ),
 
         // History Page
         TransactionHistoryPage(widget.budgetObject),

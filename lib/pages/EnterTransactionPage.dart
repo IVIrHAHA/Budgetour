@@ -1,15 +1,18 @@
-import '../models/Transaction.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
 import 'package:budgetour/widgets/standardized/EnteredInput.dart';
-import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class EnterTransactionPage extends StatefulWidget {
-  final Function(Transaction transaction, BuildContext ctx)
-      addTransactionFunction;
+  final Function(double, BuildContext) onEnterPressed;
+  final String processName;
+  final Color processNameColor;
 
-  EnterTransactionPage(this.addTransactionFunction);
+  EnterTransactionPage({
+    @required this.onEnterPressed,
+    @required this.processName,
+    this.processNameColor = Colors.grey,
+  });
 
   @override
   _EnterTransactionPageState createState() => _EnterTransactionPageState();
@@ -55,13 +58,17 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
             ),
           ),
           Flexible(
-              flex: 3,
-              child: CalculatorView(controller, (entry) {
-                widget.addTransactionFunction(
-                  Transaction.fillDate(amount: entry),
+            flex: 3,
+            child: CalculatorView(
+              controller,
+              (entry) {
+                widget.onEnterPressed(
+                  entry,
                   context,
                 );
-              })),
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -75,8 +82,8 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           EnteredHeader(
-            text: 'Withdraw',
-            color: ColorGenerator.fromHex('#FF6868'),
+            text: widget.processName,
+            color: widget.processNameColor,
           ),
           EnteredInput('\$ $enteredText'),
           Row(

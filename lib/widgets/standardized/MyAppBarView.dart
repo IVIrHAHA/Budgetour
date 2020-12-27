@@ -63,8 +63,7 @@ class _MyAppBarViewState extends State<MyAppBarView>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
             side: BorderSide(
-                color: ColorGenerator.fromHex(GColors.borderColor),
-                width: 1),
+                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
           ),
         ),
         trailing: Column(
@@ -79,7 +78,9 @@ class _MyAppBarViewState extends State<MyAppBarView>
 
     return Scaffold(
       appBar: appBar,
-      body: buildBody(context),
+      body: widget.tabTitles != null
+          ? buildBody(context)
+          : widget.tabPages.first,
     );
   }
 

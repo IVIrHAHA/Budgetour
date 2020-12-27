@@ -1,3 +1,7 @@
+/*
+ * Allows FinanceTile to interface with all FinaceObjects easily
+ */
+
 import 'package:flutter/material.dart';
 
 abstract class FinanceObject {
