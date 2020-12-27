@@ -6,7 +6,8 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class EnterTransactionPage extends StatefulWidget {
-  final Function(Transaction transaction) addTransactionFunction;
+  final Function(Transaction transaction, BuildContext ctx)
+      addTransactionFunction;
 
   EnterTransactionPage(this.addTransactionFunction);
 
@@ -14,7 +15,7 @@ class EnterTransactionPage extends StatefulWidget {
   _EnterTransactionPageState createState() => _EnterTransactionPageState();
 }
 
-class _EnterTransactionPageState extends State<EnterTransactionPage>{
+class _EnterTransactionPageState extends State<EnterTransactionPage> {
   CalculatorController controller;
   String enteredText;
 
@@ -54,11 +55,13 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>{
             ),
           ),
           Flexible(
-            flex: 3,
-            child: CalculatorView(controller, (entry) {
-              widget.addTransactionFunction(Transaction.fillDate(amount: entry));
-            })
-          ),
+              flex: 3,
+              child: CalculatorView(controller, (entry) {
+                widget.addTransactionFunction(
+                  Transaction.fillDate(amount: entry),
+                  context,
+                );
+              })),
         ],
       ),
     );

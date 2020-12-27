@@ -17,11 +17,12 @@ class BudgetObjRoute extends StatefulWidget {
 }
 
 class _BudgetObjRouteState extends State<BudgetObjRoute> {
-  _addTransaction(Transaction transaction) {
+  void _addTransaction(Transaction transaction, BuildContext ctx) {
     setState(() {
-      transaction.description = 'new transaction';
       widget.budgetObject.logTransaction(transaction);
     });
+
+    Navigator.of(ctx).pop();
   }
 
   @override
@@ -44,7 +45,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
         ),
       ],
       tabPages: [
-        // Withdraw Page
+        // Transaction Page
         EnterTransactionPage(_addTransaction),
 
         // History Page
