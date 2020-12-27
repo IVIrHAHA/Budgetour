@@ -1,32 +1,33 @@
+/*
+ *  This widget/interface gives the dev the appBar and 
+ *  TabView already formatted. 
+ */
+
 import 'package:budgetour/models/FinanceObject.dart';
 
 import '../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
-import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
-class BudgetObjRoute extends StatefulWidget {
+class FinanceObjRoute extends StatefulWidget {
   final FinanceObject financeObject;
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
   final String quickStatTitle, quickStatInfo;
 
-  final Function onEnterPressed;
-
-  BudgetObjRoute({
+  FinanceObjRoute({
     @required this.financeObject,
     this.tabPages,
     this.tabTitles,
-    this.onEnterPressed,
     this.quickStatInfo,
     this.quickStatTitle,
   });
 
   @override
-  _BudgetObjRouteState createState() => _BudgetObjRouteState();
+  _FinanceObjRouteState createState() => _FinanceObjRouteState();
 }
 
-class _BudgetObjRouteState extends State<BudgetObjRoute>
+class _FinanceObjRouteState extends State<FinanceObjRoute>
     with TickerProviderStateMixin {
   TabController _controller;
 
