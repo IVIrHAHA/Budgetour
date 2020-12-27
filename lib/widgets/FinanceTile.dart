@@ -59,10 +59,23 @@ class FinanceTile extends StatelessWidget {
   }
 
   openTile(BuildContext ctx) {
-    Navigator.of(ctx).push(MaterialPageRoute(
-      builder: (_) {
-        return FixedPaymentObjRoute(financeObj);
-      },
-    ));
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (_) {
+          switch (financeObj.getType()) {
+            case FinanceObjectType.budget:
+              return BudgetObjRoute(financeObj);
+              break;
+
+            case FinanceObjectType.fixed:
+              return FixedPaymentObjRoute(financeObj);
+              break;
+
+            default:
+              throw Exception('UNKNOWN FINANCE_OBJECT_TYPE');
+          }
+        },
+      ),
+    );
   }
 }

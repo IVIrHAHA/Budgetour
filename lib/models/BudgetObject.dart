@@ -13,7 +13,7 @@ class BudgetObject extends FinanceObject with TransactionHistory {
     this.allocatedAmount = 0,
     String label1,
     String label2,
-  }) : super(name: title, label_1: label1, label_2: label2) {
+  }) : super(FinanceObjectType.budget, name: title, label_1: label1, label_2: label2) {
     this.currentBalance = this.allocatedAmount;
   }
 
