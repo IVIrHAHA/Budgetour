@@ -10,7 +10,7 @@ class InitTestData {
   static initTileList() {
     dummyFOList.add(_buildBudgetObj('Food', 150, 10));
     dummyFOList.add(_buildBudgetObj('Gas', 135, 4));
-    dummyFOList.add(_buildBudgetObj('Weed', 30, 2));
+    dummyFOList.add(_buildBudgetObj('Rent', 30, 2));
 
     return dummyFOList;
   }

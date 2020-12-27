@@ -60,6 +60,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.unfold_more),
+            title: Text('macro'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.unfold_less),
+            title: Text('micro'),
+          )
+        ],
+      ),
       appBar: AppBar(
         title: ListTile(
           leading: Text('Allocated'),
