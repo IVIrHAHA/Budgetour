@@ -56,7 +56,6 @@ class _EnterTransactionPageState extends State<EnterTransactionPage>{
           Flexible(
             flex: 3,
             child: CalculatorView(controller, (entry) {
-              print('creating new transaction');
               widget.addTransactionFunction(Transaction.fillDate(amount: entry));
             })
           ),
