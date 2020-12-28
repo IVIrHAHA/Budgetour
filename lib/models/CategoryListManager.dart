@@ -16,7 +16,7 @@ class CategoryListManager extends _CategoryListBase {
     _miscList = new List<FinanceObject>();
   }
 
-  static get instance => _instance;
+  static CategoryListManager get instance => _instance;
 
   add(FinanceObject what, CategoryType where) {
     switch (where) {

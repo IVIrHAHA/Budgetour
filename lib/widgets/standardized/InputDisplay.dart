@@ -3,23 +3,25 @@ import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class CalculatorDisplay extends StatefulWidget {
+class InputDisplay extends StatefulWidget {
   final String overrideText;
-  final bool focusable;
+  // final bool focusable;
   final Color indicatorColor;
   final CalculatorController controller;
 
-  CalculatorDisplay(this.controller,
-      {this.overrideText, this.focusable, this.indicatorColor});
+  InputDisplay(
+      {this.controller,
+      this.overrideText,
+      this.indicatorColor});
 
   @override
-  _CalculatorDisplayState createState() => _CalculatorDisplayState();
+  _InputDisplayState createState() => _InputDisplayState();
 }
 
-class _CalculatorDisplayState extends State<CalculatorDisplay> {
+class _InputDisplayState extends State<InputDisplay> {
   String displayedText;
 
-  _CalculatorDisplayState() {
+  _InputDisplayState() {
     displayedText = '\$ 0.00';
   }
 
@@ -27,7 +29,7 @@ class _CalculatorDisplayState extends State<CalculatorDisplay> {
   void initState() {
     // Make the calculatorView control what is displayed directly
     // Otherwise, parent controls what is displayed
-    if (widget.overrideText == null) {
+    if (widget.overrideText == null && widget.controller != null) {
       widget.controller.addListener((formatedText) {
         setState(() {
           displayedText = '\$ ' + formatedText;

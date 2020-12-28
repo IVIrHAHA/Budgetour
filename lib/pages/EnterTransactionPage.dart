@@ -1,6 +1,7 @@
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/CalculatorDisplay.dart';
+import 'package:budgetour/widgets/standardized/InputDisplay.dart';
 import 'package:flutter/material.dart';
 
 class EnterTransactionPage extends StatefulWidget {
@@ -66,7 +67,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
 
   Widget buildDisplay() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: GlobalValues.defaultMargin, vertical: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -74,7 +75,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
             text: widget.processName,
             color: widget.processNameColor,
           ),
-          CalculatorDisplay(controller),
+          InputDisplay(controller: controller),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

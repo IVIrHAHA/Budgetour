@@ -15,8 +15,12 @@ class GColors {
   // Text Colors
   static const String positiveNumber = '#48C144';
   static const String negativeNumber = '#FF6868';
+
+  // Misc Colors
+  static const String blueish = '#64B2FF';
 }
 
 class GlobalValues {
   static const double roundedEdges = 8;
+  static const double defaultMargin = 24;
 }
