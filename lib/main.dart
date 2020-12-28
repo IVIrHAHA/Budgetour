@@ -1,7 +1,7 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
-import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:flutter/foundation.dart';
 import 'models/finance_objects/FinanceObject.dart';
@@ -83,10 +83,41 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           leading: Text('Allocated'),
           title: InkWell(
             onTap: () {
-              print('adding some squars');
-              widget.manager.add(
-                FixedPaymentObject(title: 'minecraft', paymentAmount: 10),
-                CategoryType.lifestyle,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return MenuListPage({
+                      Text('Budget',
+                          style: Theme.of(context).textTheme.headline5): () {
+                        print('create budget');
+                      },
+                      Text(
+                        'Bill',
+                        style: Theme.of(context).textTheme.headline5,
+                      ): () {
+                        print('create bill');
+                      },
+                      Text(
+                        'Goal',
+                        style: Theme.of(context).textTheme.headline5,
+                      ): () {
+                        print('create goal');
+                      },
+                      Text(
+                        'Fund',
+                        style: Theme.of(context).textTheme.headline5,
+                      ): () {
+                        print('create fund');
+                      },
+                      Text(
+                        'Investment',
+                        style: Theme.of(context).textTheme.headline5,
+                      ): () {
+                        print('create investment');
+                      },
+                    });
+                  },
+                ),
               );
             },
             child: Icon(
