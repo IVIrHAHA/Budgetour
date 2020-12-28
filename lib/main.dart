@@ -1,6 +1,9 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
+import 'package:budgetour/models/CategoryListManager.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
+import 'package:flutter/foundation.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -32,6 +35,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
+  final CategoryListManager manager = CategoryListManager.instance;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -77,9 +81,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: ListTile(
           leading: Text('Allocated'),
-          title: Icon(
-            Icons.add_circle_outline,
-            size: 32,
+          title: InkWell(
+            onTap: () {
+              print('adding some squars');
+              widget.manager.add(
+                FixedPaymentObject(title: 'minecraft', paymentAmount: 10),
+                CategoryType.lifestyle,
+              );
+            },
+            child: Icon(
+              Icons.add_circle_outline,
+              size: 32,
+            ),
           ),
           trailing: Text('Pending'),
         ),
@@ -124,11 +137,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: TabBarView(
                 controller: _controller,
                 children: [
-                  TileLayout(InitTestData.dummyEssentialList),
-                  buildPage('Security'),
-                  buildPage('Goals'),
-                  buildPage('Lifestyle'),
-                  buildPage('Misc'),
+                  TileLayout(widget.manager.essentials),
+                  TileLayout(widget.manager.securities),
+                  TileLayout(widget.manager.goals),
+                  TileLayout(widget.manager.lifestyle),
+                  TileLayout(widget.manager.misc),
                 ],
               ),
             ),
@@ -156,12 +169,14 @@ class TileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: GridView.count(
-        crossAxisCount: 2,
-        children: financeList.map((element) {
-          return FinanceTile(element);
-        }).toList(),
-      ),
+      child: financeList.length != 0
+          ? GridView.count(
+              crossAxisCount: 2,
+              children: financeList.map((element) {
+                return FinanceTile(element);
+              }).toList(),
+            )
+          : Center(child: Text('Nothing to display')),
     );
   }
 }
