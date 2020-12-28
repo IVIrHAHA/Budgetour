@@ -2,7 +2,7 @@
   *  Manages the transaction list 
   */
 
-import '../Transaction.dart';
+import '../finance_objects/Transaction.dart';
 
 mixin TransactionHistory {
   List<Transaction> _list = List<Transaction>();

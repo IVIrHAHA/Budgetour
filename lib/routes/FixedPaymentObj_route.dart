@@ -1,4 +1,4 @@
-import 'package:budgetour/models/FixedPaymentObject.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';

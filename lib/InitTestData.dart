@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:budgetour/models/FixedPaymentObject.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 
-import './models/BudgetObject.dart';
-import './models/FinanceObject.dart';
-import './models/Transaction.dart';
+import 'models/finance_objects/BudgetObject.dart';
+import 'models/finance_objects/FinanceObject.dart';
+import 'models/finance_objects/Transaction.dart';
 
 class InitTestData {
   static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();

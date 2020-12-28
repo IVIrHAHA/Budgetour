@@ -1,4 +1,4 @@
-import 'package:budgetour/models/BudgetObject.dart';
+import 'package:budgetour/models/finance_objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';

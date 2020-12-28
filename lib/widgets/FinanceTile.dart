@@ -1,14 +1,12 @@
-import 'package:budgetour/models/FixedPaymentObject.dart';
-import 'package:budgetour/routes/FixedPaymentObj_route.dart';
-
-import '../models/BudgetObject.dart';
-import '../models/FinanceObject.dart';
-import 'package:budgetour/routes/BudgetObj_Route.dart';
-import 'package:budgetour/tools/GlobalValues.dart';
+import '../models/finance_objects/FixedPaymentObject.dart';
+import '../routes/FixedPaymentObj_route.dart';
+import '../models/finance_objects/FinanceObject.dart';
+import '../models/finance_objects/BudgetObject.dart';
+import '../routes/BudgetObj_Route.dart';
+import '../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Research Named routes
 class FinanceTile extends StatelessWidget {
   final FinanceObject financeObj;
 

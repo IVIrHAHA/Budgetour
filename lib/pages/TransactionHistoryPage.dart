@@ -1,4 +1,4 @@
-import 'package:budgetour/models/BudgetObject.dart';
+import 'package:budgetour/models/finance_objects/BudgetObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/TransactionTile.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';

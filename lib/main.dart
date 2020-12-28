@@ -1,7 +1,7 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
-import './models/FinanceObject.dart';
+import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: TabBarView(
                 controller: _controller,
                 children: [
-                  EssentialPage(InitTestData.dummyEssentialList),
+                  TileLayout(InitTestData.dummyEssentialList),
                   buildPage('Security'),
                   buildPage('Goals'),
                   buildPage('Lifestyle'),
@@ -148,10 +148,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
-class EssentialPage extends StatelessWidget {
+class TileLayout extends StatelessWidget {
   final List<FinanceObject> financeList;
 
-  EssentialPage(this.financeList);
+  TileLayout(this.financeList);
 
   @override
   Widget build(BuildContext context) {

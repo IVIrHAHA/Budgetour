@@ -2,8 +2,8 @@ import 'package:budgetour/pages/TransactionHistoryPage.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
-import '../models/BudgetObject.dart';
-import '../models/Transaction.dart';
+import '../models/finance_objects/BudgetObject.dart';
+import '../models/finance_objects/Transaction.dart';
 import '../pages/EnterTransactionPage.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
