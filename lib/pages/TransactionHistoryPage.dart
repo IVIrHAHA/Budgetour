@@ -1,7 +1,9 @@
 import 'package:budgetour/models/BudgetObject.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/TransactionTile.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
+import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -20,8 +22,8 @@ class TransactionHistoryPage extends StatelessWidget {
         Expanded(
           flex: 1,
           child: InfoTile(
-            infoText:
-                '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
+            infoText: '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
+            infoTextColor: ColorGenerator.fromHex(GColors.negativeNumber),
             title: 'Total Spent',
           ),
         ),

@@ -13,7 +13,6 @@ class EnhancedListTile extends StatelessWidget {
     this.padding,
   });
 
-  // nothing really just trying something, can delete whenever
   @override
   Widget build(BuildContext context) {
     return Container(

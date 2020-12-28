@@ -1,3 +1,4 @@
+import 'package:budgetour/models/FixedPaymentObject.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
 
 import '../models/BudgetObject.dart';
@@ -13,21 +14,11 @@ class FinanceTile extends StatelessWidget {
 
   FinanceTile(this.financeObj);
 
-  Color _determineTileColor() {
-    if (financeObj is BudgetObject) {
-      BudgetObject obj = financeObj;
-      if (obj.isOverbudget())
-        return ColorGenerator.fromHex(GColors.warningColor);
-    }
-
-    return ColorGenerator.fromHex(GColors.neutralColor);
-  }
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        openTile(context);
+        _openTile(context);
       },
       child: Card(
         color: _determineTileColor(),
@@ -58,7 +49,26 @@ class FinanceTile extends StatelessWidget {
     );
   }
 
-  openTile(BuildContext ctx) {
+  Color _determineTileColor() {
+    switch (financeObj.getType()) {
+      // BudgetObject
+      case FinanceObjectType.budget:
+        if ((financeObj as BudgetObject).isOverbudget())
+          return ColorGenerator.fromHex(GColors.warningColor);
+
+        break;
+
+      // Fixed Payment Object
+      case FinanceObjectType.fixed:
+        return (financeObj as FixedPaymentObject).isPaid()
+            ? ColorGenerator.fromHex(GColors.positiveColor)
+            : ColorGenerator.fromHex(GColors.neutralColor);
+    }
+
+    return ColorGenerator.fromHex(GColors.neutralColor);
+  }
+
+  _openTile(BuildContext ctx) {
     Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (_) {

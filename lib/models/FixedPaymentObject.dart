@@ -36,4 +36,6 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory{
   DateTime _setNextDueDate() {
 
   }
+
+  isPaid() => paymentAmount == 0 ? true : false;
 }

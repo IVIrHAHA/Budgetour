@@ -8,11 +8,15 @@ import 'EnhancedListTile.dart';
 class InfoTile extends StatelessWidget {
   final String title;
   final String infoText;
+  final Color titleColor;
+  final Color infoTextColor;
 
   const InfoTile({
     Key key,
-    this.infoText,
     this.title,
+    this.titleColor = Colors.white,
+    this.infoText,
+    this.infoTextColor = Colors.white,
   }) : super(key: key);
 
   @override
@@ -24,19 +28,20 @@ class InfoTile extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            color: Colors.white,
+            color: titleColor,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       trailing: Row(
         children: [
-          Text(
+          infoText != null ? Text(
             infoText,
             style: TextStyle(
-                color: ColorGenerator.fromHex(GColors.negativeNumber),
+                color: infoTextColor,
                 fontWeight: FontWeight.bold),
-          ),
+          ) : Container(),
+
           Flexible(
             fit: FlexFit.tight,
             child: Container(),
