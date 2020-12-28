@@ -19,9 +19,15 @@ class _CalculatorViewState extends State<CalculatorView> {
   Color decimalColor;
   Color dynamicSplashColor;
 
+  _CalculatorViewState() {
+    decimalColor = ColorGenerator.fromHex(GColors.calcButtonColor);
+  }
+
   @override
   void initState() {
-    widget.controller.attachSplashNotifier((entryPassed) {
+    // Color indicators for when calculator is accepting or
+    // denying entries
+    widget.controller._attachSplashNotifier((entryPassed) {
       setState(() {
         if (entryPassed)
           dynamicSplashColor =
@@ -29,6 +35,12 @@ class _CalculatorViewState extends State<CalculatorView> {
         else
           dynamicSplashColor =
               ColorGenerator.fromHex(GColors.calcButtonNoSplashColor);
+      });
+    });
+
+    widget.controller._attachDecimalEnabler(() {
+      setState(() {
+        decimalColor = ColorGenerator.fromHex(GColors.calcButtonColor);
       });
     });
     super.initState();
@@ -125,11 +137,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                     buildButton(
                       '.',
                       context,
-                      optionalColor: decimalColor = !widget
-                              .controller.decimalInUse
-                          ? ColorGenerator.fromHex(GColors.calcButtonColor)
-                          : ColorGenerator.fromHex(
-                              GColors.calcDisabledButtonColor),
+                      optionalColor: decimalColor,
                       onTap: () {
                         widget.controller.updateValue('.');
                         setState(() {
@@ -282,8 +290,18 @@ class CalculatorController {
    *  Only used by the CalculatorView to properly display splash colors 
    */
   Function(bool allowEntry) _notifySplash;
-  attachSplashNotifier(Function(bool entryPassed) function) {
+  void _attachSplashNotifier(Function(bool entryPassed) function) {
     _notifySplash = function;
+  }
+
+
+  /*
+   * Visually enables the decimal button in CalculatorView.
+   * **CalculatorView disables the button.  
+   */
+  Function _notifyDecimalEnabled;
+  void _attachDecimalEnabler(Function showDecimalEnabled) {
+    _notifyDecimalEnabled = showDecimalEnabled;
   }
 
   /* 
@@ -353,6 +371,7 @@ class CalculatorController {
       // re-enable decimal button
       if (removedChar == '.') {
         decimalInUse = false;
+        _notifyDecimalEnabled();
       }
       _enteredValue = _enteredValue.substring(0, _enteredValue.length - 1);
       return removedChar;

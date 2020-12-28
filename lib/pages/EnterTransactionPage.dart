@@ -1,6 +1,6 @@
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/EnteredInput.dart';
+import 'package:budgetour/widgets/standardized/CalculatorDisplay.dart';
 import 'package:flutter/material.dart';
 
 class EnterTransactionPage extends StatefulWidget {
@@ -20,20 +20,10 @@ class EnterTransactionPage extends StatefulWidget {
 
 class _EnterTransactionPageState extends State<EnterTransactionPage> {
   CalculatorController controller;
-  String enteredText;
-
-  _EnterTransactionPageState() {
-    this.enteredText = '0.00';
-  }
 
   @override
   void initState() {
     controller = CalculatorController();
-    controller.addListener((v) {
-      setState(() {
-        enteredText = v;
-      });
-    });
     super.initState();
   }
 
@@ -74,7 +64,6 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
     );
   }
 
-  // Builds the middle section. ie (not the calculator)
   Widget buildDisplay() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -85,7 +74,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
             text: widget.processName,
             color: widget.processNameColor,
           ),
-          EnteredInput('\$ $enteredText'),
+          CalculatorDisplay(controller),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

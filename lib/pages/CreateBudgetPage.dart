@@ -1,7 +1,7 @@
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/EnteredInput.dart';
+import 'package:budgetour/widgets/standardized/CalculatorDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +77,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                     color: Colors.blue,
                   ),
                   Text('How much is going into this budget?'),
-                  EnteredInput('\$ $inputText'),
+                  // CalculatorDisplay('\$ $inputText'),
                 ],
               ),
             ),
