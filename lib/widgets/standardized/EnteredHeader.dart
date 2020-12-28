@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class EnteredHeader extends StatelessWidget {
   final String text;
+  final String text2;
   final Color color;
 
-  EnteredHeader({this.text = '', this.color = Colors.black});
+  EnteredHeader({this.text = '', this.color = Colors.black, this.text2});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class EnteredHeader extends StatelessWidget {
           ),
         ),
         Text(
-          ' Amount',
+          text2 ?? ' Amount',
           style: theme.textTheme.headline6.copyWith(
             color: Colors.black,
           ),

@@ -15,7 +15,7 @@ class EnteredInput extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            text,
+            text ?? '\$ 0.00',
             style: Theme.of(context).textTheme.headline5.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.normal

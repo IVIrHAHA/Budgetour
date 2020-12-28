@@ -1,6 +1,7 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
+import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:flutter/foundation.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
           primaryColor: ColorGenerator.createMaterialColor('000000'),
@@ -89,7 +91,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     return MenuListPage({
                       Text('Budget',
                           style: Theme.of(context).textTheme.headline5): () {
-                        print('create budget');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) {
+                              return CreateBudgetPage();
+                            },
+                          ),
+                        );
                       },
                       Text(
                         'Bill',
