@@ -28,15 +28,14 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ))),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
-  final String title;
   final CategoryListManager manager = CategoryListManager.instance;
 
   @override
@@ -83,48 +82,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       appBar: AppBar(
         title: ListTile(
+          // Category Info 1
           leading: Text('Allocated'),
+
+          // Add Finance Object Button
           title: InkWell(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) {
-                    return MenuListPage({
-                      Text('Budget',
-                          style: Theme.of(context).textTheme.headline5): () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) {
-                              return CreateBudgetPage(CategoryType.values[_controller.index]);
-                            },
-                          ),
-                        );
-                      },
-                      Text(
-                        'Bill',
-                        style: Theme.of(context).textTheme.headline5,
-                      ): () {
-                        print('create bill');
-                      },
-                      Text(
-                        'Goal',
-                        style: Theme.of(context).textTheme.headline5,
-                      ): () {
-                        print('create goal');
-                      },
-                      Text(
-                        'Fund',
-                        style: Theme.of(context).textTheme.headline5,
-                      ): () {
-                        print('create fund');
-                      },
-                      Text(
-                        'Investment',
-                        style: Theme.of(context).textTheme.headline5,
-                      ): () {
-                        print('create investment');
-                      },
-                    });
+                    return buildCreateFinanceObjectMenu(context);
                   },
                 ),
               );
@@ -134,17 +101,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               size: 32,
             ),
           ),
+
+          // Category Info 2
           trailing: Text('Pending'),
         ),
+
+        // Create Category Tabs
         bottom: TabBar(
           controller: _controller,
           tabs: CategoryType.values.map((e) {
             // Use Enums for titles
             String label = e.toString().split('.').last;
             return Text(label, style: style);
-          }).toList(), 
+          }).toList(),
         ),
       ),
+
+      // Build Body
       body: Container(
         child: Column(
           children: [
@@ -174,13 +147,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  Center buildPage(String text) {
-    return Center(
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 24),
-      ),
-    );
+  MenuListPage buildCreateFinanceObjectMenu(BuildContext context) {
+    return MenuListPage({
+      Text('Budget', style: Theme.of(context).textTheme.headline5): () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return CreateBudgetPage(CategoryType.values[_controller.index]);
+            },
+          ),
+        );
+      },
+      Text(
+        'Bill',
+        style: Theme.of(context).textTheme.headline5,
+      ): () {
+        print('create bill');
+      },
+      Text(
+        'Goal',
+        style: Theme.of(context).textTheme.headline5,
+      ): () {
+        print('create goal');
+      },
+      Text(
+        'Fund',
+        style: Theme.of(context).textTheme.headline5,
+      ): () {
+        print('create fund');
+      },
+      Text(
+        'Investment',
+        style: Theme.of(context).textTheme.headline5,
+      ): () {
+        print('create investment');
+      },
+    });
   }
 }
 
