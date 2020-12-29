@@ -10,6 +10,10 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
+  final CategoryType addToCategory;
+
+  CreateBudgetPage(this.addToCategory);
+
   @override
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
 }
@@ -156,13 +160,18 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
           ),
           Flexible(
             flex: 0, // Use CalculatorView default height
-            child: CalculatorView(controller, (_) {
-              CategoryListManager.instance.add(
-                BudgetObject(title: budgetName, allocatedAmount: controller.getEntry()),
-                CategoryType.essential,
-              );
+            child: CalculatorView(controller, (amount) {
+              // OnEnterPressed
+              if (amount != null) {
+                CategoryListManager.instance.add(
+                  BudgetObject(
+                      title: budgetName,
+                      allocatedAmount: controller.getEntry()),
+                  widget.addToCategory,
+                );
 
-              Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              }
             }),
           ),
         ],

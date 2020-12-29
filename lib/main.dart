@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle style = TextStyle(fontSize: 10);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) {
-                              return CreateBudgetPage();
+                              return CreateBudgetPage(CategoryType.values[_controller.index]);
                             },
                           ),
                         );
@@ -137,28 +138,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         bottom: TabBar(
           controller: _controller,
-          tabs: [
-            Text(
-              'Essentials',
-              style: TextStyle(fontSize: 10),
-            ),
-            Text(
-              'Security',
-              style: TextStyle(fontSize: 10),
-            ),
-            Text(
-              'Goals',
-              style: TextStyle(fontSize: 10),
-            ),
-            Text(
-              'Lifestyle',
-              style: TextStyle(fontSize: 10),
-            ),
-            Text(
-              'Misc',
-              style: TextStyle(fontSize: 10),
-            ),
-          ],
+          tabs: CategoryType.values.map((e) {
+            // Use Enums for titles
+            String label = e.toString().split('.').last;
+            return Text(label, style: style);
+          }).toList(), 
         ),
       ),
       body: Container(
