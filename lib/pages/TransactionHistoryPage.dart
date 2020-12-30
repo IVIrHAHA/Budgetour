@@ -25,7 +25,8 @@ class TransactionHistoryPage extends StatelessWidget {
         Expanded(
           flex: 1,
           child: InfoTile(
-            infoText: '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
+            infoText:
+                '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
             infoTextColor: ColorGenerator.fromHex(GColors.negativeNumber),
             title: 'Total Spent',
           ),
@@ -79,10 +80,8 @@ class TransactionHistoryPage extends StatelessWidget {
     );
   }
 
-  /*
-   *  Builds transaction list view. A list of all transactions 
-   *  seperated by Month.
-   */
+  /// Builds transaction list view. A list of all transactions
+  /// seperated by Month.
   SingleChildScrollView _buildTransactionListView(int workingMonth) {
     return SingleChildScrollView(
       child: Column(
@@ -104,6 +103,8 @@ class TransactionHistoryPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child:
+
+                          /// (Full name of month) + (*space*) + (year)
                           Text(DateFormat('LLLL y').format(transaction.date)),
                     ),
                     TransactionTile(
