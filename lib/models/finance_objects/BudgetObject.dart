@@ -1,5 +1,15 @@
+/*
+ *  Dictates BudgetObject behaviour.
+ *  
+ *  Basic Idea:
+ *    1. Have an allocated amount which replenishes after a period time, 
+ *    usually a month.
+ * 
+ *    2. Track how much user has spent/not spent.
+ */
+
 import 'FinanceObject.dart';
-import '../interfaces/TransactionMixin.dart';
+import '../interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
 
 import 'Transaction.dart';

@@ -20,7 +20,7 @@ class BudgetObjRoute extends StatefulWidget {
 class _BudgetObjRouteState extends State<BudgetObjRoute> {
   void _addTransaction(double valueEntered, BuildContext ctx) {
     setState(() {
-      Transaction transaction = Transaction.fillDate(amount: valueEntered);
+      Transaction transaction = Transaction(amount: valueEntered);
       widget.budgetObject.logTransaction(transaction);
     });
 

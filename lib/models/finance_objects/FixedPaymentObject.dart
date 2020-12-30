@@ -1,5 +1,5 @@
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
-import 'package:budgetour/models/interfaces/TransactionMixin.dart';
+import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
 
 
