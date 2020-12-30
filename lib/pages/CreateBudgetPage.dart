@@ -1,40 +1,43 @@
-import 'package:budgetour/models/CategoryListManager.dart';
-import 'package:budgetour/models/finance_objects/BudgetObject.dart';
-import 'package:budgetour/tools/DialogBox.dart';
-import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/widgets/standardized/CalculatorView.dart';
-import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/InfoTile.dart';
-import 'package:budgetour/widgets/standardized/InputDisplay.dart';
+import '../models/CategoryListManager.dart';
+import '../models/finance_objects/BudgetObject.dart';
+import '../tools/DialogBox.dart';
+import '../tools/GlobalValues.dart';
+import '../widgets/standardized/CalculatorView.dart';
+import '../widgets/standardized/EnteredHeader.dart';
+import '../widgets/standardized/InfoTile.dart';
+import '../widgets/standardized/InputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
-  final CategoryType addToCategory;
+  final CategoryType targetedCategory;
 
-  CreateBudgetPage(this.addToCategory);
+  CreateBudgetPage(this.targetedCategory);
 
   @override
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
 }
 
 class _CreateBudgetPageState extends State<CreateBudgetPage> {
-  CalculatorController controller;
+  CalculatorController _calcController;
+  TextEditingController _textInputController;
   String budgetName;
 
   @override
   void initState() {
-    controller = CalculatorController();
+    _calcController = CalculatorController();
+    _textInputController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _calcController.dispose();
+    _textInputController.dispose();
     super.dispose();
   }
 
-  TextEditingController _textInputController = new TextEditingController();
+  /// Enter Name pop-up
   void showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -151,7 +154,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   InputDisplay(
-                    controller: controller,
+                    controller: _calcController,
                     indicatorColor: ColorGenerator.fromHex(GColors.blueish),
                   ),
                 ],
@@ -160,14 +163,15 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
           ),
           Flexible(
             flex: 0, // Use CalculatorView default height
-            child: CalculatorView(controller, (amount) {
+            child: CalculatorView(_calcController, (amount) {
               // OnEnterPressed
-              if (amount != null) {
+              if (amount != null && budgetName != null) {
                 CategoryListManager.instance.add(
                   BudgetObject(
-                      title: budgetName,
-                      allocatedAmount: controller.getEntry()),
-                  widget.addToCategory,
+                    title: budgetName,
+                    allocatedAmount: _calcController.getEntry(),
+                  ),
+                  widget.targetedCategory,
                 );
 
                 Navigator.of(context).pop();

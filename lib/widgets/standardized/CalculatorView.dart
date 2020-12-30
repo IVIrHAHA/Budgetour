@@ -203,10 +203,6 @@ class _CalculatorViewState extends State<CalculatorView> {
       onTap: () {
         // Passed entry back to EnterTransactionPage
         widget.onEnterPressed(widget.controller.getEntry());
-        // Reset Calculator
-        setState(() {
-          widget.controller.reset();
-        });
       },
       child: Card(
         shape: RoundedRectangleBorder(
