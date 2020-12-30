@@ -1,18 +1,25 @@
-import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/widgets/standardized/CalculatorView.dart';
-import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/InputDisplay.dart';
+import '../tools/GlobalValues.dart';
+import '../widgets/standardized/CalculatorView.dart';
+import '../widgets/standardized/EnteredHeader.dart';
+import '../widgets/standardized/InputDisplay.dart';
 import 'package:flutter/material.dart';
 
-class EnterTransactionPage extends StatefulWidget {
-  final Function(double, BuildContext) onEnterPressed;
-  final String processName;
-  final Color processNameColor;
+/// Versatile widget which allows for a formatted view of
+/// [EnteredHeader], [InputDisplay] and [CalculatorView].
 
-  EnterTransactionPage({
+class EnterTransactionPage extends StatefulWidget {
+
+  /// [onEnterPressed] will be called when [CalculatorView]
+  /// "enter" button is pressed.
+  /// [BuildContext] is needed for the [Navigator]
+  final Function(double, BuildContext) onEnterPressed;
+  final String headerTitle;
+  final Color headerColorAccent;
+
+  const EnterTransactionPage({
     @required this.onEnterPressed,
-    @required this.processName,
-    this.processNameColor = Colors.grey,
+    @required this.headerTitle,
+    this.headerColorAccent = Colors.grey,
   });
 
   @override
@@ -20,17 +27,17 @@ class EnterTransactionPage extends StatefulWidget {
 }
 
 class _EnterTransactionPageState extends State<EnterTransactionPage> {
-  CalculatorController controller;
+  CalculatorController calcController;
 
   @override
   void initState() {
-    controller = CalculatorController();
+    calcController = CalculatorController();
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    calcController.dispose();
     super.dispose();
   }
 
@@ -41,6 +48,8 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+
+          /// [EnteredHeader] and [InputDisplay]
           Flexible(
             flex: 2,
             child: Padding(
@@ -48,10 +57,12 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
               child: buildDisplay(),
             ),
           ),
+
+          /// [CalculatorView]
           Flexible(
             flex: 3,
             child: CalculatorView(
-              controller,
+              calcController,
               (entry) {
                 widget.onEnterPressed(
                   entry,
@@ -65,17 +76,20 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
     );
   }
 
+  /// Builds the portion above the calculator view
   Widget buildDisplay() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: GlobalValues.defaultMargin, vertical: 16.0),
+      padding: EdgeInsets.symmetric(
+          horizontal: GlobalValues.defaultMargin, vertical: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           EnteredHeader(
-            text: widget.processName,
-            color: widget.processNameColor,
+            text: widget.headerTitle,
+            color: widget.headerColorAccent,
           ),
-          InputDisplay(controller: controller),
+          InputDisplay(controller: calcController),
+          //TODO: implement options menu
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

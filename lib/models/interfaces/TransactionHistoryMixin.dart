@@ -7,12 +7,24 @@ mixin TransactionHistory {
   List<Transaction> _transactionsList = List<Transaction>();
 
   /// Logs transactions according to date. Latest to oldest.
+  /// TODO: Can make this more efficient
   logTransaction(Transaction transaction) {
+    // Add wherever if list is empty
     if (_transactionsList.isEmpty) {
       _transactionsList.add(transaction);
-    } else if (_transactionsList.first.date.compareTo(transaction.date) < 1) {
+    } 
+
+    // Add to front of list if incoming transaction.date allows
+    else if (_transactionsList.first.date.compareTo(transaction.date) < 1) {
       _transactionsList.insert(0, transaction);
-    } else {
+    } 
+    
+    // Otherwise, add wherever and sort the list
+    //
+    // *** This is where we can improve. Rather than sorting the entire list
+    // should find where to place and insert there. If list is already sorted
+    // to begin with.
+    else {
       _transactionsList.add(transaction);
       _sortList();
     }

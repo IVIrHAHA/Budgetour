@@ -1,13 +1,16 @@
-import 'package:budgetour/models/finance_objects/BudgetObject.dart';
-import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/widgets/TransactionTile.dart';
-import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';
-import 'package:budgetour/widgets/standardized/InfoTile.dart';
+import '../models/finance_objects/BudgetObject.dart';
+import '../tools/GlobalValues.dart';
+import '../widgets/TransactionTile.dart';
+import '../widgets/standardized/EnhancedListTile.dart';
+import '../widgets/standardized/InfoTile.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/finance_objects/Transaction.dart';
+
+/// Displays [Transaction] history
 class TransactionHistoryPage extends StatelessWidget {
   final BudgetObject budgetObject;
 

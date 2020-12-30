@@ -1,13 +1,42 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 
+/// The 5 Categories of the program
+enum CategoryType {
+  essential,
+  security,
+  goals,
+  lifestyle,
+  miscellaneous,
+}
+
+/// Singleton class which manages the 5 Category lists of the
+/// program.
+///
+/// 1. Essentials
+///   [CategoryType.essential]
+/// 
+/// 2. Security
+///   [CategoryType.security]
+/// 
+/// 3. Goals
+///   [CategoryType.goals]
+/// 
+/// 4. Lifestyle
+///   [CategoryType.lifestyle]
+/// 
+/// 5. Miscellaneous
+///   [CategoryType.miscellaneous]
+
 class CategoryListManager extends _CategoryListBase {
+  /// This and only instance of [CategoryListManager]
   static final CategoryListManager _instance = CategoryListManager._internal();
 
   factory CategoryListManager() {
     return _instance;
   }
 
+  // Initialize the category lists
   CategoryListManager._internal() {
     _essentialList = InitTestData.dummyEssentialList;
     _securityList = new List<FinanceObject>();
@@ -16,8 +45,10 @@ class CategoryListManager extends _CategoryListBase {
     _miscList = new List<FinanceObject>();
   }
 
+  /// Get this [_instance]
   static CategoryListManager get instance => _instance;
 
+  /// Adds [FinanceObject] to specified Category list using [CategoryType]
   add(FinanceObject what, CategoryType where) {
     switch (where) {
       case CategoryType.essential:
@@ -43,17 +74,11 @@ class CategoryListManager extends _CategoryListBase {
   }
 }
 
-enum CategoryType {
-  essential,
-  security,
-  goals,
-  lifestyle,
-  miscellaneous,
-}
+/// The 5 Category lists.
+///  
+/// ** Seperated as to not make the singlton class above
+/// overly complicated.
 
-/*
- *  Category list base. Used for organization 
- */
 abstract class _CategoryListBase {
   List<FinanceObject> _essentialList,
       _securityList,

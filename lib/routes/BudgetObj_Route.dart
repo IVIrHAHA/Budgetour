@@ -50,8 +50,8 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
         // Transaction Page
         EnterTransactionPage(
           onEnterPressed: _addTransaction,
-          processName: 'Withdraw',
-          processNameColor: ColorGenerator.fromHex('#FF6868'),
+          headerTitle: 'Withdraw',
+          headerColorAccent: ColorGenerator.fromHex('#FF6868'),
         ),
 
         // History Page

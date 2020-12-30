@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';

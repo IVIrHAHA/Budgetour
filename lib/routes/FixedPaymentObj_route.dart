@@ -42,8 +42,8 @@ class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
                     Navigator.of(context).pop();
                   });
                 },
-                processName: 'Payment',
-                processNameColor: Colors.grey,
+                headerTitle: 'Payment',
+                headerColorAccent: Colors.grey,
               ),
             ),
           ],
