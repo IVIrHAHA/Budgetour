@@ -8,6 +8,10 @@
  *    2. Track how much user has spent/not spent.
  */
 
+import 'package:budgetour/routes/BudgetObj_Route.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
+import 'package:common_tools/ColorGenerator.dart';
+
 import 'FinanceObject.dart';
 import '../interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +27,8 @@ class BudgetObject extends FinanceObject with TransactionHistory {
     this.allocatedAmount = 0,
     String label1,
     String label2,
-  }) : super(FinanceObjectType.budget, name: title, label_1: label1, label_2: label2) {
+  }) : super(FinanceObjectType.budget,
+            name: title, label_1: label1, label_2: label2) {
     this.currentBalance = this.allocatedAmount;
   }
 
@@ -37,5 +42,18 @@ class BudgetObject extends FinanceObject with TransactionHistory {
 
   isOverbudget() {
     return currentBalance < 0 ? true : false;
+  }
+
+  @override
+  Widget getLandingPage() {
+    return BudgetObjRoute(this);
+  }
+
+  @override
+  Color getTileColor() {
+    if (this.isOverbudget()) {
+      return ColorGenerator.fromHex(GColors.warningColor);
+    } else
+      return ColorGenerator.fromHex(GColors.neutralColor);
   }
 }

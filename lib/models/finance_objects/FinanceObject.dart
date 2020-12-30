@@ -2,6 +2,7 @@
  * Allows program to interface with all FinaceObjects
  */
 
+import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
 import '../../widgets/standardized/MyAppBarView.dart';
@@ -15,7 +16,8 @@ enum FinanceObjectType {
   goal,
 }
 
-abstract class FinanceObject {
+/// with [TilePresenter] allows [FinanceTile] to interface with this behaviour
+abstract class FinanceObject with TilePresenter{
   String name;
   final FinanceObjectType _type;
   /// For hints or messages to be displayed above [FinanceTile]

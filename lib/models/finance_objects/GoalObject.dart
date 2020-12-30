@@ -1,4 +1,7 @@
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/routes/GoalObj_Route.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
+import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class GoalObject extends FinanceObject {
@@ -34,6 +37,10 @@ class GoalObject extends FinanceObject {
     totalContribution += contributionAmount;
   }
 
+  isReady() {
+    return targetAmount <= totalContribution;
+  }
+
   /// Set as methods
   setAsFixedAmountContribution(double amount) {
     contributeByFixedAmount = amount;
@@ -51,5 +58,18 @@ class GoalObject extends FinanceObject {
     contributeByFixedAmount = null;
     contributeByPercent = null;
     completeByDate = dueDate;
+  }
+
+  @override
+  Widget getLandingPage() {
+    return GoalObjRoute(this);
+  }
+
+  @override
+  Color getTileColor() {
+    if (this.isReady()) {
+      return ColorGenerator.fromHex(GColors.positiveColor);
+    } else
+      return ColorGenerator.fromHex(GColors.neutralColor);
   }
 }

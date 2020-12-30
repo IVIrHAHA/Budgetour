@@ -37,14 +37,8 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
       quickStatInfo:
           '\$${Format.formatDouble(widget.budgetObject.currentBalance, 0)}',
       tabTitles: [
-        Text(
-          'Withdraw',
-          style: style,
-        ),
-        Text(
-          'History',
-          style: style,
-        ),
+        Text('Withdraw', style: style),
+        Text('History', style: style),
       ],
       tabPages: [
         // Transaction Page

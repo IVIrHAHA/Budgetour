@@ -19,8 +19,8 @@ class MyAppBarView extends StatefulWidget {
     @required this.financeObject,
     this.tabPages,
     this.tabTitles,
-    this.quickStatInfo,
-    this.quickStatTitle,
+    this.quickStatInfo = '',
+    this.quickStatTitle = '',
   });
 
   @override
