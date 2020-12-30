@@ -1,4 +1,5 @@
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
@@ -45,7 +46,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
         EnterTransactionPage(
           onEnterPressed: _addTransaction,
           headerTitle: 'Withdraw',
-          headerColorAccent: ColorGenerator.fromHex('#FF6868'),
+          headerColorAccent: ColorGenerator.fromHex(GColors.redish),
         ),
 
         // History Page

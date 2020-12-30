@@ -12,12 +12,14 @@ class GColors {
   static const String calcButtonSplashColor = neutralColor;
   static const String calcButtonNoSplashColor = '#F93838';
 
-  // Text Colors
+  // Number Colors
   static const String positiveNumber = '#48C144';
   static const String negativeNumber = '#FF6868';
 
   // Misc Colors
   static const String blueish = '#64B2FF';
+  static const String redish = '#FF6868';
+  static const String greenish = '#48C144';
 }
 
 class GlobalValues {

@@ -23,7 +23,7 @@ class _GoalObjRouteState extends State<GoalObjRoute> {
       financeObject: widget.goalObject,
       tabTitles: [
         Text('Deposit', style: style),
-        Text('History', style: style),
+        Text('Progress', style: style),
       ],
       tabPages: [
         EnterTransactionPage(
@@ -31,8 +31,9 @@ class _GoalObjRouteState extends State<GoalObjRoute> {
             print('hello');
           },
           headerTitle: 'Deposit',
-          headerColorAccent: ColorGenerator.fromHex(GColors.positiveColor),
-        )
+          headerColorAccent: ColorGenerator.fromHex(GColors.greenish),
+        ),
+        Container(child: Text('pending'),),
       ],
     );
   }
