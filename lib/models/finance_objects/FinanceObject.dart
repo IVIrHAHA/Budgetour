@@ -12,6 +12,7 @@ enum FinanceObjectType {
   budget,
   fixed,
   fund,
+  goal,
 }
 
 abstract class FinanceObject {
