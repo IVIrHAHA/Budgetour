@@ -18,15 +18,34 @@ class CreateBudgetPage extends StatefulWidget {
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
 }
 
-class _CreateBudgetPageState extends State<CreateBudgetPage> {
+class _CreateBudgetPageState extends State<CreateBudgetPage>
+    with TickerProviderStateMixin {
   CalculatorController _calcController;
   TextEditingController _textInputController;
+  AnimationController _animController;
+
   String budgetName;
+
+  final DecorationTween decorationTween = DecorationTween(
+    begin: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+        border: Border.all(width: 2, color: Colors.grey)),
+    end: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+        border: Border.all(width: 2, color: Colors.grey)),
+  );
 
   @override
   void initState() {
     _calcController = CalculatorController();
     _textInputController = TextEditingController();
+    _animController = AnimationController(
+      duration: Duration(milliseconds: 200),
+      vsync: this,
+    );
+
     super.initState();
   }
 
@@ -34,6 +53,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
   void dispose() {
     _calcController.dispose();
     _textInputController.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
@@ -96,23 +116,21 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
       title: ListTile(
-        leading: Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: InkWell(
-              onTap: () => showAlertDialog(context),
-              child: Text(
-                budgetName ?? 'Enter Name',
-                style: Theme.of(context).textTheme.headline5,
+        leading: Container(
+          child: DecoratedBoxTransition(
+            decoration: decorationTween.animate(_animController),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: InkWell(
+                onTap: () => showAlertDialog(context),
+                child: Text(
+                  budgetName ?? 'Enter Name',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
               ),
             ),
           ),
           color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-            side: BorderSide(
-                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
-          ),
         ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -175,6 +193,9 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                 );
 
                 Navigator.of(context).pop();
+              }
+              else {
+                _animController.forward().whenComplete(() => _animController.reverse());
               }
             }),
           ),
