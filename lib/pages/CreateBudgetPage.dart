@@ -19,33 +19,36 @@ class CreateBudgetPage extends StatefulWidget {
 }
 
 class _CreateBudgetPageState extends State<CreateBudgetPage>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   CalculatorController _calcController;
   TextEditingController _textInputController;
   AnimationController _animController;
 
   String budgetName;
 
-  final DecorationTween decorationTween = DecorationTween(
-    begin: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-        border: Border.all(width: 2, color: Colors.grey)),
-    end: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-        border: Border.all(width: 2, color: Colors.grey)),
-  );
+  Animation<Color> colorTween;
+
+  Color headerColor = Colors.black;
 
   @override
   void initState() {
     _calcController = CalculatorController();
     _textInputController = TextEditingController();
     _animController = AnimationController(
-      duration: Duration(milliseconds: 200),
       vsync: this,
+      duration: Duration(
+        milliseconds: 250,
+      ),
     );
 
+    colorTween = ColorTween(begin: Colors.black, end: Colors.red)
+        .animate(_animController)
+          ..addListener(() {
+            setState(() {
+              headerColor =
+                  budgetName == null ? colorTween.value : Colors.black;
+            });
+          });
     super.initState();
   }
 
@@ -53,7 +56,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   void dispose() {
     _calcController.dispose();
     _textInputController.dispose();
-    _animController.dispose();
     super.dispose();
   }
 
@@ -116,21 +118,23 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
       title: ListTile(
-        leading: Container(
-          child: DecoratedBoxTransition(
-            decoration: decorationTween.animate(_animController),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: InkWell(
-                onTap: () => showAlertDialog(context),
-                child: Text(
-                  budgetName ?? 'Enter Name',
-                  style: Theme.of(context).textTheme.headline5,
-                ),
+        leading: Card(
+          color: headerColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: InkWell(
+              onTap: () => showAlertDialog(context),
+              child: Text(
+                budgetName ?? 'Enter Name',
+                style: Theme.of(context).textTheme.headline5,
               ),
             ),
           ),
-          color: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+            side: BorderSide(
+                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
+          ),
         ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -173,7 +177,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
                   ),
                   InputDisplay(
                     controller: _calcController,
-                    indicatorColor: ColorGenerator.fromHex(GColors.blueish),
+                    //indicatorColor: inputColor,
                   ),
                 ],
               ),
@@ -193,9 +197,10 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
                 );
 
                 Navigator.of(context).pop();
-              }
-              else {
-                _animController.forward().whenComplete(() => _animController.reverse());
+              } else if (budgetName == null) {
+                _animController
+                    .forward()
+                    .whenComplete(() => _animController.reverse());
               }
             }),
           ),

@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 class InputDisplay extends StatefulWidget {
   final String overrideText;
   // final bool focusable;
-  final Color indicatorColor;
+  final Color indicatorColor, textColor;
   final CalculatorController controller;
 
-  InputDisplay(
-      {this.controller,
-      this.overrideText,
-      this.indicatorColor});
+  InputDisplay({
+    this.controller,
+    this.overrideText,
+    this.textColor = Colors.black,
+    this.indicatorColor,
+  });
 
   @override
   _InputDisplayState createState() => _InputDisplayState();
@@ -49,14 +51,12 @@ class _InputDisplayState extends State<InputDisplay> {
         children: [
           Text(
             displayedText,
-            style: Theme.of(context)
-                .textTheme
-                .headline5
-                .copyWith(color: Colors.black, fontWeight: FontWeight.normal),
+            style: Theme.of(context).textTheme.headline5.copyWith(
+                color: widget.textColor, fontWeight: FontWeight.normal),
           ),
           Divider(
             color: widget.indicatorColor ??
-                ColorGenerator.fromHex(GColors.borderColor),
+                ColorGenerator.fromHex(GColors.blueish),
             thickness: 2,
           ),
         ],
