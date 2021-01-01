@@ -20,14 +20,17 @@ class CreateBudgetPage extends StatefulWidget {
 
 class _CreateBudgetPageState extends State<CreateBudgetPage>
     with SingleTickerProviderStateMixin {
+  /// Controllers
   CalculatorController _calcController;
   TextEditingController _textInputController;
   AnimationController _animController;
 
+  /// [budgetName] recorded upon pop-up dialog onEnterPressed
   String budgetName;
 
-  Animation<Color> colorTween;
-
+  /// Color animation when [budgetName] was not entered
+  /// transmitted through [headerColor]
+  Animation<Color> headerColorTween;
   Color headerColor = Colors.black;
 
   @override
@@ -41,12 +44,13 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
       ),
     );
 
-    colorTween = ColorTween(begin: Colors.black, end: Colors.red)
+    /// Instantiating [headerColor] color animation
+    headerColorTween = ColorTween(begin: Colors.black, end: Colors.red)
         .animate(_animController)
           ..addListener(() {
             setState(() {
               headerColor =
-                  budgetName == null ? colorTween.value : Colors.black;
+                  budgetName == null ? headerColorTween.value : Colors.black;
             });
           });
     super.initState();
@@ -56,10 +60,136 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   void dispose() {
     _calcController.dispose();
     _textInputController.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
-  /// Enter Name pop-up
+  /// MAIN_BUILD_FUNCTION
+  /// ---------------------------------------------
+  /// Creates prompt content to obtain user data
+  /// ---------------------------------------------
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: Column(
+        children: [
+          Flexible(
+            flex: 1,
+            child: InfoTile(
+              title: 'Budget',
+            ),
+          ),
+          Flexible(
+            flex: 6,
+            child: _buildPromptContent(context),
+          ),
+          Flexible(
+            flex: 0, // Use CalculatorView default height
+            child: CalculatorView(_calcController, (amount) {
+              _onEnterPressed(amount);
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// BUILD_PROMPT_CONTENT
+  /// ---------------------------------------------
+  /// Creates prompt content to obtain user data
+  /// ---------------------------------------------
+  Container _buildPromptContent(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(horizontal: GlobalValues.defaultMargin),
+      alignment: Alignment.topLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          EnteredHeader(
+            text: 'Square',
+            text2: ' Details',
+            color: ColorGenerator.fromHex(GColors.blueish),
+          ),
+          Text(
+            'How much is going into this budget?',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          InputDisplay(
+            controller: _calcController,
+            //indicatorColor: inputColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// ON_ENTER_PRESSED
+  /// ---------------------------------------------
+  /// When user is ready to create [BudgetObject]
+  /// Validate data entered
+  /// ---------------------------------------------
+  void _onEnterPressed(double amount) {
+    // OnEnterPressed
+    if (amount != null && budgetName != null) {
+      CategoryListManager.instance.add(
+        BudgetObject(
+          title: budgetName,
+          allocatedAmount: _calcController.getEntry(),
+        ),
+        widget.targetedCategory,
+      );
+
+      Navigator.of(context).pop();
+    } else if (budgetName == null) {
+      _animController.forward().whenComplete(() => _animController.reverse());
+    }
+  }
+
+  /// BUILD_APP_BAR METHOD
+  /// ------------------------------------------
+  /// builds the appBar used.
+  /// This is a clone of [MyAppBarView], but has
+  /// subtle changes.
+  /// ------------------------------------------
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: ListTile(
+        leading: Card(
+          color: headerColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: InkWell(
+              onTap: () => showAlertDialog(context),
+              child: Text(
+                budgetName ?? 'Enter Name',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+            side: BorderSide(
+                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
+          ),
+        ),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text('selection 1'),
+            Text('selection 2'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// ALERT_DIALOG_BOX
+  /// --------------------------------------
+  /// Display window to obtain [budgetName]
+  /// --------------------------------------
   void showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -111,101 +241,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           ),
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    AppBar appBar = AppBar(
-      title: ListTile(
-        leading: Card(
-          color: headerColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: InkWell(
-              onTap: () => showAlertDialog(context),
-              child: Text(
-                budgetName ?? 'Enter Name',
-                style: Theme.of(context).textTheme.headline5,
-              ),
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-            side: BorderSide(
-                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
-          ),
-        ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text('selection 1'),
-            Text('selection 2'),
-          ],
-        ),
-      ),
-    );
-
-    return Scaffold(
-      appBar: appBar,
-      body: Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: InfoTile(
-              title: 'Budget',
-            ),
-          ),
-          Flexible(
-            flex: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: GlobalValues.defaultMargin),
-              alignment: Alignment.topLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  EnteredHeader(
-                    text: 'Square',
-                    text2: ' Details',
-                    color: ColorGenerator.fromHex(GColors.blueish),
-                  ),
-                  Text(
-                    'How much is going into this budget?',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  InputDisplay(
-                    controller: _calcController,
-                    //indicatorColor: inputColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 0, // Use CalculatorView default height
-            child: CalculatorView(_calcController, (amount) {
-              // OnEnterPressed
-              if (amount != null && budgetName != null) {
-                CategoryListManager.instance.add(
-                  BudgetObject(
-                    title: budgetName,
-                    allocatedAmount: _calcController.getEntry(),
-                  ),
-                  widget.targetedCategory,
-                );
-
-                Navigator.of(context).pop();
-              } else if (budgetName == null) {
-                _animController
-                    .forward()
-                    .whenComplete(() => _animController.reverse());
-              }
-            }),
-          ),
-        ],
-      ),
     );
   }
 }
