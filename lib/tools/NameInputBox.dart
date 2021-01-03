@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'GlobalValues.dart';
 
 class NameInputBox extends StatefulWidget {
-  final Widget title;
+  final Text title;
   final Widget hint;
   final TextEditingController controller;
   final Color backgroundColor;
   final Color borderColor;
   final double defaultWidth;
+  final Function(String) onSubmitted;
 
   NameInputBox({
     this.title,
@@ -18,6 +19,7 @@ class NameInputBox extends StatefulWidget {
     this.borderColor,
     this.backgroundColor,
     @required this.defaultWidth,
+    this.onSubmitted,
   });
 
   @override
@@ -26,17 +28,16 @@ class NameInputBox extends StatefulWidget {
 
 class _NameInputBoxState extends State<NameInputBox> {
   double _containerWidth;
-  TextEditingController _textinputController = TextEditingController();
 
   /// child to be displayed in animated container
-  /// ***either [showInputPrompt] or [showDisplay] 
+  /// ***either [showInputPrompt] or [showDisplay]
   Widget _child;
   bool _displayMode;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      color: Colors.indigo,
+      color: widget.backgroundColor,
       duration: Duration(milliseconds: 200),
       width: _containerWidth ?? widget.defaultWidth,
       child: _child ?? showDisplay(context),
@@ -71,20 +72,22 @@ class _NameInputBoxState extends State<NameInputBox> {
   /// ----------------------------------------
   Widget showInputPrompt(BuildContext context) {
     String defaultText;
-    if (widget.title is Text) {
-      defaultText = (widget.title as Text).data;
+    if (widget.title != null) {
+      defaultText = widget.title.data;
     }
 
     return Container(
-      color: Colors.black,
       child: TextFormField(
+        autofocus: true,
         onFieldSubmitted: (value) {
           /// Collapse AnimatedContainer and swap
           /// [_child] to call [showDisplay]
           _collapseDisplay(true);
           _displayMode = true;
+
+          widget.onSubmitted(value);
         },
-        controller: _textinputController,
+        controller: widget.controller,
         keyboardType: TextInputType.name,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
@@ -106,7 +109,7 @@ class _NameInputBoxState extends State<NameInputBox> {
   /// --------------------------------------
   Widget showDisplay(BuildContext context) {
     return Material(
-      color: Colors.black,
+      color: Colors.transparent,
       child: InkWell(
         onTap: () {
           /// Collapse AnimatedContainer and swap
@@ -128,11 +131,12 @@ class _NameInputBoxState extends State<NameInputBox> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: DefaultTextStyle(
             child: widget.title,
+            textAlign: TextAlign.center,
             overflow: TextOverflow.fade,
             softWrap: false,
             style: Theme.of(context)
                 .textTheme
-                .headline5
+                .headline6
                 .copyWith(color: Colors.white),
           ),
         ),

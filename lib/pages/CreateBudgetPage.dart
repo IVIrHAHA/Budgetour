@@ -73,6 +73,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: _buildAppBar(context),
       body: Column(
         children: [
@@ -161,7 +162,11 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
       title: ListTile(
         leading: NameInputBox(
           defaultWidth: MediaQuery.of(context).size.width / 3,
-          title: Text('Enter Name'),
+          title: Text(budgetName ?? 'Enter Name'),
+          backgroundColor: headerColor,
+          onSubmitted: (text) {
+            budgetName = text.isNotEmpty ? text : 'not valid';
+          },
         ),
         // leading: Card(
         //   color: headerColor,
