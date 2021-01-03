@@ -162,10 +162,16 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
       title: ListTile(
         leading: NameInputBox(
           defaultWidth: MediaQuery.of(context).size.width / 3,
-          title: Text(budgetName ?? 'Enter Name'),
+          title: Text(budgetName ?? 'Enter Names'),
           backgroundColor: headerColor,
+          isValidFunction: (testTxt) {
+            if (testTxt.isNotEmpty) {
+              return true;
+            } else
+              return false;
+          },
           onSubmitted: (text) {
-            budgetName = text.isNotEmpty ? text : 'not valid';
+            budgetName = text;
           },
         ),
         // leading: Card(

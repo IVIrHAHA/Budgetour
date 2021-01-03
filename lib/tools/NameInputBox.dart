@@ -6,20 +6,24 @@ import 'GlobalValues.dart';
 class NameInputBox extends StatefulWidget {
   final Text title;
   final Widget hint;
+  final String errorMessage;
   final TextEditingController controller;
   final Color backgroundColor;
   final Color borderColor;
   final double defaultWidth;
   final Function(String) onSubmitted;
+  final bool Function(String) isValidFunction;
 
   NameInputBox({
     this.title,
+    @required this.defaultWidth,
     this.hint,
+    this.errorMessage = 'not valid',
     this.controller,
     this.borderColor,
     this.backgroundColor,
-    @required this.defaultWidth,
     this.onSubmitted,
+    this.isValidFunction,
   });
 
   @override
@@ -28,11 +32,13 @@ class NameInputBox extends StatefulWidget {
 
 class _NameInputBoxState extends State<NameInputBox> {
   double _containerWidth;
+  Text _errorText;
+  Color _errorColor;
 
   /// child to be displayed in animated container
   /// ***either [showInputPrompt] or [showDisplay]
   Widget _child;
-  bool _displayMode;
+  bool _displayMode = true;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +62,32 @@ class _NameInputBoxState extends State<NameInputBox> {
     });
   }
 
+  _initErrorMsg() {
+    // Display error message
+    _errorText = Text(widget.errorMessage.toLowerCase());
+    _errorColor = Colors.red;
+    _showDisplay();
+  }
+
+  _showDisplay() {
+    /// Collapse AnimatedContainer and swap
+    /// [_child] to call [showDisplay]
+    _collapseDisplay(true);
+    _displayMode = true;
+  }
+
+  _showInput() {
+    /// Collapse AnimatedContainer and swap
+    /// [_child] to call [showInputPrompt]
+    _collapseDisplay(true);
+    _displayMode = false;
+  }
+
   /// METHOD: SWAP CHILD
   /// ----------------------------------------
   /// Swaps [_child] to be either [showDisplay] or [showInputPrompt]
   /// Then expand animatedBox
+  /// Called only by the AnimatedBox in [build] method
   /// ----------------------------------------
   _swap() {
     _child = _displayMode ? showDisplay(context) : showInputPrompt(context);
@@ -80,12 +108,25 @@ class _NameInputBoxState extends State<NameInputBox> {
       child: TextFormField(
         autofocus: true,
         onFieldSubmitted: (value) {
-          /// Collapse AnimatedContainer and swap
-          /// [_child] to call [showDisplay]
-          _collapseDisplay(true);
-          _displayMode = true;
+          /// If [widget.isValidFunction] is not null let
+          /// [this] perform error message
+          if (widget.isValidFunction != null) {
+            if (widget.isValidFunction(value)) {
+              _errorColor = null;
+              _errorText = null;
+              widget.onSubmitted(value);
+            }
+            // Show error message
+            else {
+              _initErrorMsg();
+            }
+          }
 
-          widget.onSubmitted(value);
+          /// Pass data back without opinion
+          else
+            widget.onSubmitted(value);
+
+          _showDisplay();
         },
         controller: widget.controller,
         keyboardType: TextInputType.name,
@@ -112,13 +153,11 @@ class _NameInputBoxState extends State<NameInputBox> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          /// Collapse AnimatedContainer and swap
-          /// [_child] to call [showInputPrompt]
-          _collapseDisplay(true);
-          _displayMode = false;
+          _showInput();
         },
         child: Container(
           decoration: BoxDecoration(
+            color: _errorColor ?? Colors.transparent,
             border: Border.all(
               color: ColorGenerator.fromHex(GColors.borderColor),
               width: 1,
@@ -130,7 +169,7 @@ class _NameInputBoxState extends State<NameInputBox> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: DefaultTextStyle(
-            child: widget.title,
+            child: _errorText ?? widget.title,
             textAlign: TextAlign.center,
             overflow: TextOverflow.fade,
             softWrap: false,
