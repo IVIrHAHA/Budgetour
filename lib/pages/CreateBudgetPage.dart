@@ -163,6 +163,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         leading: NameInputBox(
           defaultWidth: MediaQuery.of(context).size.width / 3,
           title: Text(budgetName ?? 'Enter Name'),
+          inputHint: 'Enter New Name',
           backgroundColor: headerColor,
           isValidFunction: (testTxt) {
             if (testTxt.isNotEmpty && testTxt != 'Enter Name') {
@@ -174,24 +175,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
             budgetName = text;
           },
         ),
-        // leading: Card(
-        //   color: headerColor,
-        //   child: Padding(
-        //     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        //     child: InkWell(
-        //       onTap: () => showAlertDialog(context),
-        //       child: Text(
-        //         budgetName ?? 'Enter Name',
-        //         style: Theme.of(context).textTheme.headline5,
-        //       ),
-        //     ),
-        //   ),
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-        //     side: BorderSide(
-        //         color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
-        //   ),
-        // ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [

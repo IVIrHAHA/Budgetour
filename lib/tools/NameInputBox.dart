@@ -4,22 +4,13 @@ import 'package:flutter/material.dart';
 import 'GlobalValues.dart';
 
 class NameInputBox extends StatefulWidget {
-  // Used as the main text in display and
-  // in the inputPrompt
-  final Text title;
+  /// Creates an animated input field
+  ///
+  /// When tapped [NameInputBox] collapses and re-emerges for input data
 
-  // Used as the text above inputPrompt
-  final String inputHint;
-  final String errorMessage;
-  final TextEditingController controller;
-  final Color backgroundColor;
-  final Color borderColor;
-  final double defaultWidth;
-  final Function(String) onSubmitted;
-  final bool Function(String) isValidFunction;
-
-  NameInputBox({
-    this.title,
+  const NameInputBox({
+    Key key,
+    this.title = const Text(''),
     @required this.defaultWidth,
     this.inputHint = 'Enter Text',
     this.errorMessage = 'not valid',
@@ -28,7 +19,45 @@ class NameInputBox extends StatefulWidget {
     this.backgroundColor,
     this.onSubmitted,
     this.isValidFunction,
-  });
+  }) : super(key: key);
+
+  /// Used as the main text in display and inside the input prompt.
+  /// If nothing is entered into the input prompt this is returned
+  /// via the value in [onSubmitted]
+  final Text title;
+
+  /// If [null] defaults to 'Enter Text'
+  ///
+  /// Used as the text above the input prompt
+  final String inputHint;
+
+  /// If [null] defaults to 'not valid'
+  ///
+  /// The error message when [isValidFunction] return [false]
+  final String errorMessage;
+
+  final TextEditingController controller;
+  final Color backgroundColor;
+  final Color borderColor;
+  final double defaultWidth;
+  final Function(String) onSubmitted;
+
+  /// Checks whether the text passed via the [onSubmitted] function
+  /// is valid or not
+  ///
+  /// Example usage:
+  /// ```dart
+  /// title: Text(params ?? 'aDefaultText'),
+  /// 
+  /// isValidFunction : (testTxt) {
+  ///     if (testTxt.isNotEmpty && testTxt != 'aDefaultText') {
+  ///       return true;
+  ///     } else
+  ///       return false;
+  ///   },
+  /// ```
+  ///
+  final bool Function(String) isValidFunction;
 
   @override
   _NameInputBoxState createState() => _NameInputBoxState();
@@ -62,19 +91,29 @@ class _NameInputBoxState extends State<NameInputBox> {
   /// Get user input data
   /// ----------------------------------------
   Widget _showInputPrompt(BuildContext context) {
-    String defaultText;
-    if (widget.title != null) {
-      defaultText = widget.title.data;
-    }
+    String previousTitle;
+
+    // Make sure old entry is valid because
+    // this will be passed back in onFieldSubmitted
+    if (widget.title != null && widget.isValidFunction(widget.title.data))
+      previousTitle = widget.title.data;
+    else
+      previousTitle = '';
 
     return Container(
       child: TextFormField(
         autofocus: true,
         onFieldSubmitted: (value) {
+          // If user taps to edit but whishes to return
+          // without editing. This allows for that.
+          if (value.isEmpty) {
+            value = previousTitle;
+          }
+
           /// If [widget.isValidFunction] is not null let
           /// [this] perform error message
           if (widget.isValidFunction != null) {
-            if (widget.isValidFunction(value)) {
+            if (widget.isValidFunction(value.trim())) {
               // Call this in case it was called before
               _initErrorMsg(false);
               widget.onSubmitted(value);
@@ -95,10 +134,11 @@ class _NameInputBoxState extends State<NameInputBox> {
         keyboardType: TextInputType.name,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          labelText: defaultText ?? 'Enter Text',
+          labelText: widget.inputHint,
           labelStyle: TextStyle(
             color: Colors.white,
           ),
+          hintText: previousTitle,
           hintStyle: TextStyle(
             color: Colors.white,
           ),
