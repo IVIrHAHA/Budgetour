@@ -11,68 +11,52 @@ class NameInputBox extends StatefulWidget {
   final Color borderColor;
   final double defaultWidth;
 
-  NameInputBox(
-      {this.title,
-      this.hint,
-      this.controller,
-      this.borderColor,
-      this.backgroundColor,
-      this.defaultWidth});
+  NameInputBox({
+    this.title,
+    this.hint,
+    this.controller,
+    this.borderColor,
+    this.backgroundColor,
+    @required this.defaultWidth,
+  });
 
   @override
-  _NameInputBoxState createState() => _NameInputBoxState(this.defaultWidth);
+  _NameInputBoxState createState() => _NameInputBoxState();
 }
 
 class _NameInputBoxState extends State<NameInputBox> {
   final List<Widget> children = <Widget>[];
   double containerWidth;
 
-  _NameInputBoxState(double defaultWidth) {
-    this.containerWidth = defaultWidth;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       color: Colors.indigo,
       duration: Duration(milliseconds: 200),
-      width: containerWidth,
-      child: buildDisplayMode(context),
+      width: containerWidth ?? widget.defaultWidth,
+      child: showDisplay(context),
       onEnd: () {
-        _collapse(false);
+        _collapseDisplay(false);
       },
     );
   }
 
-  _collapse(bool collapse) {
+  _collapseDisplay(bool collapse) {
     setState(() {
       if (collapse) {
         containerWidth = 0;
       } else
-        _setDefaultWidth();
+        containerWidth = widget.defaultWidth;
     });
   }
 
-  /// Get a default width size for [containerWidth]
-  /// so there is a value to return to when container
-  /// expands
-  _setDefaultWidth() {
-    if (widget.defaultWidth != null) {
-      containerWidth = widget.defaultWidth;
-    } else
-      LayoutBuilder(builder: (_, size) {
-        containerWidth = size.maxWidth;
-        return null;
-      });
-  }
-
   /// Builds the display mode of this widget
-  Widget buildDisplayMode(BuildContext context) {
+  Widget showDisplay(BuildContext context) {
     return Material(
       color: Colors.black,
       child: InkWell(
         onTap: () {
-          _collapse(true);
+          _collapseDisplay(true);
         },
         child: Container(
           decoration: BoxDecoration(
@@ -100,22 +84,3 @@ class _NameInputBoxState extends State<NameInputBox> {
     );
   }
 }
-
-// Card(
-//           color: headerColor,
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-//             child: InkWell(
-//               onTap: () => showAlertDialog(context),
-//               child: Text(
-//                 budgetName ?? 'Enter Name',
-//                 style: Theme.of(context).textTheme.headline5,
-//               ),
-//             ),
-//           ),
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-//             side: BorderSide(
-//                 color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
-//           ),
-//         ),
