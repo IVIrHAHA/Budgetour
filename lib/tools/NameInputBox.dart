@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'GlobalValues.dart';
 
 class NameInputBox extends StatefulWidget {
+  // Used as the main text in display and
+  // in the inputPrompt
   final Text title;
-  final Widget hint;
+
+  // Used as the text above inputPrompt
+  final String inputHint;
   final String errorMessage;
   final TextEditingController controller;
   final Color backgroundColor;
@@ -17,7 +21,7 @@ class NameInputBox extends StatefulWidget {
   NameInputBox({
     this.title,
     @required this.defaultWidth,
-    this.hint,
+    this.inputHint = 'Enter Text',
     this.errorMessage = 'not valid',
     this.controller,
     this.borderColor,
@@ -36,7 +40,7 @@ class _NameInputBoxState extends State<NameInputBox> {
   Color _errorColor;
 
   /// child to be displayed in animated container
-  /// ***either [showInputPrompt] or [showDisplay]
+  /// ***either [_showInputPrompt] or [_showDisplay]
   Widget _child;
   bool _displayMode = true;
 
@@ -46,59 +50,18 @@ class _NameInputBoxState extends State<NameInputBox> {
       color: widget.backgroundColor,
       duration: Duration(milliseconds: 200),
       width: _containerWidth ?? widget.defaultWidth,
-      child: _child ?? showDisplay(context),
+      child: _child ?? _showDisplay(context),
       onEnd: () {
         _swap();
       },
     );
   }
 
-  _collapseDisplay(bool collapse) {
-    setState(() {
-      if (collapse) {
-        _containerWidth = 0;
-      } else
-        _containerWidth = widget.defaultWidth;
-    });
-  }
-
-  _initErrorMsg() {
-    // Display error message
-    _errorText = Text(widget.errorMessage.toLowerCase());
-    _errorColor = Colors.red;
-    _showDisplay();
-  }
-
-  _showDisplay() {
-    /// Collapse AnimatedContainer and swap
-    /// [_child] to call [showDisplay]
-    _collapseDisplay(true);
-    _displayMode = true;
-  }
-
-  _showInput() {
-    /// Collapse AnimatedContainer and swap
-    /// [_child] to call [showInputPrompt]
-    _collapseDisplay(true);
-    _displayMode = false;
-  }
-
-  /// METHOD: SWAP CHILD
-  /// ----------------------------------------
-  /// Swaps [_child] to be either [showDisplay] or [showInputPrompt]
-  /// Then expand animatedBox
-  /// Called only by the AnimatedBox in [build] method
-  /// ----------------------------------------
-  _swap() {
-    _child = _displayMode ? showDisplay(context) : showInputPrompt(context);
-    _collapseDisplay(false);
-  }
-
   /// METHOD: SHOW INPUT PROMPT
   /// ----------------------------------------
   /// Get user input data
   /// ----------------------------------------
-  Widget showInputPrompt(BuildContext context) {
+  Widget _showInputPrompt(BuildContext context) {
     String defaultText;
     if (widget.title != null) {
       defaultText = widget.title.data;
@@ -112,13 +75,13 @@ class _NameInputBoxState extends State<NameInputBox> {
           /// [this] perform error message
           if (widget.isValidFunction != null) {
             if (widget.isValidFunction(value)) {
-              _errorColor = null;
-              _errorText = null;
+              // Call this in case it was called before
+              _initErrorMsg(false);
               widget.onSubmitted(value);
             }
             // Show error message
             else {
-              _initErrorMsg();
+              _initErrorMsg(true);
             }
           }
 
@@ -126,7 +89,7 @@ class _NameInputBoxState extends State<NameInputBox> {
           else
             widget.onSubmitted(value);
 
-          _showDisplay();
+          _expandToDisplay();
         },
         controller: widget.controller,
         keyboardType: TextInputType.name,
@@ -148,12 +111,12 @@ class _NameInputBoxState extends State<NameInputBox> {
   /// --------------------------------------
   /// Builds the display mode of this widget
   /// --------------------------------------
-  Widget showDisplay(BuildContext context) {
+  Widget _showDisplay(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          _showInput();
+          _expandToInput();
         },
         child: Container(
           decoration: BoxDecoration(
@@ -181,5 +144,62 @@ class _NameInputBoxState extends State<NameInputBox> {
         ),
       ),
     );
+  }
+
+  /// Collapses the AnimatedContainer
+  _collapseDisplay(bool collapse) {
+    setState(() {
+      if (collapse) {
+        _containerWidth = 0;
+      } else
+        _containerWidth = widget.defaultWidth;
+    });
+  }
+
+  /// METHOD: INIT_ERROR_MSG
+  /// ----------------------------------------
+  /// Instantiates error message and removes
+  /// error message.
+  ///
+  /// ** currently called in onFormSubmitted
+  ///    in [_showInputPrompt]
+  /// ----------------------------------------
+  _initErrorMsg(bool initMessage) {
+    if (initMessage) {
+      // Display error message
+      _errorText = Text(widget.errorMessage.toLowerCase());
+      _errorColor = Colors.red;
+      _expandToDisplay();
+    } else {
+      _errorText = null;
+      _errorColor = null;
+    }
+  }
+
+  /// For ease of use
+  _expandToDisplay() {
+    /// Collapse AnimatedContainer and swap
+    /// [_child] to call [showDisplay]
+    _collapseDisplay(true);
+    _displayMode = true;
+  }
+
+  /// For ease of use
+  _expandToInput() {
+    /// Collapse AnimatedContainer and swap
+    /// [_child] to call [showInputPrompt]
+    _collapseDisplay(true);
+    _displayMode = false;
+  }
+
+  /// METHOD: SWAP CHILD
+  /// ----------------------------------------
+  /// Swaps [_child] to be either [_showDisplay] or [_showInputPrompt]
+  /// Then expand animatedBox
+  /// Called only by the AnimatedBox in [build] method
+  /// ----------------------------------------
+  _swap() {
+    _child = _displayMode ? _showDisplay(context) : _showInputPrompt(context);
+    _collapseDisplay(false);
   }
 }
