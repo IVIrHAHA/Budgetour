@@ -28,15 +28,20 @@ class _NameInputBoxState extends State<NameInputBox> {
   double _containerWidth;
   TextEditingController _textinputController = TextEditingController();
 
+  /// child to be displayed in animated container
+  /// ***either [showInputPrompt] or [showDisplay] 
+  Widget _child;
+  bool _displayMode;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       color: Colors.indigo,
       duration: Duration(milliseconds: 200),
       width: _containerWidth ?? widget.defaultWidth,
-      child: showInputPrompt(context),
+      child: _child ?? showDisplay(context),
       onEnd: () {
-        _collapseDisplay(false);
+        _swap();
       },
     );
   }
@@ -50,6 +55,15 @@ class _NameInputBoxState extends State<NameInputBox> {
     });
   }
 
+  /// METHOD: SWAP CHILD
+  /// ----------------------------------------
+  /// Swaps [_child] to be either [showDisplay] or [showInputPrompt]
+  /// Then expand animatedBox
+  /// ----------------------------------------
+  _swap() {
+    _child = _displayMode ? showDisplay(context) : showInputPrompt(context);
+    _collapseDisplay(false);
+  }
 
   /// METHOD: SHOW INPUT PROMPT
   /// ----------------------------------------
@@ -57,13 +71,19 @@ class _NameInputBoxState extends State<NameInputBox> {
   /// ----------------------------------------
   Widget showInputPrompt(BuildContext context) {
     String defaultText;
-    if(widget.title is Text) {
+    if (widget.title is Text) {
       defaultText = (widget.title as Text).data;
     }
 
     return Container(
       color: Colors.black,
-          child: TextFormField(
+      child: TextFormField(
+        onFieldSubmitted: (value) {
+          /// Collapse AnimatedContainer and swap
+          /// [_child] to call [showDisplay]
+          _collapseDisplay(true);
+          _displayMode = true;
+        },
         controller: _textinputController,
         keyboardType: TextInputType.name,
         style: TextStyle(color: Colors.white),
@@ -89,7 +109,10 @@ class _NameInputBoxState extends State<NameInputBox> {
       color: Colors.black,
       child: InkWell(
         onTap: () {
+          /// Collapse AnimatedContainer and swap
+          /// [_child] to call [showInputPrompt]
           _collapseDisplay(true);
+          _displayMode = false;
         },
         child: Container(
           decoration: BoxDecoration(
