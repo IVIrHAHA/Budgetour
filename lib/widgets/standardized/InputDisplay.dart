@@ -13,7 +13,7 @@ class InputDisplay extends StatefulWidget {
     this.controller,
     this.overrideText,
     this.textColor = Colors.black,
-    this.indicatorColor,
+    this.indicatorColor = Colors.grey,
   });
 
   @override
@@ -55,8 +55,7 @@ class _InputDisplayState extends State<InputDisplay> {
                 color: widget.textColor, fontWeight: FontWeight.normal),
           ),
           Divider(
-            color: widget.indicatorColor ??
-                ColorGenerator.fromHex(GColors.blueish),
+            color: widget.indicatorColor,
             thickness: 2,
           ),
         ],

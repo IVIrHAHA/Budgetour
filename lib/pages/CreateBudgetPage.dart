@@ -1,3 +1,5 @@
+import 'package:budgetour/tools/NameInputBox.dart';
+
 import '../models/CategoryListManager.dart';
 import '../models/finance_objects/BudgetObject.dart';
 import '../tools/DialogBox.dart';
@@ -119,7 +121,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           ),
           InputDisplay(
             controller: _calcController,
-            //indicatorColor: inputColor,
+            indicatorColor: ColorGenerator.fromHex(GColors.blueish),
           ),
         ],
       ),
@@ -157,24 +159,28 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       title: ListTile(
-        leading: Card(
-          color: headerColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: InkWell(
-              onTap: () => showAlertDialog(context),
-              child: Text(
-                budgetName ?? 'Enter Name',
-                style: Theme.of(context).textTheme.headline5,
-              ),
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-            side: BorderSide(
-                color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
-          ),
+        leading: NameInputBox(
+          defaultWidth: MediaQuery.of(context).size.width / 3,
+          title: Text('Enter Name'),
         ),
+        // leading: Card(
+        //   color: headerColor,
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        //     child: InkWell(
+        //       onTap: () => showAlertDialog(context),
+        //       child: Text(
+        //         budgetName ?? 'Enter Name',
+        //         style: Theme.of(context).textTheme.headline5,
+        //       ),
+        //     ),
+        //   ),
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+        //     side: BorderSide(
+        //         color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
+        //   ),
+        // ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -194,9 +200,10 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final emailField = TextFormField(
+        // Creates input field
+        final inputField = TextFormField(
           controller: _textInputController,
-          keyboardType: TextInputType.emailAddress,
+          keyboardType: TextInputType.name,
           style: TextStyle(
             color: Colors.black,
           ),
@@ -212,27 +219,38 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         );
 
         return CustomAlertDialog(
-          content: Container(
-            width: MediaQuery.of(context).size.width / 1.3,
-            height: MediaQuery.of(context).size.height / 2.5,
-            decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: const Color(0xFFFFFF),
-              borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+          title: Text(budgetName ?? 'Budget Name'),
+          actions: [
+            MaterialButton(
+              onPressed: () {},
+              child: Text(
+                'Enter',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.black,
             ),
+          ],
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            color: Colors.amber,
+            width: MediaQuery.of(context).size.width / 1.5,
+            height: MediaQuery.of(context).size.height / 2,
             child: Column(
               children: [
                 Text('enter a name'),
-                emailField,
+                inputField,
                 MaterialButton(
                   child: Container(
                     color: Colors.blue,
                     child: Text('Enter'),
                   ),
                   onPressed: () {
-                    setState(() {
-                      budgetName = _textInputController.text;
-                    });
+                    if (_textInputController.text.isEmpty) {
+                    } else {
+                      setState(() {
+                        budgetName = _textInputController.text;
+                      });
+                    }
                     Navigator.of(context).pop();
                   },
                 ),
