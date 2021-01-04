@@ -2,7 +2,6 @@ import 'package:budgetour/tools/NameInputBox.dart';
 
 import '../models/CategoryListManager.dart';
 import '../models/finance_objects/BudgetObject.dart';
-import '../tools/DialogBox.dart';
 import '../tools/GlobalValues.dart';
 import '../widgets/standardized/CalculatorView.dart';
 import '../widgets/standardized/EnteredHeader.dart';
@@ -183,76 +182,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           ],
         ),
       ),
-    );
-  }
-
-  /// ALERT_DIALOG_BOX
-  /// --------------------------------------
-  /// Display window to obtain [budgetName]
-  /// --------------------------------------
-  void showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // Creates input field
-        final inputField = TextFormField(
-          controller: _textInputController,
-          keyboardType: TextInputType.name,
-          style: TextStyle(
-            color: Colors.black,
-          ),
-          decoration: InputDecoration(
-            labelText: 'Budget Name',
-            labelStyle: TextStyle(
-              color: Colors.black,
-            ),
-            hintStyle: TextStyle(
-              color: Colors.black,
-            ),
-          ),
-        );
-
-        return CustomAlertDialog(
-          title: Text(budgetName ?? 'Budget Name'),
-          actions: [
-            MaterialButton(
-              onPressed: () {},
-              child: Text(
-                'Enter',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.black,
-            ),
-          ],
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            color: Colors.amber,
-            width: MediaQuery.of(context).size.width / 1.5,
-            height: MediaQuery.of(context).size.height / 2,
-            child: Column(
-              children: [
-                Text('enter a name'),
-                inputField,
-                MaterialButton(
-                  child: Container(
-                    color: Colors.blue,
-                    child: Text('Enter'),
-                  ),
-                  onPressed: () {
-                    if (_textInputController.text.isEmpty) {
-                    } else {
-                      setState(() {
-                        budgetName = _textInputController.text;
-                      });
-                    }
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
