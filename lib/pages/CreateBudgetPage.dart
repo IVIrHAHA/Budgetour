@@ -24,21 +24,24 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   /// Controllers
   CalculatorController _calcController;
   TextEditingController _textInputController;
-  AnimationController _animController;
+  AnimationController _animHeaderCtrl;
 
-  /// [budgetName] recorded upon pop-up dialog onEnterPressed
-  String budgetName;
+  /// [_budgetName] recorded upon pop-up dialog onEnterPressed
+  String _budgetName;
 
-  /// Color animation when [budgetName] was not entered
+  /// Color animation when [_budgetName] was not entered
   /// transmitted through [headerColor]
   Animation<Color> headerColorTween;
   Color headerColor = Colors.black;
+
+  double _calcValue;
+  Color numberColor = Colors.black;
 
   @override
   void initState() {
     _calcController = CalculatorController();
     _textInputController = TextEditingController();
-    _animController = AnimationController(
+    _animHeaderCtrl = AnimationController(
       vsync: this,
       duration: Duration(
         milliseconds: 250,
@@ -47,13 +50,17 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
 
     /// Instantiating [headerColor] color animation
     headerColorTween = ColorTween(begin: Colors.black, end: Colors.red)
-        .animate(_animController)
+        .animate(_animHeaderCtrl)
           ..addListener(() {
             setState(() {
-              headerColor =
-                  budgetName == null ? headerColorTween.value : Colors.black;
+              if(_budgetName == null)
+                headerColor = headerColorTween.value;
+
+              if(_calcValue == null)
+                numberColor = headerColorTween.value;
             });
           });
+
     super.initState();
   }
 
@@ -61,7 +68,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   void dispose() {
     _calcController.dispose();
     _textInputController.dispose();
-    _animController.dispose();
+    _animHeaderCtrl.dispose();
     super.dispose();
   }
 
@@ -121,6 +128,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           ),
           InputDisplay(
             controller: _calcController,
+            textColor: numberColor,
             indicatorColor: ColorGenerator.fromHex(GColors.blueish),
           ),
         ],
@@ -134,19 +142,20 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   /// Validate data entered
   /// ---------------------------------------------
   void _onEnterPressed(double amount) {
+    _calcValue = amount;
     // OnEnterPressed
-    if (amount != null && budgetName != null) {
+    if (_calcValue != null && _budgetName != null) {
       CategoryListManager.instance.add(
         BudgetObject(
-          title: budgetName,
+          title: _budgetName,
           allocatedAmount: _calcController.getEntry(),
         ),
         widget.targetedCategory,
       );
 
       Navigator.of(context).pop();
-    } else if (budgetName == null) {
-      _animController.forward().whenComplete(() => _animController.reverse());
+    } else {
+      _animHeaderCtrl.forward().whenComplete(() => _animHeaderCtrl.reverse());
     }
   }
 
@@ -161,7 +170,8 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
       title: ListTile(
         leading: NameInputBox(
           defaultWidth: MediaQuery.of(context).size.width / 3,
-          title: Text(budgetName ?? 'Enter Name'),
+          title: Text(_budgetName ?? 'Enter Name'),
+          errorMessage: 'invalid',
           inputHint: 'Enter New Name',
           backgroundColor: headerColor,
           isValidFunction: (testTxt) {
@@ -171,7 +181,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
               return false;
           },
           onSubmitted: (text) {
-            budgetName = text;
+            _budgetName = text;
           },
         ),
         trailing: Column(
