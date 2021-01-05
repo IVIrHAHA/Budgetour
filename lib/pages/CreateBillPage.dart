@@ -75,9 +75,12 @@ class _CreateBillPageState extends State<CreateBillPage>
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       keyboardBarColor: Colors.grey[200],
       nextFocus: true,
-      actions: [
+      keyboardSeparatorColor: Colors.amber,
+      actions: [   
         KeyboardActionsItem(
           focusNode: _focusNumber,
+          displayActionBar: false,
+          enabled: false,
           footerBuilder: (ctx) {
             return CalculatorView(
               MediaQuery.of(context).size.height / 2,
@@ -110,26 +113,24 @@ class _CreateBillPageState extends State<CreateBillPage>
                 color: ColorGenerator.fromHex(GColors.blueish),
               ),
             ),
+
+            // Questions Column
             Expanded(
               flex: 1,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: Container(
-                      height: 200,
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
                       child: KeyboardActions(
+                        disableScroll: true,
+                        tapOutsideToDismiss: true,
                         config: _builConfig(context),
                         child: KeyboardCustomInput<String>(
                           focusNode: _focusNumber,
                           notifier: _keyboardNotifier,
-                          height: 30, // TODO: Verify this
-                          builder: (ctx, value, focus) {
-                            print('this was passed as value: ' + value);
-                            if (focus) {
-                              print('is focused');
-                            }
-
+                          builder: (ctx, _, focus) {
                             return _buildQuestion(
                               context,
                               title: 'How much is the bill?',
@@ -141,80 +142,78 @@ class _CreateBillPageState extends State<CreateBillPage>
                               ),
                             );
                           },
-
-                          // child: _buildQuestion(
-                          //   context,
-                          //   title: 'How much is the bill?',
-                          //   child: CalculatorInputDisplay(
-                          //     controller: _calcController,
-                          //     textColor: numberColor,
-                          //     indicatorColor: Colors.grey,
-                          //     indicatorSize: 1,
-                          //   ),
-                          // ),
                         ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: _buildQuestion(
-                      context,
-                      title: 'When is the next payment due date?',
-                      child: GestureDetector(
-                        onTap: () {
-                          selectDate(context);
-                        },
-                        child: AbsorbPointer(
-                          absorbing: true,
-                          child: TextFormField(
-                            controller: startdata,
-                            keyboardType: TextInputType.datetime,
-                            decoration: InputDecoration(
-                                suffixIcon: Icon(Icons.calendar_today,
-                                    color: Colors.blue)),
+
+                  // Payment Due-Date
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: _buildQuestion(
+                        context,
+                        title: 'When is the next payment due date?',
+                        child: GestureDetector(
+                          onTap: () {
+                            selectDate(context);
+                          },
+                          child: AbsorbPointer(
+                            absorbing: true,
+                            child: TextFormField(
+                              controller: startdata,
+                              keyboardType: TextInputType.datetime,
+                              decoration: InputDecoration(
+                                  suffixIcon: Icon(Icons.calendar_today,
+                                      color: Colors.blue)),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Frequency',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            DropdownButton<String>(
-                              value: 'Monthly',
-                              icon: Icon(Icons.arrow_drop_down),
-                              onChanged: (newValue) {
-                                print('changed from menu: ' + newValue);
-                              },
-                              items: <String>[
-                                'Weekly',
-                                'Monthly',
-                                'Bi-Monthly',
-                                'Yearly'
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
-                        Divider(
-                          color: Colors.grey,
-                          thickness: 1,
-                          height: 0,
-                        )
-                      ],
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Frequency',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              DropdownButton<String>(
+                                value: 'Monthly',
+                                icon: Icon(Icons.arrow_drop_down),
+                                onChanged: (newValue) {
+                                  print('changed from menu: ' + newValue);
+                                },
+                                items: <String>[
+                                  'Weekly',
+                                  'Monthly',
+                                  'Bi-Monthly',
+                                  'Yearly'
+                                ].map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                          Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                            height: 0,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],
