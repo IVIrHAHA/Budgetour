@@ -3,7 +3,7 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/tools/NameInputBox.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
-import 'package:budgetour/widgets/standardized/InputDisplay.dart';
+import 'package:budgetour/widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

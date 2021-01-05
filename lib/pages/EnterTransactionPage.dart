@@ -1,7 +1,7 @@
 import '../tools/GlobalValues.dart';
 import '../widgets/standardized/CalculatorView.dart';
 import '../widgets/standardized/EnteredHeader.dart';
-import '../widgets/standardized/InputDisplay.dart';
+import '../widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:flutter/material.dart';
 
 /// Versatile widget which allows for a formatted view of
