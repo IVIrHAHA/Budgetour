@@ -5,7 +5,7 @@ import '../widgets/standardized/InputDisplay.dart';
 import 'package:flutter/material.dart';
 
 /// Versatile widget which allows for a formatted view of
-/// [EnteredHeader], [InputDisplay] and [CalculatorView].
+/// [EnteredHeader], [CalculatorInputDisplay] and [CalculatorView].
 
 class EnterTransactionPage extends StatefulWidget {
 
@@ -88,7 +88,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
             text: widget.headerTitle,
             color: widget.headerColorAccent,
           ),
-          InputDisplay(controller: calcController),
+          CalculatorInputDisplay(controller: calcController),
           //TODO: implement options menu
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

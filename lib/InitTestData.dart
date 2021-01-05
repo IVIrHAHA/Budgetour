@@ -14,7 +14,6 @@ class InitTestData {
     dummyEssentialList.add(_buildBudgetObjects('Food', 150, 10));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
-    dummyEssentialList.add(_buildGoalObject('4Runner', 4000, fixedAmount: 200));
 
     return dummyEssentialList;
   }

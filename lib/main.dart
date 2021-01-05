@@ -1,6 +1,7 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
+import 'package:budgetour/pages/CreateBillPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -148,6 +149,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   MenuListPage buildCreateFinanceObjectMenu(BuildContext context) {
+    /// [_controller.index] gets the tab name of the TabBarView. Which
+    /// is correlated with the [CategoryType] enum list
     return MenuListPage({
       Text('Budget', style: Theme.of(context).textTheme.headline5): () {
         Navigator.of(context).push(
@@ -162,7 +165,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         'Bill',
         style: Theme.of(context).textTheme.headline5,
       ): () {
-        print('create bill');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return CreateBillPage(CategoryType.values[_controller.index]);
+            },
+          ),
+        );
       },
       Text(
         'Goal',

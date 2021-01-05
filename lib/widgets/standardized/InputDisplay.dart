@@ -3,27 +3,29 @@ import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class InputDisplay extends StatefulWidget {
+class CalculatorInputDisplay extends StatefulWidget {
   final String overrideText;
   // final bool focusable;
   final Color indicatorColor, textColor;
   final CalculatorController controller;
+  final double indicatorSize;
 
-  InputDisplay({
+  CalculatorInputDisplay({
     this.controller,
     this.overrideText,
     this.textColor = Colors.black,
     this.indicatorColor = Colors.grey,
+    this.indicatorSize = 2,
   });
 
   @override
-  _InputDisplayState createState() => _InputDisplayState();
+  _CalculatorInputDisplayState createState() => _CalculatorInputDisplayState();
 }
 
-class _InputDisplayState extends State<InputDisplay> {
+class _CalculatorInputDisplayState extends State<CalculatorInputDisplay> {
   String displayedText;
 
-  _InputDisplayState() {
+  _CalculatorInputDisplayState() {
     displayedText = '\$ 0.00';
   }
 
@@ -56,7 +58,7 @@ class _InputDisplayState extends State<InputDisplay> {
           ),
           Divider(
             color: widget.indicatorColor,
-            thickness: 2,
+            thickness: widget.indicatorSize,
           ),
         ],
       ),

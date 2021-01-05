@@ -23,7 +23,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     with SingleTickerProviderStateMixin {
   /// Controllers
   CalculatorController _calcController;
-  TextEditingController _textInputController;
   AnimationController _animHeaderCtrl;
 
   /// [_budgetName] recorded upon pop-up dialog onEnterPressed
@@ -40,7 +39,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   @override
   void initState() {
     _calcController = CalculatorController();
-    _textInputController = TextEditingController();
     _animHeaderCtrl = AnimationController(
       vsync: this,
       duration: Duration(
@@ -67,7 +65,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   @override
   void dispose() {
     _calcController.dispose();
-    _textInputController.dispose();
     _animHeaderCtrl.dispose();
     super.dispose();
   }
@@ -126,7 +123,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
             'How much is going into this budget?',
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          InputDisplay(
+          CalculatorInputDisplay(
             controller: _calcController,
             textColor: numberColor,
             indicatorColor: ColorGenerator.fromHex(GColors.blueish),
