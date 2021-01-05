@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 /// [EnteredHeader], [CalculatorInputDisplay] and [CalculatorView].
 
 class EnterTransactionPage extends StatefulWidget {
-
   /// [onEnterPressed] will be called when [CalculatorView]
   /// "enter" button is pressed.
   /// [BuildContext] is needed for the [Navigator]
@@ -48,7 +47,6 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
           /// [EnteredHeader] and [InputDisplay]
           Flexible(
             flex: 2,
@@ -62,8 +60,9 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
           Flexible(
             flex: 3,
             child: CalculatorView(
-              calcController,
-              (entry) {
+              MediaQuery.of(context).size.height / 2,
+              controller: calcController,
+              onEnterPressed: (entry) {
                 widget.onEnterPressed(
                   entry,
                   context,

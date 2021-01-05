@@ -2,15 +2,24 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
-class CalculatorView extends StatefulWidget {
+class CalculatorView extends StatefulWidget
+    with KeyboardCustomPanelMixin
+    implements PreferredSizeWidget {
   final CalculatorController controller;
   final Function(double numberEntered) onEnterPressed;
+  final _height;
 
-  CalculatorView(this.controller, this.onEnterPressed);
+  final ValueNotifier<String> notifier;
+
+  CalculatorView(this._height, {this.controller, this.onEnterPressed, this.notifier});
 
   @override
   _CalculatorViewState createState() => _CalculatorViewState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(_height);
 }
 
 class _CalculatorViewState extends State<CalculatorView> {
@@ -287,7 +296,6 @@ class CalculatorController {
   void _attachSplashNotifier(Function(bool entryPassed) function) {
     _notifySplash = function;
   }
-
 
   /*
    * Visually enables the decimal button in CalculatorView.

@@ -7,6 +7,8 @@ import 'package:budgetour/widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
 
 class CreateBillPage extends StatefulWidget {
   final CategoryType targetCategory;
@@ -65,9 +67,36 @@ class _CreateBillPageState extends State<CreateBillPage>
     super.dispose();
   }
 
+  final FocusNode _focusNumber = FocusNode();
+  final _keyboardNotifier = ValueNotifier<String>('0');
+
+  KeyboardActionsConfig _builConfig(BuildContext ctx) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNumber,
+          footerBuilder: (ctx) {
+            return CalculatorView(
+              MediaQuery.of(context).size.height / 2,
+              notifier: _keyboardNotifier,
+              controller: _calcController,
+              onEnterPressed: (_) {
+                print('enter accepted');
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: _buildAppBar(context),
       body: Container(
         padding: const EdgeInsets.all(GlobalValues.defaultMargin),
@@ -87,14 +116,43 @@ class _CreateBillPageState extends State<CreateBillPage>
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: _buildQuestion(
-                      context,
-                      title: 'How much is the bill?',
-                      child: CalculatorInputDisplay(
-                        controller: _calcController,
-                        textColor: numberColor,
-                        indicatorColor: Colors.grey,
-                        indicatorSize: 1,
+                    child: Container(
+                      height: 200,
+                      child: KeyboardActions(
+                        config: _builConfig(context),
+                        child: KeyboardCustomInput<String>(
+                          focusNode: _focusNumber,
+                          notifier: _keyboardNotifier,
+                          height: 30, // TODO: Verify this
+                          builder: (ctx, value, focus) {
+                            print('this was passed as value: ' + value);
+                            if (focus) {
+                              print('is focused');
+                            }
+
+                            return _buildQuestion(
+                              context,
+                              title: 'How much is the bill?',
+                              child: CalculatorInputDisplay(
+                                controller: _calcController,
+                                textColor: numberColor,
+                                indicatorColor: Colors.grey,
+                                indicatorSize: 1,
+                              ),
+                            );
+                          },
+
+                          // child: _buildQuestion(
+                          //   context,
+                          //   title: 'How much is the bill?',
+                          //   child: CalculatorInputDisplay(
+                          //     controller: _calcController,
+                          //     textColor: numberColor,
+                          //     indicatorColor: Colors.grey,
+                          //     indicatorSize: 1,
+                          //   ),
+                          // ),
+                        ),
                       ),
                     ),
                   ),

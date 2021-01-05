@@ -51,11 +51,9 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         .animate(_animHeaderCtrl)
           ..addListener(() {
             setState(() {
-              if(_budgetName == null)
-                headerColor = headerColorTween.value;
+              if (_budgetName == null) headerColor = headerColorTween.value;
 
-              if(_calcValue == null)
-                numberColor = headerColorTween.value;
+              if (_calcValue == null) numberColor = headerColorTween.value;
             });
           });
 
@@ -92,9 +90,13 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           ),
           Flexible(
             flex: 0, // Use CalculatorView default height
-            child: CalculatorView(_calcController, (amount) {
-              _onEnterPressed(amount);
-            }),
+            child: CalculatorView(
+              MediaQuery.of(context).size.height / 2,
+              controller: _calcController,
+              onEnterPressed: (amount) {
+                _onEnterPressed(amount);
+              },
+            ),
           ),
         ],
       ),
