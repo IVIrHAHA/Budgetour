@@ -214,7 +214,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     super.dispose();
   }
 
-  FixedPaymentFrequency _selectedFrequency;
+  FixedPaymentFrequency _selectedFrequency = FixedPaymentFrequency.monthly;
 
   /// METHOD: SELECT FREQUENCY
   /// -------------------------------------------
@@ -232,7 +232,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               style: Theme.of(context).textTheme.bodyText1,
             ),
             DropdownButton<FixedPaymentFrequency>(
-              value: FixedPaymentFrequency.monthly,
+              value: _selectedFrequency,
               icon: Icon(Icons.arrow_drop_down),
               onChanged: (newValue) {
                 _selectedFrequency = newValue;
