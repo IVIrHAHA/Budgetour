@@ -37,6 +37,8 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   double _calcValue;
   Color numberColor = Colors.black;
 
+  Function _enterFunction = null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,28 +64,25 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                 children: [
                   Flexible(
                     flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: KeyboardActions(
-                        disableScroll: true,
-                        tapOutsideToDismiss: true,
-                        config: _buildConfig(context),
-                        child: KeyboardCustomInput<String>(
-                          focusNode: _focusNumber,
-                          notifier: _keyboardNotifier,
-                          builder: (ctx, _, focus) {
-                            return _formatQuestion(
-                              context,
-                              title: 'How much is the bill?',
-                              child: CalculatorInputDisplay(
-                                controller: _calcController,
-                                textColor: numberColor,
-                                indicatorColor: Colors.grey,
-                                indicatorSize: 1,
-                              ),
-                            );
-                          },
-                        ),
+                    child: KeyboardActions(
+                      disableScroll: true,
+                      tapOutsideToDismiss: true,
+                      config: _buildConfig(context),
+                      child: KeyboardCustomInput<String>(
+                        focusNode: _focusNumber,
+                        notifier: _keyboardNotifier,
+                        builder: (ctx, _, focus) {
+                          return _formatQuestion(
+                            context,
+                            title: 'How much is the bill?',
+                            child: CalculatorInputDisplay(
+                              controller: _calcController,
+                              textColor: numberColor,
+                              indicatorColor: Colors.grey,
+                              indicatorSize: 1,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -91,27 +90,22 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                   // Payment Due-Date
                   Flexible(
                     flex: 3,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: _formatQuestion(
-                        context,
-                        title: 'When is the next payment due date?',
-                        child: GestureDetector(
-                          onTap: () {
-                            selectDate(context);
-                          },
-                          child: AbsorbPointer(
-                            absorbing: true,
-                            child: TextFormField(
-                              controller: startdata,
-                              keyboardType: TextInputType.datetime,
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.calendar_today,
-                                  color:
-                                      ColorGenerator.fromHex(GColors.blueish),
-                                ),
+                    child: _formatQuestion(
+                      context,
+                      title: 'When is the next payment due date?',
+                      child: GestureDetector(
+                        onTap: () {
+                          selectDate(context);
+                        },
+                        child: AbsorbPointer(
+                          absorbing: true,
+                          child: TextFormField(
+                            controller: startdata,
+                            keyboardType: TextInputType.datetime,
+                            decoration: InputDecoration(
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                color: ColorGenerator.fromHex(GColors.blueish),
                               ),
                             ),
                           ),
@@ -123,18 +117,48 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                   // Select Frequency
                   Flexible(
                     flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: _selectFrequency(context),
-                    ),
+                    child: _selectFrequency(context),
                   ),
                 ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: _enterFunction,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 4,
+              ),
+              color: Colors.black,
+              disabledColor: Colors.grey,
+              child: Text(
+                'Enter',
+                style: Theme.of(context).textTheme.button.copyWith(
+                      color: Colors.white,
+                    ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  _onEntryEntered() {
+    if (_selectedDate != null &&
+        _calcValue != null &&
+        _selectedFrequency != null &&
+        _billName != null) {
+      setState(() {
+        _enterFunction = _returnFixedPayment;
+      });
+    } else {
+      setState(() {
+        _enterFunction = null;
+      });
+    }
   }
 
   bool _validEntries() {
@@ -145,10 +169,10 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     if (_validEntries()) {
       CategoryListManager.instance.add(
         FixedPaymentObject(
-          title: null,
-          paymentAmount: null,
-          nextDueDate: null,
-          frequency: null,
+          name: _billName,
+          paymentAmount: _calcValue,
+          nextDueDate: _selectedDate,
+          frequency: _selectedFrequency,
         ),
         widget.targetCategory,
       );
@@ -190,6 +214,8 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     super.dispose();
   }
 
+  FixedPaymentFrequency _selectedFrequency;
+
   /// METHOD: SELECT FREQUENCY
   /// -------------------------------------------
   /// Get the frequency at which the [FixedPaymentObject]
@@ -205,17 +231,19 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               'Frequency',
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            DropdownButton<String>(
-              value: 'Monthly',
+            DropdownButton<FixedPaymentFrequency>(
+              value: FixedPaymentFrequency.monthly,
               icon: Icon(Icons.arrow_drop_down),
               onChanged: (newValue) {
-                print('changed from menu: ' + newValue);
+                _selectedFrequency = newValue;
+                _onEntryEntered();
               },
-              items: <String>['Weekly', 'Monthly', 'Bi-Monthly', 'Yearly']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+              items: FixedPaymentFrequency.values
+                  .map<DropdownMenuItem<FixedPaymentFrequency>>(
+                      (FixedPaymentFrequency value) {
+                return DropdownMenuItem<FixedPaymentFrequency>(
                   value: value,
-                  child: Text(value),
+                  child: Text(_convertEnumToString(value)),
                 );
               }).toList(),
             ),
@@ -230,8 +258,20 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     );
   }
 
+  String _convertEnumToString(FixedPaymentFrequency evalue) {
+    String string = evalue.toString().split('.').last.toString();
+
+    // TODO: Revise non-working logic
+    if (string.contains('_')) {
+      string.replaceFirst('_', '-');
+    }
+
+    return string;
+  }
+
   final FocusNode _focusNumber = FocusNode();
-  /// As of now this is only used as a means to 
+
+  /// As of now this is only used as a means to
   /// implement [CalculatorView] but it doesn't
   /// actually return anything
   final _keyboardNotifier = ValueNotifier<String>(null);
@@ -240,7 +280,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   /// --------------------------------------------------
   /// Configures [CalculatorView] as the system keyboard.
   /// Uses the [KeyboardActions] package to achieve this.
-  /// 
+  ///
   /// ** Because there are multiple questions, the CalcView
   /// needs to appear/hide when answering other questions
   /// --------------------------------------------------
@@ -253,7 +293,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
       actions: [
         KeyboardActionsItem(
           focusNode: _focusNumber,
-          displayActionBar: false,  // Hides the action bar
+          displayActionBar: false, // Hides the action bar
           enabled: false,
           footerBuilder: (ctx) {
             return CalculatorView(
@@ -262,6 +302,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               controller: _calcController,
               onEnterPressed: (amount) {
                 _calcValue = amount;
+                _onEntryEntered();
                 _focusNumber.unfocus();
               },
             );
@@ -276,13 +317,13 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   /// Promps user to select a date from a calendar
   /// -----------------------------------------------------
   TextEditingController startdata = new TextEditingController();
-  DateTime selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now();
   var myFormat = DateFormat('yyyy-MM-dd');
   Future selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
-      firstDate: selectedDate,
+      initialDate: _selectedDate,
+      firstDate: _selectedDate,
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget child) {
         return Theme(
@@ -298,7 +339,8 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     );
     if (picked != null) {
       setState(() {
-        selectedDate = picked;
+        _selectedDate = picked;
+        _onEntryEntered();
         startdata = TextEditingController(
           text: myFormat.format(picked),
         );

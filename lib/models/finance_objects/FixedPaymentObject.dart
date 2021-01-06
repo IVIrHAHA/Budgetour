@@ -18,14 +18,14 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
   DateTime _lastDueDate; // If nothing entered for nextDueDate, use date created
 
   FixedPaymentObject({
-    @required String title,
+    @required String name,
     @required this.paymentAmount,
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
     String label1,
     String label2,
   }) : super(FinanceObjectType.fixed,
-            name: title, label_1: label1, label_2: label2) {
+            name: name, label_1: label1, label_2: label2) {
     this._lastDueDate = nextDueDate ?? DateTime.now();
   }
 

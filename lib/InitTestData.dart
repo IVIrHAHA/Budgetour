@@ -43,7 +43,7 @@ class InitTestData {
   // Eventually have history, labels and due dates
   static FixedPaymentObject _buildFixedPaymentObject(
       String title, double amount) {
-    return FixedPaymentObject(title: title, paymentAmount: amount);
+    return FixedPaymentObject(name: title, paymentAmount: amount);
   }
 
   static GoalObject _buildGoalObject(
