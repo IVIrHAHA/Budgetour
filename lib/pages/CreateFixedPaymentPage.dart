@@ -1,4 +1,5 @@
 import 'package:budgetour/models/CategoryListManager.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/tools/NameInputBox.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
@@ -10,16 +11,16 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 
-class CreateBillPage extends StatefulWidget {
+class CreateFixedPaymentPage extends StatefulWidget {
   final CategoryType targetCategory;
 
-  CreateBillPage(this.targetCategory);
+  CreateFixedPaymentPage(this.targetCategory);
 
   @override
-  _CreateBillPageState createState() => _CreateBillPageState();
+  _CreateFixedPaymentPageState createState() => _CreateFixedPaymentPageState();
 }
 
-class _CreateBillPageState extends State<CreateBillPage>
+class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     with SingleTickerProviderStateMixin {
   /// Controllers
   CalculatorController _calcController;
@@ -35,6 +36,128 @@ class _CreateBillPageState extends State<CreateBillPage>
 
   double _calcValue;
   Color numberColor = Colors.black;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      appBar: _buildAppBar(context),
+      body: Container(
+        padding: const EdgeInsets.all(GlobalValues.defaultMargin),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 0,
+              child: EnteredHeader(
+                text: 'Square',
+                text2: ' Details',
+                color: ColorGenerator.fromHex(GColors.blueish),
+              ),
+            ),
+
+            // Questions Column
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: KeyboardActions(
+                        disableScroll: true,
+                        tapOutsideToDismiss: true,
+                        config: _buildConfig(context),
+                        child: KeyboardCustomInput<String>(
+                          focusNode: _focusNumber,
+                          notifier: _keyboardNotifier,
+                          builder: (ctx, _, focus) {
+                            return _formatQuestion(
+                              context,
+                              title: 'How much is the bill?',
+                              child: CalculatorInputDisplay(
+                                controller: _calcController,
+                                textColor: numberColor,
+                                indicatorColor: Colors.grey,
+                                indicatorSize: 1,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Payment Due-Date
+                  Flexible(
+                    flex: 3,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: _formatQuestion(
+                        context,
+                        title: 'When is the next payment due date?',
+                        child: GestureDetector(
+                          onTap: () {
+                            selectDate(context);
+                          },
+                          child: AbsorbPointer(
+                            absorbing: true,
+                            child: TextFormField(
+                              controller: startdata,
+                              keyboardType: TextInputType.datetime,
+                              decoration: InputDecoration(
+                                suffixIcon: Icon(
+                                  Icons.calendar_today,
+                                  color:
+                                      ColorGenerator.fromHex(GColors.blueish),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Select Frequency
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: _selectFrequency(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _validEntries() {
+    return true;
+  }
+
+  _returnFixedPayment() {
+    if (_validEntries()) {
+      CategoryListManager.instance.add(
+        FixedPaymentObject(
+          title: null,
+          paymentAmount: null,
+          nextDueDate: null,
+          frequency: null,
+        ),
+        widget.targetCategory,
+      );
+
+      Navigator.of(context).pop();
+    } else {
+      _animHeaderCtrl.forward().whenComplete(() => _animHeaderCtrl.reverse());
+    }
+  }
 
   @override
   void initState() {
@@ -67,27 +190,79 @@ class _CreateBillPageState extends State<CreateBillPage>
     super.dispose();
   }
 
-  final FocusNode _focusNumber = FocusNode();
-  final _keyboardNotifier = ValueNotifier<String>('0');
+  /// METHOD: SELECT FREQUENCY
+  /// -------------------------------------------
+  /// Get the frequency at which the [FixedPaymentObject]
+  /// will be billed
+  /// -------------------------------------------
+  Widget _selectFrequency(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Frequency',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            DropdownButton<String>(
+              value: 'Monthly',
+              icon: Icon(Icons.arrow_drop_down),
+              onChanged: (newValue) {
+                print('changed from menu: ' + newValue);
+              },
+              items: <String>['Weekly', 'Monthly', 'Bi-Monthly', 'Yearly']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        Divider(
+          color: Colors.grey,
+          thickness: 1,
+          height: 0,
+        )
+      ],
+    );
+  }
 
-  KeyboardActionsConfig _builConfig(BuildContext ctx) {
+  final FocusNode _focusNumber = FocusNode();
+  /// As of now this is only used as a means to 
+  /// implement [CalculatorView] but it doesn't
+  /// actually return anything
+  final _keyboardNotifier = ValueNotifier<String>(null);
+
+  /// METHOD: BUILD CONFIG
+  /// --------------------------------------------------
+  /// Configures [CalculatorView] as the system keyboard.
+  /// Uses the [KeyboardActions] package to achieve this.
+  /// 
+  /// ** Because there are multiple questions, the CalcView
+  /// needs to appear/hide when answering other questions
+  /// --------------------------------------------------
+  KeyboardActionsConfig _buildConfig(BuildContext ctx) {
+    /// [KeyboardActionsConfig] is used by [KeyboardActions]
+    /// when building [CalculatorInputDisplay].
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Colors.grey[200],
       nextFocus: true,
-      keyboardSeparatorColor: Colors.amber,
-      actions: [   
+      actions: [
         KeyboardActionsItem(
           focusNode: _focusNumber,
-          displayActionBar: false,
+          displayActionBar: false,  // Hides the action bar
           enabled: false,
           footerBuilder: (ctx) {
             return CalculatorView(
               MediaQuery.of(context).size.height / 2,
               notifier: _keyboardNotifier,
               controller: _calcController,
-              onEnterPressed: (_) {
-                print('enter accepted');
+              onEnterPressed: (amount) {
+                _calcValue = amount;
+                _focusNumber.unfocus();
               },
             );
           },
@@ -96,135 +271,10 @@ class _CreateBillPageState extends State<CreateBillPage>
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: _buildAppBar(context),
-      body: Container(
-        padding: const EdgeInsets.all(GlobalValues.defaultMargin),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 0,
-              child: EnteredHeader(
-                text: 'Square',
-                text2: ' Details',
-                color: ColorGenerator.fromHex(GColors.blueish),
-              ),
-            ),
-
-            // Questions Column
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Flexible(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: KeyboardActions(
-                        disableScroll: true,
-                        tapOutsideToDismiss: true,
-                        config: _builConfig(context),
-                        child: KeyboardCustomInput<String>(
-                          focusNode: _focusNumber,
-                          notifier: _keyboardNotifier,
-                          builder: (ctx, _, focus) {
-                            return _buildQuestion(
-                              context,
-                              title: 'How much is the bill?',
-                              child: CalculatorInputDisplay(
-                                controller: _calcController,
-                                textColor: numberColor,
-                                indicatorColor: Colors.grey,
-                                indicatorSize: 1,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Payment Due-Date
-                  Flexible(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: _buildQuestion(
-                        context,
-                        title: 'When is the next payment due date?',
-                        child: GestureDetector(
-                          onTap: () {
-                            selectDate(context);
-                          },
-                          child: AbsorbPointer(
-                            absorbing: true,
-                            child: TextFormField(
-                              controller: startdata,
-                              keyboardType: TextInputType.datetime,
-                              decoration: InputDecoration(
-                                  suffixIcon: Icon(Icons.calendar_today,
-                                      color: Colors.blue)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Frequency',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              DropdownButton<String>(
-                                value: 'Monthly',
-                                icon: Icon(Icons.arrow_drop_down),
-                                onChanged: (newValue) {
-                                  print('changed from menu: ' + newValue);
-                                },
-                                items: <String>[
-                                  'Weekly',
-                                  'Monthly',
-                                  'Bi-Monthly',
-                                  'Yearly'
-                                ].map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          ),
-                          Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                            height: 0,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  /// METHOD: SELECT DATE
+  /// -----------------------------------------------------
+  /// Promps user to select a date from a calendar
+  /// -----------------------------------------------------
   TextEditingController startdata = new TextEditingController();
   DateTime selectedDate = DateTime.now();
   var myFormat = DateFormat('yyyy-MM-dd');
@@ -237,9 +287,9 @@ class _CreateBillPageState extends State<CreateBillPage>
       builder: (BuildContext context, Widget child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Colors.amber,
+            primaryColor: Colors.black,
             accentColor: Colors.amberAccent,
-            colorScheme: ColorScheme.light(primary: Colors.amber),
+            colorScheme: ColorScheme.light(primary: Colors.black),
             buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child,
@@ -256,18 +306,17 @@ class _CreateBillPageState extends State<CreateBillPage>
     } else {}
   }
 
-  /// BUILD_PROMPT_CONTENT
+  /// METHOD: BUILD_QUESTION_FORMAT
   /// ---------------------------------------------
   /// Creates prompt content to obtain user data
   /// ---------------------------------------------
-  Widget _buildQuestion(
+  Widget _formatQuestion(
     BuildContext context, {
     String title,
     Widget child,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
           title,

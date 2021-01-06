@@ -1,7 +1,7 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
-import 'package:budgetour/pages/CreateBillPage.dart';
+import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) {
-              return CreateBillPage(CategoryType.values[_controller.index]);
+              return CreateFixedPaymentPage(CategoryType.values[_controller.index]);
             },
           ),
         );
