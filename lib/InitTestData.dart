@@ -11,7 +11,7 @@ class InitTestData {
   static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();
 
   static initTileList() {
-    dummyEssentialList.add(_buildBudgetObjects('Food', 150, 10));
+    dummyEssentialList.add(_buildBudgetObjects('Food', 150.99, 10));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
 

@@ -1,5 +1,8 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+
+import 'finance_objects/BudgetObject.dart';
 
 /// The 5 Categories of the program
 enum CategoryType {
@@ -15,16 +18,16 @@ enum CategoryType {
 ///
 /// 1. Essentials
 ///   [CategoryType.essential]
-/// 
+///
 /// 2. Security
 ///   [CategoryType.security]
-/// 
+///
 /// 3. Goals
 ///   [CategoryType.goals]
-/// 
+///
 /// 4. Lifestyle
 ///   [CategoryType.lifestyle]
-/// 
+///
 /// 5. Miscellaneous
 ///   [CategoryType.miscellaneous]
 
@@ -75,7 +78,7 @@ class CategoryListManager extends _CategoryListBase {
 }
 
 /// The 5 Category lists.
-///  
+///
 /// ** Seperated as to not make the singlton class above
 /// overly complicated.
 
@@ -95,4 +98,40 @@ abstract class _CategoryListBase {
   get lifestyle => _lifeStyleList;
 
   get misc => _miscList;
+}
+
+class CategoryListAnalyzer {
+  /// Calculates the alloted amounts in the following [FinanceObject] types
+  /// - [BudgetObject]
+  /// - [FixedPaymentObject]
+  static double getAllocatedAmount(List<FinanceObject> list) {
+    double amount = 0;
+
+    for (FinanceObject obj in list) {
+      if (obj is BudgetObject) {
+        amount += obj.allocatedAmount;
+      } else if (obj is FixedPaymentObject) {
+        amount += obj.paymentAmount;
+      }
+    }
+
+    return amount;
+  }
+
+  /// Calculates the unspent amounts in the following [FinanceObject] types
+  /// - [BudgetObject]
+  /// - [FixedPaymentObject]
+  static double getUnspentAmount(List<FinanceObject> list) {
+    double unspent = 0;
+
+    for (FinanceObject obj in list) {
+      if (obj is BudgetObject) {
+        unspent += obj.currentBalance;
+      } else if (obj is FixedPaymentObject) {
+        if (!obj.isPaid()) unspent += obj.paymentAmount;
+      }
+    }
+
+    return unspent;
+  }
 }

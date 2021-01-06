@@ -5,6 +5,7 @@ import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: ListTile(
           // Category Info 1
-          leading: Text('Allocated'),
+          leading: Column(
+            children: [
+              Text('Allocated'),
+              Text(
+                '\$ ${Format.formatDouble(CategoryListAnalyzer.getAllocatedAmount(CategoryListManager.instance.essentials), 2)}',
+              ),
+            ],
+          ),
 
           // Add Finance Object Button
           title: InkWell(
@@ -104,7 +112,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
 
           // Category Info 2
-          trailing: Text('Pending'),
+          trailing: Column(
+            children: [
+              Text('Pending'),
+              Text(
+                '\$ ${Format.formatDouble(
+                  CategoryListAnalyzer.getUnspentAmount(
+                      CategoryListManager.instance.essentials),
+                  2,
+                )}',
+              ),
+            ],
+          ),
         ),
 
         // Create Category Tabs
@@ -168,7 +187,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) {
-              return CreateFixedPaymentPage(CategoryType.values[_controller.index]);
+              return CreateFixedPaymentPage(
+                  CategoryType.values[_controller.index]);
             },
           ),
         );
