@@ -12,6 +12,7 @@ enum FixedPaymentFrequency {
 }
 
 class FixedPaymentObject extends FinanceObject with TransactionHistory {
+  final double monthlyFixedPayment;
   double paymentAmount;
   FixedPaymentFrequency frequency;
   DateTime nextDueDate;
@@ -19,7 +20,7 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
 
   FixedPaymentObject({
     @required String name,
-    @required this.paymentAmount,
+    @required this.monthlyFixedPayment,
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
     String label1,
@@ -27,6 +28,7 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
   }) : super(FinanceObjectType.fixed,
             name: name, label_1: label1, label_2: label2) {
     this._lastDueDate = nextDueDate ?? DateTime.now();
+    this.paymentAmount = 0;
   }
 
   get lastDueDate => _lastDueDate;
@@ -38,7 +40,7 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
 
   DateTime _setNextDueDate() {}
 
-  isPaid() => paymentAmount == 0 ? true : false;
+  isPaid() => paymentAmount == monthlyFixedPayment ? true : false;
 
   @override
   Widget getLandingPage() {

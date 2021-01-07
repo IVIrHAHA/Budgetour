@@ -111,7 +111,7 @@ class CategoryListAnalyzer {
       if (obj is BudgetObject) {
         amount += obj.allocatedAmount;
       } else if (obj is FixedPaymentObject) {
-        amount += obj.paymentAmount;
+        amount += obj.monthlyFixedPayment;
       }
     }
 

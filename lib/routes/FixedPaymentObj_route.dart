@@ -20,8 +20,10 @@ class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
     return MyAppBarView(
       financeObject: widget.paymentObj,
       quickStatTitle: 'Pending',
-      quickStatInfo:
-          '\$ ${Format.formatDouble(widget.paymentObj.paymentAmount, 2)}',
+      quickStatInfo: '\$ ${Format.formatDouble(
+        widget.paymentObj.monthlyFixedPayment - widget.paymentObj.paymentAmount,
+        2,
+      )}',
       tabPages: [
         Column(
           children: [
@@ -38,8 +40,10 @@ class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
               child: EnterTransactionPage(
                 onEnterPressed: (amount, _) {
                   setState(() {
-                    widget.paymentObj.paymentAmount -= amount;
-                    Navigator.of(context).pop();
+                    if (amount != null) {
+                      widget.paymentObj.paymentAmount = amount;
+                      Navigator.of(context).pop();
+                    }
                   });
                 },
                 headerTitle: 'Payment',

@@ -47,7 +47,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          /// [EnteredHeader] and [InputDisplay]
+          /// [EnteredHeader] and [CalculatorInputDisplay]
           Flexible(
             flex: 2,
             child: Padding(
