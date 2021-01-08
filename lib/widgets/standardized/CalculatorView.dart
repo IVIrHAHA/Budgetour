@@ -235,7 +235,6 @@ class _CalculatorViewState extends State<CalculatorView> {
 }
 
 class CalculatorController {
-  double value;
   String _enteredValue;
   List<Function> listeners;
 
@@ -258,6 +257,8 @@ class CalculatorController {
     else
       throw Exception('LISTENER CANNOT NOTIFY NULL FUNCTION');
   }
+
+  double get value => getEntry();
 
   /*
    *  This outputs parsed double. 
@@ -463,14 +464,12 @@ class CalculatorController {
   }
 
   dispose() {
-    this.value = null;
     listeners.clear();
     listeners = null;
     _notifySplash = null;
   }
 
   reset() {
-    this.value = null;
     this._entryGate = true;
     this._enteredValue = '';
     this.decimalInUse = false;
