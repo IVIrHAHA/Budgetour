@@ -58,5 +58,5 @@ class BudgetObject extends FinanceObject with TransactionHistory {
       return ColorGenerator.fromHex(GColors.neutralColor);
   }
 
-  static LabelObject get allocationAmount => PreDefinedLabels.allocationAmount;
+  static LabelObject allocationAmount(double amount) => PreDefinedLabels.allocationAmount(amount);
 }

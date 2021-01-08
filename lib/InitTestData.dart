@@ -26,7 +26,7 @@ class InitTestData {
     BudgetObject obj = BudgetObject(
       title: title,
       allocatedAmount: allocationAmount,
-      label1: BudgetObject.allocationAmount,
+      label1: BudgetObject.allocationAmount(allocationAmount),
     );
 
     // Log random transactions

@@ -1,17 +1,24 @@
 class LabelObject {
   final String title;
-  final Future<double> valueFunction;
+  final double value;
 
-  const LabelObject(this.title, this.valueFunction);
+  final Future<double> evaluateValue;
+
+  const LabelObject(this.title, {this.evaluateValue, this.value = 0});
 }
 
 abstract class PreDefinedLabels {
-  static final LabelObject _allocationAmount = LabelObject('Allocated', _defineAllocationAmount());
+    static Future<double> _defineRemainingAmount() async {
+    double amount = -950;
 
-  static Future<double> _defineAllocationAmount() async {
-    print('from allo');
-    return 0.0;
+    for(int i = 0; i<100; i++) {
+      amount += i;
+    }
+
+    return amount;
   }
 
-  static get allocationAmount => _allocationAmount;
+  static allocationAmount(double amount) {
+    return LabelObject('Allocated', value: amount);
+  }
 }
