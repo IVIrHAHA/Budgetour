@@ -89,7 +89,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             children: [
               Text('Allocated'),
               Text(
-                '\$ ${Format.formatDouble(CategoryListAnalyzer.getAllocatedAmount(CategoryListManager.instance.essentials), 2)}',
+                '\$ ${Format.formatDouble(
+                  CategoryListAnalyzer.getAllocatedAmount(
+                      CategoryListManager.instance.essentials),
+                  0,
+                )}',
               ),
             ],
           ),
@@ -119,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 '\$ ${Format.formatDouble(
                   CategoryListAnalyzer.getUnspentAmount(
                       CategoryListManager.instance.essentials),
-                  2,
+                  0,
                 )}',
               ),
             ],

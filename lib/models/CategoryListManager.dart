@@ -128,7 +128,7 @@ class CategoryListAnalyzer {
       if (obj is BudgetObject) {
         unspent += obj.currentBalance;
       } else if (obj is FixedPaymentObject) {
-        if (!obj.isPaid()) unspent += obj.paymentAmount;
+        if (!obj.isPaid()) unspent += obj.monthlyFixedPayment;
       }
     }
 
