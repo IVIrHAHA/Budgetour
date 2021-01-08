@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 
-
 // TODO: When entering a name and how much the bill is.
 // the Enter button doesn't activate unless "Enter" is pressed
 // In other words when an input field loses focus before being
@@ -45,7 +44,9 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   double _calcValue;
   Color numberColor = Colors.black;
 
-  Function _enterFunction = null;
+  Function _enterFunction;
+
+  FixedPaymentFrequency _selectedFrequency = FixedPaymentFrequency.monthly;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                     flex: 3,
                     child: KeyboardActions(
                       disableScroll: true,
-                      tapOutsideToDismiss: true,
+                      tapOutsideToDismiss: false,
                       config: _buildConfig(context),
                       child: KeyboardCustomInput<String>(
                         focusNode: _focusNumber,
@@ -111,6 +112,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                             controller: startdata,
                             keyboardType: TextInputType.datetime,
                             decoration: InputDecoration(
+                              hintText:  DateFormat('MM-dd-yyyy').format(_selectedDate),
                               suffixIcon: Icon(
                                 Icons.calendar_today,
                                 color: ColorGenerator.fromHex(GColors.blueish),
@@ -131,7 +133,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               ),
             ),
             MaterialButton(
-              onPressed: _enterFunction,
+              onPressed: _onEntryEntered,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
               ),
@@ -159,13 +161,15 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
         _calcValue != null &&
         _selectedFrequency != null &&
         _billName != null) {
-      setState(() {
-        _enterFunction = _returnFixedPayment;
-      });
-    } else {
-      setState(() {
-        _enterFunction = null;
-      });
+      
+      // FixedPayment is valid and return to main screen
+      _returnFixedPayment();
+
+    } 
+
+    // Try to gather information and notify user what is missing
+    else {
+      _calcValue = _calcController.value;
     }
   }
 
@@ -222,8 +226,6 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     super.dispose();
   }
 
-  FixedPaymentFrequency _selectedFrequency = FixedPaymentFrequency.monthly;
-
   /// METHOD: SELECT FREQUENCY
   /// -------------------------------------------
   /// Get the frequency at which the [FixedPaymentObject]
@@ -244,7 +246,6 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               icon: Icon(Icons.arrow_drop_down),
               onChanged: (newValue) {
                 _selectedFrequency = newValue;
-                _onEntryEntered();
               },
               items: FixedPaymentFrequency.values
                   .map<DropdownMenuItem<FixedPaymentFrequency>>(
@@ -297,7 +298,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     /// when building [CalculatorInputDisplay].
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      nextFocus: true,
+      nextFocus: false,
       actions: [
         KeyboardActionsItem(
           focusNode: _focusNumber,
@@ -309,9 +310,10 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               notifier: _keyboardNotifier,
               controller: _calcController,
               onEnterPressed: (amount) {
-                _calcValue = amount;
-                _onEntryEntered();
-                _focusNumber.unfocus();
+                if (amount != null) {
+                  _calcValue = amount;
+                  _focusNumber.unfocus();
+                }
               },
             );
           },
@@ -326,7 +328,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   /// -----------------------------------------------------
   TextEditingController startdata = new TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  var myFormat = DateFormat('yyyy-MM-dd');
+  var myFormat = DateFormat('MM-dd-yyyy');
   Future selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -348,7 +350,6 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        _onEntryEntered();
         startdata = TextEditingController(
           text: myFormat.format(picked),
         );
