@@ -1,7 +1,7 @@
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-import 'GlobalValues.dart';
+import '../../tools/GlobalValues.dart';
 
 class NameInputBox extends StatefulWidget {
   /// Creates an animated input field

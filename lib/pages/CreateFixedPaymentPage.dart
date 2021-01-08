@@ -1,7 +1,7 @@
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:budgetour/tools/NameInputBox.dart';
+import 'package:budgetour/widgets/standardized/NameInputBox.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
 import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
 import 'package:budgetour/widgets/standardized/CalculatorInputDisplay.dart';
@@ -164,12 +164,12 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
       
       // FixedPayment is valid and return to main screen
       _returnFixedPayment();
-
     } 
 
     // Try to gather information and notify user what is missing
     else {
       _calcValue = _calcController.value;
+      _animHeaderCtrl.forward().whenComplete(() => _animHeaderCtrl.reverse());
     }
   }
 
