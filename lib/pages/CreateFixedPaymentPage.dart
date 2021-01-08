@@ -11,13 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 
-// TODO: When entering a name and how much the bill is.
-// the Enter button doesn't activate unless "Enter" is pressed
-// In other words when an input field loses focus before being
-// submitted the Enter button doesn't activate. Which leads to
-// a bit of a frusturating experience trying to active it when all
-// fields "have" data.
-
 class CreateFixedPaymentPage extends StatefulWidget {
   final CategoryType targetCategory;
 
