@@ -8,6 +8,7 @@
  *    2. Track how much user has spent/not spent.
  */
 
+import 'package:budgetour/models/finance_objects/LabelObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -25,8 +26,8 @@ class BudgetObject extends FinanceObject with TransactionHistory {
   BudgetObject({
     @required String title,
     this.allocatedAmount = 0,
-    String label1,
-    String label2,
+    LabelObject label1,
+    LabelObject label2,
   }) : super(FinanceObjectType.budget,
             name: title, label_1: label1, label_2: label2) {
     this.currentBalance = this.allocatedAmount;
@@ -56,4 +57,6 @@ class BudgetObject extends FinanceObject with TransactionHistory {
     } else
       return ColorGenerator.fromHex(GColors.neutralColor);
   }
+
+  static LabelObject get allocationAmount => PreDefinedLabels.allocationAmount;
 }

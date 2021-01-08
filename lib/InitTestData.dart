@@ -23,8 +23,11 @@ class InitTestData {
     double allocationAmount,
     int transactionQTY,
   ) {
-    BudgetObject obj =
-        BudgetObject(title: title, allocatedAmount: allocationAmount);
+    BudgetObject obj = BudgetObject(
+      title: title,
+      allocatedAmount: allocationAmount,
+      label1: BudgetObject.allocationAmount,
+    );
 
     // Log random transactions
     for (int i = 0; i <= transactionQTY; i++) {

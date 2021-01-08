@@ -37,8 +37,15 @@ class FinanceTile extends StatelessWidget {
           leading: Text(financeObj.name),
           trailing: Icon(Icons.more_vert),
         ),
-        Text(financeObj.label_1 ?? ''),
-        Text(financeObj.label_2 ?? ''),
+        ListTile(
+          title: Text(
+            financeObj.label_1 != null
+                ? financeObj.label_1.title
+                : 'no label selected',
+          ),
+          trailing: Text(''),
+        ),
+        Text(financeObj.label_2 ?? 'hello 2'),
       ],
     );
   }
