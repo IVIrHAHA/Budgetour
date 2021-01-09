@@ -26,10 +26,7 @@ class BudgetObject extends FinanceObject with TransactionHistory {
   BudgetObject({
     @required String title,
     this.allocatedAmount = 0,
-    LabelObject label1,
-    LabelObject label2,
-  }) : super(FinanceObjectType.budget,
-            name: title, label_1: label1, label_2: label2) {
+  }) : super(FinanceObjectType.budget, name: title) {
     this.currentBalance = this.allocatedAmount;
   }
 
@@ -57,6 +54,4 @@ class BudgetObject extends FinanceObject with TransactionHistory {
     } else
       return ColorGenerator.fromHex(GColors.neutralColor);
   }
-
-  static LabelObject allocationAmount(double amount) => PreDefinedLabels.allocationAmount(amount);
 }

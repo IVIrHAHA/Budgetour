@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:budgetour/models/finance_objects/LabelObject.dart';
 
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
@@ -19,15 +20,16 @@ class InitTestData {
   }
 
   static BudgetObject _buildBudgetObjects(
-    String title,
-    double allocationAmount,
-    int transactionQTY,
-  ) {
+      String title, double allocationAmount, int transactionQTY) {
+   
+    // Create budget object
     BudgetObject obj = BudgetObject(
       title: title,
       allocatedAmount: allocationAmount,
-      label1: BudgetObject.allocationAmount(allocationAmount),
     );
+
+    obj.label_1 = PreDefinedLabels(obj).getLabel(BudgetLabels.allocated);
+    obj.label_2 = PreDefinedLabels(obj).getLabel(BudgetLabels.remaining);
 
     // Log random transactions
     for (int i = 0; i <= transactionQTY; i++) {

@@ -1,3 +1,4 @@
+import 'package:budgetour/models/finance_objects/LabelObject.dart';
 import 'package:budgetour/widgets/standardized/NameInputBox.dart';
 
 import '../models/CategoryListManager.dart';
@@ -21,6 +22,11 @@ class CreateBudgetPage extends StatefulWidget {
 
 class _CreateBudgetPageState extends State<CreateBudgetPage>
     with SingleTickerProviderStateMixin {
+  /// [_theBudgetObject] the [BudgetObject] to be created
+  /// needed as an instance variable because labels need to
+  /// be added after the fact.
+  BudgetObject _theBudgetObject;
+
   /// Controllers
   CalculatorController _calcController;
   AnimationController _animHeaderCtrl;
@@ -144,11 +150,16 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     _calcValue = amount;
     // OnEnterPressed
     if (_calcValue != null && _budgetName != null) {
+      _theBudgetObject = BudgetObject(
+        title: _budgetName,
+        allocatedAmount: _calcController.getEntry(),
+      );
+
+      // Add labels
+        // TODO: ADD LABELS
+    
       CategoryListManager.instance.add(
-        BudgetObject(
-          title: _budgetName,
-          allocatedAmount: _calcController.getEntry(),
-        ),
+        _theBudgetObject,
         widget.targetedCategory,
       );
 

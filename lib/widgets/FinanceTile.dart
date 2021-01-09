@@ -1,3 +1,4 @@
+import 'package:budgetour/models/finance_objects/BudgetObject.dart';
 import 'package:budgetour/models/finance_objects/LabelObject.dart';
 import 'package:common_tools/StringFormater.dart';
 
@@ -41,15 +42,23 @@ class _FinanceTileState extends State<FinanceTile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Main Title
         ListTile(
           leading: Text(widget.financeObj.name),
           trailing: Icon(Icons.more_vert),
         ),
+
+        // Label 1
         ListTile(
           title: Text(_getLabelTitle(widget.financeObj.label_1)),
           trailing: Text(_getLabelValues(widget.financeObj.label_1)),
         ),
-        Text(widget.financeObj.label_2 ?? 'hello 2'),
+
+        // Label 2
+        ListTile(
+          title: Text(_getLabelTitle(widget.financeObj.label_2)),
+          trailing: Text(_getLabelValues(widget.financeObj.label_2)),
+        ),
       ],
     );
   }
@@ -61,10 +70,11 @@ class _FinanceTileState extends State<FinanceTile> {
       return '';
   }
 
-  String _getLabelValues(LabelObject label) {
+  bool evaluated = false;
+  _getLabelValues(LabelObject label) {
     if (label != null) {
       /// Value has been pre-determined as a constant
-      if (label.value != null) {
+      if (!label.hasToEvaluate() || evaluated) {
         return Format.formatDouble(label.value, 2);
       }
 
@@ -72,33 +82,58 @@ class _FinanceTileState extends State<FinanceTile> {
       /// *** [Future<double>] is needed as to not slow down
       ///     main UI thread, (Swiping between categories and loading)
       ///     all the financeTiles
-      else if(label.evaluateValue != null) {
-        
+      /// Almost works.. when user inputs data it doesn't update
+      else if(!evaluated){
+        label.evaluate((val) {
+          evaluated = true;
+          setState(() {
+            label.value = val;
+          });
+        });
       }
     }
-    
+
     return '';
   }
 
-  /// TEST BLOCK:::
+  /// TEST BLOCK::: kinda works, doesnt update however
   /// ---------------------------------------------------------------------------
-  double valueReturned;
-  double handlePromisedValue() {
-    Future<double> promiseForValue = widget.financeObj.label_1.evaluateValue;
 
-    // Evaluate
-    if (valueReturned == null && promiseForValue != null) {
-      promiseForValue.then((value) {
+  Future<double> test(Function fun) async {
+    return fun();
+  }
+
+  _handlePromisedValue(FinanceObject obj) {
+    Function someFun;
+    if (obj is BudgetObject) {
+      someFun = () {
+        return obj.getMonthlyExpenses();
+      };
+
+      test(someFun).then((value) {
         setState(() {
-          valueReturned = value;
+          // valueReturned = value;
         });
-      }, onError: (_) {
-        valueReturned = null;
       });
+    }
 
-      return 0;
-    } else
-      return valueReturned;
+    ///dart ```
+    /// Future<double> promiseForValue = widget.financeObj.label_1.evaluateValue;
+    ///
+    /// // Evaluate
+    /// if (valueReturned == null && promiseForValue != null) {
+    ///   promiseForValue.then((value) {
+    ///     setState(() {
+    ///       valueReturned = value;
+    ///     });
+    ///   }, onError: (_) {
+    ///     valueReturned = null;
+    ///   });
+    ///
+    ///   return 0;
+    /// } else
+    ///   return valueReturned;
+    /// ```
   }
 
   /// ---------------------------------------------------------------------------

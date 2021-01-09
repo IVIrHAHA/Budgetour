@@ -31,7 +31,7 @@ mixin TransactionHistory {
   }
 
   /// Gives current month's total transaction amount.
-  getMonthlyExpenses() {
+  double getMonthlyExpenses() {
     double amount = 0;
     _transactionsList
         .where((element) => element.date.month == DateTime.now().month)
