@@ -7,24 +7,20 @@ import '../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class FinanceTile extends StatefulWidget {
+class FinanceTile extends StatelessWidget {
   final FinanceObject financeObj;
 
   FinanceTile(this.financeObj);
 
   @override
-  _FinanceTileState createState() => _FinanceTileState();
-}
-
-class _FinanceTileState extends State<FinanceTile> {
-  @override
   Widget build(BuildContext context) {
+    if (financeObj.name == 'Food') print('building food');
     return InkWell(
       onTap: () {
         _openTile(context);
       },
       child: Card(
-        color: widget.financeObj.getTileColor(),
+        color: financeObj.getTileColor(),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
           side: BorderSide(
@@ -44,21 +40,19 @@ class _FinanceTileState extends State<FinanceTile> {
       children: [
         // Main Title
         ListTile(
-          leading: Text(widget.financeObj.name),
+          leading: Text(financeObj.name),
           trailing: Icon(Icons.more_vert),
         ),
 
         // Label 1
         ListTile(
-          title: Text(_getLabelTitle(widget.financeObj.label_1)),
-          trailing: Text(_getLabelValues(widget.financeObj.label_1)),
-        ),
+            title: Text(_getLabelTitle(financeObj.label_1)),
+            trailing: _getLabelValues(financeObj.label_1)),
 
         // Label 2
         ListTile(
-          title: Text(_getLabelTitle(widget.financeObj.label_2)),
-          trailing: Text(_getLabelValues(widget.financeObj.label_2)),
-        ),
+            title: Text(_getLabelTitle(financeObj.label_2)),
+            trailing: _getLabelValues(financeObj.label_2)),
       ],
     );
   }
@@ -70,12 +64,11 @@ class _FinanceTileState extends State<FinanceTile> {
       return '';
   }
 
-  bool evaluated = false;
   _getLabelValues(LabelObject label) {
     if (label != null) {
       /// Value has been pre-determined as a constant
-      if (!label.hasToEvaluate() || evaluated) {
-        return Format.formatDouble(label.value, 2);
+      if (!label.hasToEvaluate()) {
+        return Text('${Format.formatDouble(label.value, 2)}');
       }
 
       /// Value needs to be evaluated in the form of a future
@@ -83,17 +76,20 @@ class _FinanceTileState extends State<FinanceTile> {
       ///     main UI thread, (Swiping between categories and loading)
       ///     all the financeTiles
       /// Almost works.. when user inputs data it doesn't update
-      else if(!evaluated){
-        label.evaluate((val) {
-          evaluated = true;
-          setState(() {
-            label.value = val;
-          });
-        });
+      else {
+        return FutureBuilder<double>(
+            future: label.evaluateValue,
+            builder: (_, snapshot) {
+              if (snapshot.hasData) {
+                return Text('${Format.formatDouble(snapshot.data, 2)}');
+              } else {
+                return Text('error of sort');
+              }
+            });
       }
     }
 
-    return '';
+    return Text('nothing');
   }
 
   /// TEST BLOCK::: kinda works, doesnt update however
@@ -110,11 +106,7 @@ class _FinanceTileState extends State<FinanceTile> {
         return obj.getMonthlyExpenses();
       };
 
-      test(someFun).then((value) {
-        setState(() {
-          // valueReturned = value;
-        });
-      });
+      test(someFun).then((value) {});
     }
 
     ///dart ```
@@ -142,7 +134,7 @@ class _FinanceTileState extends State<FinanceTile> {
     Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (_) {
-          return widget.financeObj.getLandingPage();
+          return financeObj.getLandingPage();
         },
       ),
     );

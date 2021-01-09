@@ -15,13 +15,9 @@ class LabelObject {
     this.evaluateValue,
   });
 
-  void evaluate(Function(double val) whenDone) {
+  void evaluate(Function(double val) whenDone) async {
     if (hasToEvaluate()) {
-      evaluateValue.then((value) {
-        whenDone(value);
-      }, onError: (_) {
-        print('failed');
-      });
+      whenDone(await evaluateValue);
     }
   }
 
@@ -70,7 +66,7 @@ class PreDefinedLabels {
         break;
       case BudgetLabels.remaining:
         return LabelObject(
-            title: 'Remaining', evaluateValue: Future(obj.getMonthlyExpenses));
+            title: 'Spent', evaluateValue: Future(obj.getMonthlyExpenses));
         break;
       case BudgetLabels.total_spent:
         // TODO: Handle this case.
