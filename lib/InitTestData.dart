@@ -25,7 +25,8 @@ class InitTestData {
     BudgetObject obj = BudgetObject(
       title: title,
       allocatedAmount: allocationAmount,
-      // Add quick stat here
+      stat1: BudgetQuickStat.allo,
+      stat2: BudgetQuickStat.spent,
     );
 
     // OR obj.add quick stat here

@@ -42,13 +42,13 @@ class FinanceTile extends StatelessWidget {
 
         // Quick Stat Display #1
         ListTile(
-          title: Text('Title'),
-          trailing: Text('Value'),
+          title: Text(financeObj.quickStatBundle.stat1.title),
+          trailing: Text('${financeObj.quickStatBundle.stat1.value}'),
         ),
 
         // Quick Stat Display #2
         ListTile(
-          title: Text('Title'),
+          title: Text(financeObj.quickStatBundle.stat2.title),
           trailing: Text('Values'),
         ),
       ],

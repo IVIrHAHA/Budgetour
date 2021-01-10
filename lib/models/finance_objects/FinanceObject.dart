@@ -1,6 +1,7 @@
 /*
  * Allows program to interface with all FinaceObjects
  */
+import 'package:budgetour/models/finance_objects/BudgetObject.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
@@ -28,5 +29,10 @@ abstract class FinanceObject with TilePresenter{
 
   getType() {
     return _type;
+  }
+
+  QuickStatBundle quickStatBundle;
+  setQuickStatBundle(QuickStatBundle bundle) {
+    this.quickStatBundle = bundle;
   }
 }
