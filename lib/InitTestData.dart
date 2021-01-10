@@ -25,7 +25,10 @@ class InitTestData {
     BudgetObject obj = BudgetObject(
       title: title,
       allocatedAmount: allocationAmount,
+      // Add quick stat here
     );
+
+    // OR obj.add quick stat here
 
     // Log random transactions
     for (int i = 0; i <= transactionQTY; i++) {

@@ -18,15 +18,30 @@ import 'package:flutter/material.dart';
 
 import 'Transaction.dart';
 
+class QuickStatBundle<FinanceObject> {
+
+  FinanceObject aObj;
+
+  QuickStatBundle(this.aObj){
+    if(aObj is BudgetObject)
+      print((aObj as BudgetObject).name);
+  }
+}
+
+
+
 class BudgetObject extends FinanceObject with TransactionHistory {
   double allocatedAmount;
   double currentBalance;
+
+  static const List<String> availableQuickStats = ['Allocated', 'Remaining', 'Spent']; 
 
   BudgetObject({
     @required String title,
     this.allocatedAmount = 0,
   }) : super(FinanceObjectType.budget, name: title) {
     this.currentBalance = this.allocatedAmount;
+    QuickStatBundle(this);
   }
 
   @override
@@ -52,5 +67,9 @@ class BudgetObject extends FinanceObject with TransactionHistory {
       return ColorGenerator.fromHex(GColors.warningColor);
     } else
       return ColorGenerator.fromHex(GColors.neutralColor);
+  }
+
+  getQuickBundle() {
+
   }
 }

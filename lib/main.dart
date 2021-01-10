@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle style = TextStyle(fontSize: 10);
+    TextStyle style = TextStyle(fontSize: 14);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
@@ -136,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           tabs: CategoryType.values.map((e) {
             // Use Enums for titles
             String label = e.toString().split('.').last;
-            return Text(label, style: style);
+            return Text(label, style: style, overflow: TextOverflow.ellipsis,);
           }).toList(),
         ),
       ),

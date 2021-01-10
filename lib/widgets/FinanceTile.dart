@@ -42,16 +42,34 @@ class FinanceTile extends StatelessWidget {
 
         // Quick Stat Display #1
         ListTile(
-            title: Text('Title'),
-            trailing: Text('Value')),
+          title: Text('Title'),
+          trailing: Text('Value'),
+        ),
 
         // Quick Stat Display #2
         ListTile(
-            title: Text('Title'),
-            trailing: Text('Values')),
+          title: Text('Title'),
+          trailing: Text('Values'),
+        ),
       ],
     );
   }
+
+  /// dart```
+  /// _getQuickStatValue(QickStat obj) {
+  ///   if(obj.getValue is Future){
+  ///
+  ///    return FutureBuilder(
+  ///       future: obj.future,
+  ///       builder: (_, snapshot) {
+  ///       // return future result
+  ///     });
+  ///   }
+  ///   else {
+  ///     // return const value
+  ///   }
+  /// }
+  /// ```
 
   _openTile(BuildContext ctx) {
     Navigator.of(ctx).push(
