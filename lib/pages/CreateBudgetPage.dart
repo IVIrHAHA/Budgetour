@@ -1,4 +1,3 @@
-import 'package:budgetour/models/finance_objects/LabelObject.dart';
 import 'package:budgetour/widgets/standardized/NameInputBox.dart';
 
 import '../models/CategoryListManager.dart';

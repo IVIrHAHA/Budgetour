@@ -5,8 +5,6 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-import 'LabelObject.dart';
-
 enum FixedPaymentFrequency {
   monthly,
   weekly,
@@ -25,10 +23,7 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
     @required this.monthlyFixedPayment,
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
-    LabelObject label1,
-    LabelObject label2,
-  }) : super(FinanceObjectType.fixed,
-            name: name, label_1: label1, label_2: label2) {
+  }) : super(FinanceObjectType.fixed, name: name) {
     this._lastDueDate = nextDueDate ?? DateTime.now();
     this.paymentAmount = 0;
   }

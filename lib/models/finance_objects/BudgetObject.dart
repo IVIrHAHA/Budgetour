@@ -8,7 +8,6 @@
  *    2. Track how much user has spent/not spent.
  */
 
-import 'package:budgetour/models/finance_objects/LabelObject.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
