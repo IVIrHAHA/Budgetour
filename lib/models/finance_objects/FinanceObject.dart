@@ -1,7 +1,6 @@
 /*
  * Allows program to interface with all FinaceObjects
  */
-import 'package:budgetour/models/finance_objects/BudgetObject.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
@@ -16,9 +15,10 @@ enum FinanceObjectType {
 }
 
 /// with [TilePresenter] allows [FinanceTile] to interface with this behaviour
-abstract class FinanceObject with TilePresenter{
+abstract class FinanceObject with TilePresenter {
   String name;
   final FinanceObjectType _type;
+
   /// For hints or messages to be displayed above [FinanceTile]
   String affirmation;
 
@@ -31,8 +31,5 @@ abstract class FinanceObject with TilePresenter{
     return _type;
   }
 
-  QuickStatBundle quickStatBundle;
-  setQuickStatBundle(QuickStatBundle bundle) {
-    this.quickStatBundle = bundle;
-  }
+  get statBundle;
 }

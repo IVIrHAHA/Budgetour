@@ -1,3 +1,6 @@
+import 'package:budgetour/models/StatManager.dart';
+import 'package:common_tools/StringFormater.dart';
+
 import '../models/finance_objects/FinanceObject.dart';
 import '../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -40,36 +43,41 @@ class FinanceTile extends StatelessWidget {
           trailing: Icon(Icons.more_vert),
         ),
 
-        // Quick Stat Display #1
+        // Stat Display #1
         ListTile(
-          title: Text(financeObj.quickStatBundle.stat1.title),
-          trailing: Text('${financeObj.quickStatBundle.stat1.value}'),
+          title: Text(financeObj.statBundle.stat1.title),
+          trailing: _getQuickStatValue(financeObj.statBundle.stat1),
         ),
 
-        // Quick Stat Display #2
+        // Stat Display #2
         ListTile(
-          title: Text(financeObj.quickStatBundle.stat2.title),
-          trailing: Text('Values'),
+          title: Text(financeObj.statBundle.stat2.title),
+          trailing: _getQuickStatValue(financeObj.statBundle.stat2),
         ),
       ],
     );
   }
 
-  /// dart```
-  /// _getQuickStatValue(QickStat obj) {
-  ///   if(obj.getValue is Future){
-  ///
-  ///    return FutureBuilder(
-  ///       future: obj.future,
-  ///       builder: (_, snapshot) {
-  ///       // return future result
-  ///     });
-  ///   }
-  ///   else {
-  ///     // return const value
-  ///   }
-  /// }
-  /// ```
+  _getQuickStatValue(QuickStat stat) {
+    if (!stat.hasToEvaluate()) {
+      return Text('${Format.formatDouble(stat.value, 2)}');
+    } else {
+      return FutureBuilder(
+        future: stat.evaluateValue,
+        builder: (_, snapshot) {
+          if(snapshot.hasData) {
+            return Text('${Format.formatDouble(snapshot.data, 2)}');
+          }
+          else if(snapshot.hasError) {
+            return Text('errr');
+          }
+          else {
+            return Text('berr');
+          }
+        },
+      );
+    }
+  }
 
   _openTile(BuildContext ctx) {
     Navigator.of(ctx).push(

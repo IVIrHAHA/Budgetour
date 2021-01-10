@@ -72,4 +72,7 @@ class GoalObject extends FinanceObject {
     } else
       return ColorGenerator.fromHex(GColors.neutralColor);
   }
+
+  @override
+  get statBundle => null;
 }

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 
+import 'models/StatManager.dart';
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'models/finance_objects/GoalObject.dart';
@@ -25,11 +26,9 @@ class InitTestData {
     BudgetObject obj = BudgetObject(
       title: title,
       allocatedAmount: allocationAmount,
-      stat1: BudgetQuickStat.allo,
-      stat2: BudgetQuickStat.spent,
+      stat1: BudgetStat.allocated,
+      stat2: BudgetStat.spent,
     );
-
-    // OR obj.add quick stat here
 
     // Log random transactions
     for (int i = 0; i <= transactionQTY; i++) {

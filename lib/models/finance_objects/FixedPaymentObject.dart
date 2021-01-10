@@ -50,4 +50,7 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
         ? ColorGenerator.fromHex(GColors.positiveColor)
         : ColorGenerator.fromHex(GColors.neutralColor);
   }
+
+  @override
+  get statBundle => null;
 }
