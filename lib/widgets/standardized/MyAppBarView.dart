@@ -10,13 +10,13 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class MyAppBarView extends StatefulWidget {
-  final FinanceObject financeObject;
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
   final String quickStatTitle, quickStatInfo;
+  final String headerName;
 
   MyAppBarView({
-    @required this.financeObject,
+    this.headerName,
     this.tabPages,
     this.tabTitles,
     this.quickStatInfo = '',
@@ -55,7 +55,7 @@ class _MyAppBarViewState extends State<MyAppBarView>
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              widget.financeObject.name,
+              widget.headerName,
               style: Theme.of(context).textTheme.headline5,
             ),
           ),

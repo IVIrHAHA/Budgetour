@@ -7,5 +7,7 @@ mixin TilePresenter {
 
   Color getTileColor();
 
+  /// Lets FinanceTile know where to direct
+  /// material page
   Widget getLandingPage();
 }

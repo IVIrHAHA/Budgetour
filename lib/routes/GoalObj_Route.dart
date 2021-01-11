@@ -20,7 +20,7 @@ class _GoalObjRouteState extends State<GoalObjRoute> {
     const TextStyle style = TextStyle(color: Colors.black);
 
     return MyAppBarView(
-      financeObject: widget.goalObject,
+      headerName: widget.goalObject.name,
       tabTitles: [
         Text('Deposit', style: style),
         Text('Progress', style: style),

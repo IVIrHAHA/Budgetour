@@ -33,7 +33,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
     const TextStyle style = TextStyle(color: Colors.black);
 
     return MyAppBarView(
-      financeObject: widget.budgetObject,
+      headerName: widget.budgetObject.name,
       quickStatTitle: 'Remaining',
       quickStatInfo:
           '\$${Format.formatDouble(widget.budgetObject.currentBalance, 0)}',

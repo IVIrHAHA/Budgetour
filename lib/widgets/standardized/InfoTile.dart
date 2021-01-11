@@ -1,6 +1,3 @@
-import 'package:budgetour/models/finance_objects/BudgetObject.dart';
-import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 import 'EnhancedListTile.dart';
@@ -10,6 +7,7 @@ class InfoTile extends StatelessWidget {
   final String infoText;
   final Color titleColor;
   final Color infoTextColor;
+  final Function onTap;
 
   const InfoTile({
     Key key,
@@ -17,40 +15,44 @@ class InfoTile extends StatelessWidget {
     this.titleColor = Colors.white,
     this.infoText,
     this.infoTextColor = Colors.white,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return EnhancedListTile(
-      backgroundColor: Colors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      leading: Container(
-        child: Text(
-          title,
-          style: TextStyle(
-            color: titleColor,
-            fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: onTap ?? (){},
+      child: EnhancedListTile(
+        backgroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        leading: Container(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: titleColor,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-      trailing: Row(
-        children: [
-          infoText != null ? Text(
-            infoText,
-            style: TextStyle(
-                color: infoTextColor,
-                fontWeight: FontWeight.bold),
-          ) : Container(),
-
-          Flexible(
-            fit: FlexFit.tight,
-            child: Container(),
-          ),
-          Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-        ],
+        trailing: Row(
+          children: [
+            infoText != null
+                ? Text(
+                    infoText,
+                    style: TextStyle(
+                        color: infoTextColor, fontWeight: FontWeight.bold),
+                  )
+                : Container(),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Container(),
+            ),
+            Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+          ],
+        ),
       ),
     );
   }

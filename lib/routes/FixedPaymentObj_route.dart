@@ -18,7 +18,7 @@ class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
   @override
   Widget build(BuildContext context) {
     return MyAppBarView(
-      financeObject: widget.paymentObj,
+      headerName: widget.paymentObj.name,
       quickStatTitle: 'Pending',
       quickStatInfo: '\$ ${Format.formatDouble(
         widget.paymentObj.monthlyFixedPayment - widget.paymentObj.paymentAmount,

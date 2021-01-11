@@ -150,6 +150,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: InfoTile(
                 title: 'Unallocated',
                 infoText: '\$ 100',
+                onTap: () {
+                  print('input income');
+                },
               ),
             ),
             Expanded(
