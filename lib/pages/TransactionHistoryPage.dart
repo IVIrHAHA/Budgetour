@@ -8,8 +8,6 @@ import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../models/finance_objects/Transaction.dart';
-
 /// Displays [Transaction] history
 class TransactionHistoryPage extends StatelessWidget {
   final BudgetObject budgetObject;

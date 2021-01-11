@@ -1,4 +1,5 @@
-import '../StatManager.dart';
+
+import 'package:budgetour/models/Meta/QuickStat.dart';
 
 /// To use this correctly ensure to make an [enum]
 /// that directly correlates to the specific [FinanceType]
@@ -36,6 +37,14 @@ mixin StatMixin<E> {
 
   QuickStat getSecondStat() {
     return _stat2 != null ? determineStat(_stat2) : null;
+  }
+
+  bool hasFirstStat() {
+    return _stat1 != null;
+  }
+
+    bool hasSecondStat() {
+    return _stat2 != null;
   }
 
   /// Allow [FinanceObject] to determine how [QuickStat] will

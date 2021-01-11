@@ -2,11 +2,10 @@ import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 
-import 'models/StatManager.dart';
+import 'models/Meta/Transaction.dart';
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'models/finance_objects/GoalObject.dart';
-import 'models/finance_objects/Transaction.dart';
 
 class InitTestData {
   static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();
@@ -14,7 +13,7 @@ class InitTestData {
   static initTileList() {
     dummyEssentialList.add(_buildBudgetObjects('Food', 150.99, 10));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
-    // dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
+    dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
 
     return dummyEssentialList;
   }

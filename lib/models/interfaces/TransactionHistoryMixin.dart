@@ -1,6 +1,7 @@
+import 'package:budgetour/models/Meta/Transaction.dart';
+
 /// Creates and manages [FinanceObject]s transaction history
 
-import '../finance_objects/Transaction.dart';
 import '../finance_objects/FinanceObject.dart';
 
 mixin TransactionHistory {

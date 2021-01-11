@@ -1,11 +1,15 @@
-import 'package:budgetour/models/StatManager.dart';
+import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/routes/GoalObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-class GoalObject extends FinanceObject {
+enum GoalStats {
+  date
+}
+
+class GoalObject extends FinanceObject<GoalStats> {
   double targetAmount;
   double totalContribution;
 
@@ -75,8 +79,9 @@ class GoalObject extends FinanceObject {
   }
 
   @override
-  QuickStat determineStat(statType) {
+  QuickStat determineStat(GoalStats statType) {
     // TODO: implement determineStat
     throw UnimplementedError();
   }
+  
 }

@@ -1,4 +1,4 @@
-import 'package:budgetour/models/StatManager.dart';
+import '../models/Meta/QuickStat.dart';
 import 'package:common_tools/StringFormater.dart';
 
 import '../models/finance_objects/FinanceObject.dart';
@@ -44,14 +44,21 @@ class FinanceTile extends StatelessWidget {
 
         // Stat Display #1
         ListTile(
-          title: Text(financeObj.getFirstStat().title),
-          trailing: _getQuickStatValue(financeObj.getFirstStat()),
+          title: Text(
+              financeObj.hasFirstStat() ? financeObj.getFirstStat().title : ''),
+          trailing: financeObj.hasFirstStat()
+              ? _getQuickStatValue(financeObj.getFirstStat())
+              : Text(''),
         ),
 
         // Stat Display #2
         ListTile(
-          title: Text(financeObj.getSecondStat().title),
-          trailing: _getQuickStatValue(financeObj.getSecondStat()),
+          title: Text(financeObj.hasSecondStat()
+              ? financeObj.getSecondStat().title
+              : ''),
+          trailing: financeObj.hasSecondStat()
+              ? _getQuickStatValue(financeObj.getSecondStat())
+              : Text(''),
         ),
       ],
     );
@@ -64,13 +71,11 @@ class FinanceTile extends StatelessWidget {
       return FutureBuilder(
         future: stat.evaluateValue,
         builder: (_, snapshot) {
-          if(snapshot.hasData) {
+          if (snapshot.hasData) {
             return Text('${Format.formatDouble(snapshot.data, 2)}');
-          }
-          else if(snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Text('errr');
-          }
-          else {
+          } else {
             return Text('berr');
           }
         },
