@@ -1,6 +1,7 @@
 /*
  * Allows program to interface with all FinaceObjects
  */
+import 'package:budgetour/models/interfaces/StatMixin.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
@@ -15,7 +16,7 @@ enum FinanceObjectType {
 }
 
 /// with [TilePresenter] allows [FinanceTile] to interface with this behaviour
-abstract class FinanceObject with TilePresenter {
+abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
   String name;
   final FinanceObjectType _type;
 
@@ -30,6 +31,4 @@ abstract class FinanceObject with TilePresenter {
   getType() {
     return _type;
   }
-
-  get statBundle;
 }

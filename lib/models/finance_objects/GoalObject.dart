@@ -74,5 +74,8 @@ class GoalObject extends FinanceObject {
   }
 
   @override
-  get statBundle => null;
+  getStat1(T) {
+    // TODO: implement getStat1
+    throw UnimplementedError();
+  }
 }

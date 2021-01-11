@@ -52,5 +52,8 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
   }
 
   @override
-  get statBundle => null;
+  getStat1(T) {
+    // TODO: implement getStat1
+    throw UnimplementedError();
+  }
 }
