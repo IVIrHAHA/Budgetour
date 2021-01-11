@@ -4,6 +4,7 @@ import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
+import 'package:budgetour/routes/Income_Route.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
@@ -151,7 +152,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 title: 'Unallocated',
                 infoText: '\$ 100',
                 onTap: () {
-                  print('input income');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return IncomeRoute();
+                      }
+                    ),
+                  );
                 },
               ),
             ),
@@ -177,6 +184,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   MenuListPage buildCreateFinanceObjectMenu(BuildContext context) {
     /// [_controller.index] gets the tab name of the TabBarView. Which
     /// is correlated with the [CategoryType] enum list
+    /// This lets any created [FinanceObject] to be added to the correct
+    /// category
     return MenuListPage({
       Text('Budget', style: Theme.of(context).textTheme.headline5): () {
         Navigator.of(context).push(

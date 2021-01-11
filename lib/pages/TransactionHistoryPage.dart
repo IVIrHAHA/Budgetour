@@ -1,3 +1,5 @@
+import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
+
 import '../models/finance_objects/BudgetObject.dart';
 import '../tools/GlobalValues.dart';
 import '../widgets/TransactionTile.dart';
@@ -10,9 +12,9 @@ import 'package:intl/intl.dart';
 
 /// Displays [Transaction] history
 class TransactionHistoryPage extends StatelessWidget {
-  final BudgetObject budgetObject;
+  final TransactionHistory history;
 
-  TransactionHistoryPage(this.budgetObject);
+  TransactionHistoryPage(this.history);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class TransactionHistoryPage extends StatelessWidget {
           flex: 1,
           child: InfoTile(
             infoText:
-                '\$ ${Format.formatDouble(budgetObject.getMonthlyExpenses(), 2)}',
+                '\$ ${Format.formatDouble(history.getMonthlyExpenses(), 2)}',
             infoTextColor: ColorGenerator.fromHex(GColors.negativeNumber),
             title: 'Total Spent',
           ),
@@ -83,7 +85,7 @@ class TransactionHistoryPage extends StatelessWidget {
   SingleChildScrollView _buildTransactionListView(int workingMonth) {
     return SingleChildScrollView(
       child: Column(
-        children: budgetObject.getTransactions.map((transaction) {
+        children: history.getTransactions.map((transaction) {
           // Keep working month the same if already assigned
           // otherwise working month goes to first element in list
           workingMonth = workingMonth ?? transaction.date.month;
