@@ -19,15 +19,15 @@ import 'package:flutter/material.dart';
 
 import 'Transaction.dart';
 
+enum BudgetStat {
+  allocated,
+  remaining,
+  spent,
+}
+
 class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   double allocatedAmount;
   double currentBalance;
-
-  // static const Map<BudgetStat, String> preDefinedStats = {
-  //   BudgetStat.allocated: 'Allocated',
-  //   BudgetStat.remaining: 'Remaining',
-  //   BudgetStat.spent: 'Spent'
-  // };
 
   BudgetObject({
     @required String title,
@@ -36,8 +36,8 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     BudgetStat stat2,
   }) : super(FinanceObjectType.budget, name: title) {
     this.currentBalance = this.allocatedAmount;
-    this.stat_1 = stat1;
-    this.stat_2 = stat2;
+    this.firstStat = stat1;
+    this.secondStat = stat2;
   }
 
   @override
@@ -69,14 +69,21 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   QuickStat determineStat(BudgetStat statType) {
     switch (statType) {
       case BudgetStat.allocated:
-        // TODO: Handle this case.
+        return QuickStat(title: 'Allocated', value: allocatedAmount);
         break;
       case BudgetStat.remaining:
-        // TODO: Handle this case.
+        return QuickStat(
+          title: 'Remaining',
+          evaluateValue: Future(() {
+            return allocatedAmount - this.getMonthlyExpenses();
+          }),
+        );
         break;
       case BudgetStat.spent:
-        // TODO: Handle this case.
+        return QuickStat(
+            title: 'Spent', evaluateValue: Future(this.getMonthlyExpenses));
         break;
     }
+    return null;
   }
 }

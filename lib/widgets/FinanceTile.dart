@@ -13,7 +13,6 @@ class FinanceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (financeObj.name == 'Food') print('building food');
     return InkWell(
       onTap: () {
         _openTile(context);
@@ -45,14 +44,14 @@ class FinanceTile extends StatelessWidget {
 
         // Stat Display #1
         ListTile(
-          title: Text(financeObj.statBundle.stat1.title),
-          trailing: _getQuickStatValue(financeObj.statBundle.stat1),
+          title: Text(financeObj.getFirstStat().title),
+          trailing: _getQuickStatValue(financeObj.getFirstStat()),
         ),
 
         // Stat Display #2
         ListTile(
-          title: Text(financeObj.statBundle.stat2.title),
-          trailing: _getQuickStatValue(financeObj.statBundle.stat2),
+          title: Text(financeObj.getSecondStat().title),
+          trailing: _getQuickStatValue(financeObj.getSecondStat()),
         ),
       ],
     );

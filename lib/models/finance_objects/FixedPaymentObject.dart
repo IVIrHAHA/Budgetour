@@ -1,3 +1,4 @@
+import 'package:budgetour/models/StatManager.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
@@ -11,11 +12,21 @@ enum FixedPaymentFrequency {
   bi_monthly,
 }
 
-class FixedPaymentObject extends FinanceObject with TransactionHistory {
+enum FixedPaymentStats {
+  monthlyPayment,
+  nextDue,
+}
+
+class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
+    with TransactionHistory {
   final double monthlyFixedPayment;
   double paymentAmount;
   FixedPaymentFrequency frequency;
+
+  /// when the next due date is coming
   DateTime nextDueDate;
+
+  /// Determine dueDate reference
   DateTime _lastDueDate; // If nothing entered for nextDueDate, use date created
 
   FixedPaymentObject({
@@ -35,7 +46,19 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
     this._lastDueDate = dueDate;
   }
 
-  DateTime _setNextDueDate() {}
+  DateTime _setNextDueDate() {
+    switch (frequency) {
+      case FixedPaymentFrequency.monthly:
+        nextDueDate = _lastDueDate.add(Duration(days: 30)); // TODO: Revise
+        break;
+      case FixedPaymentFrequency.weekly:
+        // TODO: Handle this case.
+        break;
+      case FixedPaymentFrequency.bi_monthly:
+        // TODO: Handle this case.
+        break;
+    }
+  }
 
   isPaid() => paymentAmount == monthlyFixedPayment ? true : false;
 
@@ -52,8 +75,15 @@ class FixedPaymentObject extends FinanceObject with TransactionHistory {
   }
 
   @override
-  getStat1(T) {
-    // TODO: implement getStat1
-    throw UnimplementedError();
+  QuickStat determineStat(statType) {
+    switch (statType) {
+      case FixedPaymentStats.monthlyPayment:
+        return QuickStat(title: 'Payment Amount', value: monthlyFixedPayment);
+        break;
+      case FixedPaymentStats.nextDue:
+        return QuickStat(title: 'Payment Amount', value: monthlyFixedPayment);
+
+        break;
+    }
   }
 }

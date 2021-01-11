@@ -14,21 +14,30 @@ class InitTestData {
   static initTileList() {
     dummyEssentialList.add(_buildBudgetObjects('Food', 150.99, 10));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
-    dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
+    // dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
 
     return dummyEssentialList;
   }
 
   static BudgetObject _buildBudgetObjects(
       String title, double allocationAmount, int transactionQTY) {
-   
+    BudgetObject obj;
     // Create budget object
-    BudgetObject obj = BudgetObject(
-      title: title,
-      allocatedAmount: allocationAmount,
-      stat1: BudgetStat.allocated,
-      stat2: BudgetStat.spent,
-    );
+    if (title == 'Food') {
+      obj = BudgetObject(
+        title: title,
+        allocatedAmount: allocationAmount,
+        stat1: BudgetStat.allocated,
+        stat2: BudgetStat.remaining,
+      );
+    } else {
+      obj = BudgetObject(
+        title: title,
+        allocatedAmount: allocationAmount,
+        stat1: BudgetStat.allocated,
+        stat2: BudgetStat.spent,
+      );
+    }
 
     // Log random transactions
     for (int i = 0; i <= transactionQTY; i++) {

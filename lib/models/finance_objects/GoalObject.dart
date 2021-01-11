@@ -1,3 +1,4 @@
+import 'package:budgetour/models/StatManager.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/routes/GoalObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
@@ -74,8 +75,8 @@ class GoalObject extends FinanceObject {
   }
 
   @override
-  getStat1(T) {
-    // TODO: implement getStat1
+  QuickStat determineStat(statType) {
+    // TODO: implement determineStat
     throw UnimplementedError();
   }
 }
