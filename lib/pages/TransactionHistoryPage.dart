@@ -13,8 +13,9 @@ import 'package:intl/intl.dart';
 /// Displays [Transaction] history
 class TransactionHistoryPage extends StatelessWidget {
   final TransactionHistory history;
+  final String infoTileHeader;
 
-  TransactionHistoryPage(this.history);
+  TransactionHistoryPage(this.history, {this.infoTileHeader});
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +25,7 @@ class TransactionHistoryPage extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: InfoTile(
-            infoText:
-                '\$ ${Format.formatDouble(history.getMonthlyExpenses(), 2)}',
-            infoTextColor: ColorGenerator.fromHex(GColors.negativeNumber),
-            title: 'Total Spent',
-          ),
+          child: _formatInfoTile(),
         ),
         Expanded(
           flex: 12,
@@ -77,6 +73,26 @@ class TransactionHistoryPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  InfoTile _formatInfoTile() {
+    double expensesTotal = history.getMonthlyExpenses();
+    bool isNegative = true;
+
+    if (expensesTotal < 0) {
+      expensesTotal = expensesTotal * -1;
+      isNegative = false;
+    }
+
+    return InfoTile(
+      infoText: '\$ ${Format.formatDouble(expensesTotal, 2)}',
+      infoTextColor: ColorGenerator.fromHex(
+        isNegative ?
+        GColors.negativeNumber :
+        GColors.greenish
+      ),
+      title: infoTileHeader ?? 'Total Spent',
     );
   }
 

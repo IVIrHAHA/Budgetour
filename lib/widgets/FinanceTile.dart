@@ -26,7 +26,6 @@ class FinanceTile extends StatelessWidget {
               width: 1,
               color: ColorGenerator.fromHex(GColors.borderColor)),
         ),
-        margin: EdgeInsets.all(8.0),
         child: buildContents(),
       ),
     );

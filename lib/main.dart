@@ -5,9 +5,11 @@ import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/routes/Income_Route.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
+import 'models/finance_objects/CashObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -137,7 +139,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           tabs: CategoryType.values.map((e) {
             // Use Enums for titles
             String label = e.toString().split('.').last;
-            return Text(label, style: style, overflow: TextOverflow.ellipsis,);
+            return Text(
+              label,
+              style: style,
+              overflow: TextOverflow.ellipsis,
+            );
           }).toList(),
         ),
       ),
@@ -150,14 +156,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               flex: 1,
               child: InfoTile(
                 title: 'Unallocated',
-                infoText: '\$ 100',
+                infoText: '\$ ${Format.formatDouble(
+                  CashObject.instance.liquidAmount,
+                  2,
+                )}',
+                infoTextColor: ColorGenerator.fromHex(GColors.redish),
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return IncomeRoute();
-                      }
-                    ),
+                    MaterialPageRoute(builder: (_) {
+                      return IncomeRoute();
+                    }),
                   );
                 },
               ),
