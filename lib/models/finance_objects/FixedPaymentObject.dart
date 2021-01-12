@@ -4,7 +4,9 @@ import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 enum FixedPaymentFrequency {
   monthly,
@@ -14,6 +16,7 @@ enum FixedPaymentFrequency {
 
 enum FixedPaymentStats {
   monthlyPayment,
+  pending,
   nextDue,
 }
 
@@ -35,7 +38,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
   }) : super(FinanceObjectType.fixed, name: name) {
-    this._lastDueDate = nextDueDate ?? DateTime.now();
+    this._lastDueDate = this.nextDueDate ?? DateTime.now();
     this.paymentAmount = 0;
   }
 
@@ -52,12 +55,13 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         nextDueDate = _lastDueDate.add(Duration(days: 30)); // TODO: Revise
         break;
       case FixedPaymentFrequency.weekly:
-        // TODO: Handle this case.
+        nextDueDate = _lastDueDate.add(Duration(days: 7));
         break;
       case FixedPaymentFrequency.bi_monthly:
-        // TODO: Handle this case.
+        return _lastDueDate;
         break;
     }
+    return nextDueDate;
   }
 
   isPaid() => paymentAmount == monthlyFixedPayment ? true : false;
@@ -81,7 +85,23 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         return QuickStat(title: 'Payment Amount', value: monthlyFixedPayment);
         break;
       case FixedPaymentStats.nextDue:
-        return QuickStat(title: 'Payment Amount', value: monthlyFixedPayment);
+        return QuickStat(
+          title: 'Due',
+          evaluateValue: Future<String>(() {
+            return DateFormat('M/d').format(_setNextDueDate());
+          }),
+        );
+        break;
+      case FixedPaymentStats.pending:
+        return QuickStat(
+          title: 'pending',
+          evaluateValue: Future(
+            () {
+              var pendingAmount = monthlyFixedPayment - paymentAmount;
+              return Format.formatDouble(pendingAmount, 2);
+            },
+          ),
+        );
         break;
     }
   }

@@ -2,7 +2,7 @@ class QuickStat {
   final String title;
   final double value;
 
-  final Future evaluateValue;
+  final Future<String> evaluateValue;
 
   QuickStat({this.title, this.value, this.evaluateValue});
 

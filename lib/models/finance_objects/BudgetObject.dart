@@ -13,6 +13,7 @@ import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'FinanceObject.dart';
 import '../interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     super.logTransaction(transaction);
   }
 
-  isOverbudget() {
+  _isOverbudget() {
     return currentBalance < 0 ? true : false;
   }
 
@@ -57,7 +58,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
 
   @override
   Color getTileColor() {
-    if (this.isOverbudget()) {
+    if (this._isOverbudget()) {
       return ColorGenerator.fromHex(GColors.warningColor);
     } else
       return ColorGenerator.fromHex(GColors.neutralColor);
@@ -73,13 +74,16 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
         return QuickStat(
           title: 'Remaining',
           evaluateValue: Future(() {
-            return allocatedAmount - this.getMonthlyExpenses();
+            var value = allocatedAmount - this.getMonthlyExpenses();
+            return Format.formatDouble(value, 2);
           }),
         );
         break;
       case BudgetStat.spent:
         return QuickStat(
-            title: 'Spent', evaluateValue: Future(this.getMonthlyExpenses));
+            title: 'Spent', evaluateValue: Future(() {
+              return Format.formatDouble(this.getMonthlyExpenses(), 2);
+            }));
         break;
     }
     return null;

@@ -71,7 +71,7 @@ class FinanceTile extends StatelessWidget {
         future: stat.evaluateValue,
         builder: (_, snapshot) {
           if (snapshot.hasData) {
-            return Text('${Format.formatDouble(snapshot.data, 2)}');
+            return Text(snapshot.data);
           } else if (snapshot.hasError) {
             return Text('errr');
           } else {
