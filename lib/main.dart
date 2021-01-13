@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
 void main() {
+  CashObject.instance.liquidAmount = 1000;
   runApp(MyApp());
 }
 

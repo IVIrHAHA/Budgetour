@@ -25,30 +25,45 @@ enum BudgetStat {
 }
 
 class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
-  double allocatedAmount;
-  double currentBalance;
+  double targetAlloctionAmount;
 
   BudgetObject({
     @required String title,
-    this.allocatedAmount = 0,
+    this.targetAlloctionAmount = 0,
+    double cashFeed = 0,
     BudgetStat stat1,
     BudgetStat stat2,
-  }) : super(FinanceObjectType.budget, name: title) {
-    this.currentBalance = this.allocatedAmount;
+  }) : super(FinanceObjectType.budget, name: title, cashFeed: cashFeed) {
     this.firstStat = stat1;
     this.secondStat = stat2;
   }
 
   @override
   logTransaction(Transaction transaction) {
+    /// If the transaction takes place during current month
+    /// then update the financial state of this object
+    /// ie. update cashReserve
     if (transaction.date.month == DateTime.now().month) {
-      currentBalance = currentBalance - transaction.amount;
+      /// User has gone overbudget, log transaction with what is
+      /// available in cashReserve and make an auto input transaction
+      /// which tells the user they have overdrawn
+      var overDrawn = this.withdraw(transaction.amount);
+      if (overDrawn < 0) {
+        transaction.amount = transaction.amount + overDrawn;
+        super.logTransaction(transaction);
+
+        /// TODO: Make this one stand out more in Transaction History 
+        transaction = Transaction(
+          amount: -overDrawn,
+          description: 'Overbudget! Replenish',
+        );
+      }
     }
     super.logTransaction(transaction);
   }
 
   _isOverbudget() {
-    return currentBalance < 0 ? true : false;
+    return this.cashReserve < 0 ? true : false;
   }
 
   @override
@@ -68,20 +83,18 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   QuickStat determineStat(BudgetStat statType) {
     switch (statType) {
       case BudgetStat.allocated:
-        return QuickStat(title: 'Allocated', value: allocatedAmount);
+        return QuickStat(title: 'Allocated', value: targetAlloctionAmount);
         break;
       case BudgetStat.remaining:
         return QuickStat(
           title: 'Remaining',
-          evaluateValue: Future(() {
-            var value = allocatedAmount - this.getMonthlyExpenses();
-            return Format.formatDouble(value, 2);
-          }),
+          value: cashReserve,
         );
         break;
       case BudgetStat.spent:
         return QuickStat(
-            title: 'Spent', evaluateValue: Future(() {
+            title: 'Spent',
+            evaluateValue: Future(() {
               return Format.formatDouble(this.getMonthlyExpenses(), 2);
             }));
         break;

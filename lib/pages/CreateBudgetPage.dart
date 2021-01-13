@@ -151,7 +151,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     if (_calcValue != null && _budgetName != null) {
       _theBudgetObject = BudgetObject(
         title: _budgetName,
-        allocatedAmount: _calcController.getEntry(),
+        targetAlloctionAmount: _calcController.getEntry(),
       );
 
       // Add labels

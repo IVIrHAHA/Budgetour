@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:budgetour/models/finance_objects/CashObject.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 
 import 'models/Meta/Transaction.dart';
@@ -11,31 +12,34 @@ class InitTestData {
   static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();
 
   static initTileList() {
-    dummyEssentialList.add(_buildBudgetObjects('Food', 150.99, 10));
-    dummyEssentialList.add(_buildBudgetObjects('Gas', 135, 4));
+    dummyEssentialList
+        .add(_buildBudgetObjects('Food', 150, transactionQTY: 10));
+    dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
 
     return dummyEssentialList;
   }
 
-  static BudgetObject _buildBudgetObjects(
-      String title, double allocationAmount, int transactionQTY) {
+  static BudgetObject _buildBudgetObjects(String title, double allocationAmount,
+      {int transactionQTY}) {
     BudgetObject obj;
     // Create budget object
     if (title == 'Food') {
       obj = BudgetObject(
         title: title,
-        allocatedAmount: allocationAmount,
+        targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.remaining,
       );
+      obj.deposit(150);
     } else {
       obj = BudgetObject(
         title: title,
-        allocatedAmount: allocationAmount,
+        targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.spent,
       );
+      obj.deposit(100);
     }
 
     // Log random transactions

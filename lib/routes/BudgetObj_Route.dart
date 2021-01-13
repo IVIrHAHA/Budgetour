@@ -36,7 +36,7 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
       headerName: widget.budgetObject.name,
       quickStatTitle: 'Remaining',
       quickStatInfo:
-          '\$${Format.formatDouble(widget.budgetObject.currentBalance, 0)}',
+          '\$${Format.formatDouble(widget.budgetObject.cashReserve, 0)}',
       tabTitles: [
         Text('Withdraw', style: style),
         Text('History', style: style),
