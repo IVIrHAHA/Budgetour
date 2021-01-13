@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 /// Return a [Route]
 
 mixin TilePresenter {
+  /// For hints or messages to be displayed above [FinanceTile]
+  String affirmation;
+  Color affirmationColor;
 
   Color getTileColor();
 

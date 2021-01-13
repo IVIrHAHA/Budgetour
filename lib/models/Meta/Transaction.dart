@@ -15,19 +15,19 @@ class Transaction {
   String description;
   double amount;
   DateTime date;
+  Color perceptibleColor;
 
   /// Defaults transaction [date] to [DateTime.now()]
-  Transaction(
-      {this.description = defaultMessage, @required this.amount, this.date}) {
+  Transaction({
+    this.description = defaultMessage,
+    @required this.amount,
+    this.date,
+    this.perceptibleColor,
+  }) {
     this.date = this.date ?? DateTime.now();
   }
 
-  /// ## Code kept for reference
-  /// How to use different types of constructors
-  /// ```dart
-  /// Transaction.fillDate(
-  ///     {this.description = defaultMessage, @required this.amount}) {
-  ///   this.date = DateTime.now();
-  /// }
-  /// ```
+  bool isImportant() {
+    return perceptibleColor != null;
+  }
 }

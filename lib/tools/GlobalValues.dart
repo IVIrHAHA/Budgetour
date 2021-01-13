@@ -25,4 +25,5 @@ class GColors {
 class GlobalValues {
   static const double roundedEdges = 8;
   static const double defaultMargin = 24;
+  static const double financeTileMargin = 4;
 }

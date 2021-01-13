@@ -55,7 +55,11 @@ class TransactionTile extends StatelessWidget {
 
     return Text(
       '\$ ' + Format.formatDouble(amount, 2),
-      style: TextStyle(color: color),
+      style: TextStyle(
+        color: transaction.perceptibleColor ?? color,
+        fontWeight:
+            transaction.isImportant() ? FontWeight.bold : FontWeight.normal,
+      ),
     );
   }
 }

@@ -3,7 +3,6 @@
  */
 import 'package:budgetour/models/interfaces/StatMixin.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
-import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
 import 'CashObject.dart';
@@ -24,9 +23,6 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
 
   double _cashReserve;
 
-  /// For hints or messages to be displayed above [FinanceTile]
-  String affirmation;
-
   FinanceObject(
     this._type, {
     @required this.name,
@@ -44,12 +40,14 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
   }
 
   void deposit(double deposit) {
-    _cashReserve += deposit;
-    print('deposited: $deposit into $name');
+    if (CashObject.instance.liquidAmount > deposit) {
+      _cashReserve += deposit;
+      print('deposited: $deposit into $name');
+    }
   }
 
   /// This method tracks the amount of cash this [FinanceObject] has at its disposal.
-  /// 
+  ///
   /// If the withdrawal request is greater than the cash supply, then overdrawn amount
   /// will be returned.
   double withdraw(double withdrawlRequest) {

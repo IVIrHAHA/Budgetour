@@ -52,14 +52,14 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
         transaction.amount = transaction.amount + overDrawn;
         super.logTransaction(transaction);
 
-        /// TODO: Make this one stand out more in Transaction History 
         transaction = Transaction(
-          amount: -overDrawn,
-          description: 'Overbudget! Replenish',
-        );
+            amount: -overDrawn,
+            description: 'Overbudget! Replenish',
+            perceptibleColor: ColorGenerator.fromHex(GColors.blueish));
       }
     }
     super.logTransaction(transaction);
+    setAffirmation();
   }
 
   _isOverbudget() {
@@ -100,5 +100,24 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
         break;
     }
     return null;
+  }
+
+  setAffirmation() {
+    // Currently overbudget
+    if (cashReserve < 0) {
+      affirmation = 'Overbudget!';
+      affirmationColor = Colors.red;
+    } 
+    // User has gone over targeted budget, but refilled
+    else if (this.getMonthlyExpenses() > this.targetAlloctionAmount &&
+        cashReserve > 0) {
+      affirmation = 'exceeded allocation target';
+      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
+    } 
+    // User is on track thus far
+    else {
+      affirmation = '';
+      affirmationColor = null;
+    }
   }
 }

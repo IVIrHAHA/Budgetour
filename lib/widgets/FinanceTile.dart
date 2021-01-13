@@ -17,21 +17,40 @@ class FinanceTile extends StatelessWidget {
       onTap: () {
         _openTile(context);
       },
-      child: Card(
-        color: financeObj.getTileColor(),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-          side: BorderSide(
-              style: BorderStyle.solid,
-              width: 1,
-              color: ColorGenerator.fromHex(GColors.borderColor)),
-        ),
-        child: buildContents(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            /// Use 16.0 because [ListTile] default to 16.0
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              top: GlobalValues.financeTileMargin,
+            ),
+            child: Text(
+              financeObj.affirmation ?? '',
+              style: TextStyle(
+                color: financeObj.affirmationColor ?? Colors.black,
+              ),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.all(GlobalValues.financeTileMargin),
+            color: financeObj.getTileColor(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+              side: BorderSide(
+                  style: BorderStyle.solid,
+                  width: 1,
+                  color: ColorGenerator.fromHex(GColors.borderColor)),
+            ),
+            child: buildContents(),
+          ),
+        ],
       ),
     );
   }
 
-  Column buildContents() {
+  Widget buildContents() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
