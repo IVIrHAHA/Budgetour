@@ -1,3 +1,5 @@
+import 'package:budgetour/routes/RefillFO_Route.dart';
+
 import '../models/Meta/QuickStat.dart';
 import 'package:common_tools/StringFormater.dart';
 
@@ -20,6 +22,7 @@ class FinanceTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Affirmation Title
           Padding(
             /// Use 16.0 because [ListTile] default to 16.0
             padding: const EdgeInsets.only(
@@ -33,20 +36,39 @@ class FinanceTile extends StatelessWidget {
               ),
             ),
           ),
-          Card(
-            margin: const EdgeInsets.all(GlobalValues.financeTileMargin),
-            color: financeObj.getTileColor(),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
-              side: BorderSide(
-                  style: BorderStyle.solid,
-                  width: 1,
-                  color: ColorGenerator.fromHex(GColors.borderColor)),
-            ),
-            child: buildContents(),
+
+          /// Card Contents
+          DragTarget<double>(
+            onWillAccept: (unallocatedCash) => unallocatedCash > 0,
+            onAccept: (cashQTY) {
+              /// Launch Refilling page
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) {
+                  return RefillObjectPage(financeObj);
+                })
+              );
+            },
+            builder: (ctx, candidates, rejects) {
+              return candidates.length > 0 ? _buildCard() : _buildCard();
+            },
           ),
         ],
       ),
+    );
+  }
+
+  Card _buildCard() {
+    return Card(
+      margin: const EdgeInsets.all(GlobalValues.financeTileMargin),
+      color: financeObj.getTileColor(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(GlobalValues.roundedEdges),
+        side: BorderSide(
+            style: BorderStyle.solid,
+            width: 1,
+            color: ColorGenerator.fromHex(GColors.borderColor)),
+      ),
+      child: buildContents(),
     );
   }
 

@@ -29,7 +29,7 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
     double cashFeed = 0,
   }) {
     // Ensure there is enough cash on hand to feed
-    if (CashObject.instance.liquidAmount >= cashFeed)
+    if (CashOnHand.instance.amount >= cashFeed)
       this._cashReserve = cashFeed;
     else
       this._cashReserve = 0;
@@ -39,11 +39,14 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
     return _type;
   }
 
-  void deposit(double deposit) {
-    if (CashObject.instance.liquidAmount > deposit) {
+  /// Update [cashReserve] and [CashOnHand.amount]
+  bool deposit(double deposit) {
+    if (CashOnHand.instance.amount >= deposit) {
+      CashOnHand.instance.amount -= deposit;
       _cashReserve += deposit;
-      print('deposited: $deposit into $name');
-    }
+      return true;
+    } else
+      return false;
   }
 
   /// This method tracks the amount of cash this [FinanceObject] has at its disposal.

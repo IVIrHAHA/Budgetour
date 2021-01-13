@@ -8,8 +8,11 @@ mixin TransactionHistory {
   List<Transaction> _transactionsList = List<Transaction>();
 
   /// Logs transactions according to date. Latest to oldest.
-  /// TODO: Can make this more efficient
+  /// 
+  /// *** By default, this does not update the [FinanceObject.cashReserve]
   logTransaction(Transaction transaction) {
+  /// TODO: Can make this more efficient
+
     // Add wherever if list is empty
     if (_transactionsList.isEmpty) {
       _transactionsList.add(transaction);

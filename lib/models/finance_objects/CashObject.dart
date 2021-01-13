@@ -1,26 +1,26 @@
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 
-class CashObject with TransactionHistory {
+class CashOnHand with TransactionHistory {
   /// Making of a singleton
-  static final CashObject _instance = CashObject._internal();
+  static final CashOnHand _instance = CashOnHand._internal();
 
-  factory CashObject() {
+  factory CashOnHand() {
     return _instance;
   }
 
-  CashObject._internal() {
+  CashOnHand._internal() {
     // TODO: Load liquidAmount
-    liquidAmount = 0;
+    amount = 0;
   }
 
-  static CashObject get instance => _instance;
+  static CashOnHand get instance => _instance;
 
-  double liquidAmount;
+  double amount;
 
   @override
   logTransaction(Transaction transaction) { 
-    liquidAmount += (transaction.amount * -1);
+    amount += (transaction.amount * -1);
     super.logTransaction(transaction);
   }
 }

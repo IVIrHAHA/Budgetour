@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
 void main() {
-  CashObject.instance.liquidAmount = 1000;
+  CashOnHand.instance.amount = 1000;
   runApp(MyApp());
 }
 
@@ -155,20 +155,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           children: [
             Expanded(
               flex: 1,
-              child: InfoTile(
-                title: 'Unallocated',
-                infoText: '\$ ${Format.formatDouble(
-                  CashObject.instance.liquidAmount,
-                  2,
-                )}',
-                infoTextColor: ColorGenerator.fromHex(GColors.redish),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) {
-                      return IncomeRoute();
-                    }),
-                  );
+              child: Draggable<double>(
+                dragAnchor: DragAnchor.pointer,
+                data: CashOnHand.instance.amount,
+                onDragCompleted: () {
+                  setState(() {
+                    /// Update main screen ui
+                  });
                 },
+                feedback: Card(
+                  color: Colors.black,
+                  child: Text('\$ ${Format.formatDouble(
+                    CashOnHand.instance.amount,
+                    2,
+                  )}', style: TextStyle(color: Colors.red),),
+                ),
+                childWhenDragging: Container(),
+                child: _allocationInfoTile(context),
               ),
             ),
             Expanded(
@@ -187,6 +190,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
+    );
+  }
+
+  InfoTile _allocationInfoTile(BuildContext context) {
+    return InfoTile(
+      title: 'Unallocated',
+      infoText: '\$ ${Format.formatDouble(
+        CashOnHand.instance.amount,
+        2,
+      )}',
+      infoTextColor: ColorGenerator.fromHex(GColors.redish),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) {
+            return IncomeRoute();
+          }),
+        );
+      },
     );
   }
 

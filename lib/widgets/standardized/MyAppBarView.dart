@@ -10,6 +10,7 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class MyAppBarView extends StatefulWidget {
+  /// If null, will build the first [tabPages] provided
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
   final String quickStatTitle, quickStatInfo;

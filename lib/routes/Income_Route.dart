@@ -16,7 +16,7 @@ class IncomeRoute extends StatelessWidget {
     return MyAppBarView(
       headerName: 'Income',
       quickStatTitle: 'liquid',
-      quickStatInfo: Format.formatDouble(CashObject.instance.liquidAmount, 2),
+      quickStatInfo: Format.formatDouble(CashOnHand.instance.amount, 2),
       tabTitles: [
         Text('Deposit', style: style),
         Text('History', style: style),
@@ -24,7 +24,7 @@ class IncomeRoute extends StatelessWidget {
       tabPages: [
         EnterTransactionPage(
           onEnterPressed: (enteredDouble, _) {
-            CashObject.instance.logTransaction(
+            CashOnHand.instance.logTransaction(
               Transaction(
                 amount: (enteredDouble * -1),
               ),
@@ -33,7 +33,7 @@ class IncomeRoute extends StatelessWidget {
           headerTitle: 'Income',
           headerColorAccent: ColorGenerator.fromHex(GColors.greenish),
         ),
-        TransactionHistoryPage(CashObject.instance, infoTileHeader: 'Cash On Hand',),
+        TransactionHistoryPage(CashOnHand.instance, infoTileHeader: 'Cash On Hand',),
       ],
     );
   }

@@ -39,6 +39,12 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   }
 
   @override
+  bool deposit(double deposit) {
+    
+    return super.deposit(deposit);
+  }
+
+  @override
   logTransaction(Transaction transaction) {
     /// If the transaction takes place during current month
     /// then update the financial state of this object
@@ -57,9 +63,11 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
             description: 'Overbudget! Replenish',
             perceptibleColor: ColorGenerator.fromHex(GColors.blueish));
       }
+      setAffirmation();
     }
+
+    // Updates the log but does not update cashReserve
     super.logTransaction(transaction);
-    setAffirmation();
   }
 
   _isOverbudget() {
@@ -107,13 +115,13 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     if (cashReserve < 0) {
       affirmation = 'Overbudget!';
       affirmationColor = Colors.red;
-    } 
+    }
     // User has gone over targeted budget, but refilled
     else if (this.getMonthlyExpenses() > this.targetAlloctionAmount &&
         cashReserve > 0) {
       affirmation = 'exceeded allocation target';
       affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
-    } 
+    }
     // User is on track thus far
     else {
       affirmation = '';

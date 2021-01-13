@@ -31,7 +31,7 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.remaining,
       );
-      obj.deposit(150);
+      // obj.deposit(150);
     } else {
       obj = BudgetObject(
         title: title,
