@@ -9,22 +9,14 @@ import '../pages/EnterTransactionPage.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
-class BudgetObjRoute extends StatefulWidget {
+class BudgetObjRoute extends StatelessWidget {
   final BudgetObject budgetObject;
 
   BudgetObjRoute(this.budgetObject);
 
-  @override
-  _BudgetObjRouteState createState() => _BudgetObjRouteState();
-}
-
-class _BudgetObjRouteState extends State<BudgetObjRoute> {
   void _addTransaction(double valueEntered, BuildContext ctx) {
-    setState(() {
-      Transaction transaction = Transaction(amount: valueEntered);
-      widget.budgetObject.logTransaction(transaction);
-    });
-
+    Transaction transaction = Transaction(amount: valueEntered);
+    budgetObject.logTransaction(transaction);
     Navigator.of(ctx).pop();
   }
 
@@ -33,10 +25,10 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
     const TextStyle style = TextStyle(color: Colors.black);
 
     return MyAppBarView(
-      headerName: widget.budgetObject.name,
+      headerName: budgetObject.name,
       quickStatTitle: 'Remaining',
       quickStatInfo:
-          '\$${Format.formatDouble(widget.budgetObject.cashReserve, 0)}',
+          '\$${Format.formatDouble(budgetObject.cashReserve, 0)}',
       tabTitles: [
         Text('Withdraw', style: style),
         Text('History', style: style),
@@ -47,10 +39,11 @@ class _BudgetObjRouteState extends State<BudgetObjRoute> {
           onEnterPressed: _addTransaction,
           headerTitle: 'Withdraw',
           headerColorAccent: ColorGenerator.fromHex(GColors.redish),
+          focusWithraw: true,
         ),
 
         // History Page
-        TransactionHistoryPage(widget.budgetObject),
+        TransactionHistoryPage(budgetObject),
       ],
     );
   }

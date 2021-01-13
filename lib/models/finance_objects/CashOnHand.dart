@@ -11,16 +11,18 @@ class CashOnHand with TransactionHistory {
 
   CashOnHand._internal() {
     // TODO: Load liquidAmount
-    amount = 0;
+    _amount = 0;
   }
 
   static CashOnHand get instance => _instance;
 
-  double amount;
+  double _amount;
+
+  double get amount => _amount;
 
   @override
   logTransaction(Transaction transaction) { 
-    amount += (transaction.amount * -1);
+    _amount += transaction.amount;
     super.logTransaction(transaction);
   }
 }

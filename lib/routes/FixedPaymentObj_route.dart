@@ -5,23 +5,18 @@ import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
-class FixedPaymentObjRoute extends StatefulWidget {
+class FixedPaymentObjRoute extends StatelessWidget {
   final FixedPaymentObject paymentObj;
 
   FixedPaymentObjRoute(this.paymentObj);
 
   @override
-  _FixedPaymentObjRouteState createState() => _FixedPaymentObjRouteState();
-}
-
-class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
-  @override
   Widget build(BuildContext context) {
     return MyAppBarView(
-      headerName: widget.paymentObj.name,
+      headerName: paymentObj.name,
       quickStatTitle: 'Pending',
       quickStatInfo: '\$ ${Format.formatDouble(
-        widget.paymentObj.monthlyFixedPayment - widget.paymentObj.paymentAmount,
+        paymentObj.monthlyFixedPayment - paymentObj.paymentAmount,
         2,
       )}',
       tabPages: [
@@ -30,21 +25,20 @@ class _FixedPaymentObjRouteState extends State<FixedPaymentObjRoute> {
             Expanded(
               flex: 1,
               child: InfoTile(
-                title: widget.paymentObj.isPaid() ? 'paid' : 'pending payment',
+                title: paymentObj.isPaid() ? 'paid' : 'pending payment',
                 titleColor:
-                    widget.paymentObj.isPaid() ? Colors.green : Colors.red,
+                    paymentObj.isPaid() ? Colors.green : Colors.red,
               ),
             ),
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
+                focusWithraw: true,
                 onEnterPressed: (amount, _) {
-                  setState(() {
                     if (amount != null) {
-                      widget.paymentObj.paymentAmount = amount;
+                      paymentObj.paymentAmount = amount;
                       Navigator.of(context).pop();
                     }
-                  });
                 },
                 headerTitle: 'Payment',
                 headerColorAccent: Colors.grey,

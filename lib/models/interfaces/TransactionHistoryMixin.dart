@@ -54,4 +54,7 @@ mixin TransactionHistory {
   List<Transaction> get getTransactions => _transactionsList;
 
   // deleteTransaction(Transaction transaction);
+
+  // bool deposit(double deposit);
+  // double withdraw(double deposit);
 }

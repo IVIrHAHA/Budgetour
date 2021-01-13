@@ -9,13 +9,18 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
-import 'models/finance_objects/CashObject.dart';
+import 'models/Meta/Transaction.dart';
+import 'models/finance_objects/CashOnHand.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
 void main() {
-  CashOnHand.instance.amount = 1000;
+  CashOnHand.instance.logTransaction(Transaction(
+    description: 'Initial Deposit',
+    amount: 1000,
+    date: DateTime(2021, 1, 1, 0, 0),
+  ));
   runApp(MyApp());
 }
 
@@ -165,10 +170,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 },
                 feedback: Card(
                   color: Colors.black,
-                  child: Text('\$ ${Format.formatDouble(
-                    CashOnHand.instance.amount,
-                    2,
-                  )}', style: TextStyle(color: Colors.red),),
+                  child: Text(
+                    '\$ ${Format.formatDouble(
+                      CashOnHand.instance.amount,
+                      2,
+                    )}',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
                 childWhenDragging: Container(),
                 child: _allocationInfoTile(context),

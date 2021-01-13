@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:budgetour/models/finance_objects/CashObject.dart';
+import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 
 import 'models/Meta/Transaction.dart';
@@ -31,7 +31,7 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.remaining,
       );
-      // obj.deposit(150);
+      obj.deposit(150);
     } else {
       obj = BudgetObject(
         title: title,
@@ -47,7 +47,7 @@ class InitTestData {
       obj.logTransaction(
         Transaction(
           description: 'Tran_${i + 1}',
-          amount: _doubleInRange(5, 25),
+          amount: _doubleInRange(5, 25) * -1,
           date: DateTime.now().subtract(Duration(days: i * 3)),
         ),
       );

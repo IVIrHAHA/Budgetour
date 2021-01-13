@@ -1,11 +1,12 @@
 /*
  * Allows program to interface with all FinaceObjects
  */
+import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/interfaces/StatMixin.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
-import 'CashObject.dart';
+import 'CashOnHand.dart';
 
 /// [FinanceObjectType] allows color schememing in [FinanceTile].
 /// Amongst other potential uses.
@@ -42,7 +43,10 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
   /// Update [cashReserve] and [CashOnHand.amount]
   bool deposit(double deposit) {
     if (CashOnHand.instance.amount >= deposit) {
-      CashOnHand.instance.amount -= deposit;
+      CashOnHand.instance.logTransaction(Transaction(
+        amount: -deposit,
+        description: 'Allocation to $name',
+      ));
       _cashReserve += deposit;
       return true;
     } else

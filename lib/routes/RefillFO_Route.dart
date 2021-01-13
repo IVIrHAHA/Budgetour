@@ -1,4 +1,4 @@
-import 'package:budgetour/models/finance_objects/CashObject.dart';
+import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -33,6 +33,7 @@ class RefillObjectPage extends StatelessWidget {
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
+                focusWithraw: false,
                 onEnterPressed: (amount, _) {
                   if(onRefillComplete != null) {
                     onRefillComplete(financeObj.deposit(amount));

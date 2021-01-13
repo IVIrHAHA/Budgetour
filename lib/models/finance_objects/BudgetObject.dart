@@ -39,12 +39,6 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   }
 
   @override
-  bool deposit(double deposit) {
-    
-    return super.deposit(deposit);
-  }
-
-  @override
   logTransaction(Transaction transaction) {
     /// If the transaction takes place during current month
     /// then update the financial state of this object
@@ -53,7 +47,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       /// User has gone overbudget, log transaction with what is
       /// available in cashReserve and make an auto input transaction
       /// which tells the user they have overdrawn
-      var overDrawn = this.withdraw(transaction.amount);
+      var overDrawn = this.withdraw(-transaction.amount);
       if (overDrawn < 0) {
         transaction.amount = transaction.amount + overDrawn;
         super.logTransaction(transaction);

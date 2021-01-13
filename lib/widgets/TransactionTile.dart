@@ -46,11 +46,11 @@ class TransactionTile extends StatelessWidget {
   Text buildAmountText(double amount) {
     Color color;
 
-    if (amount < 0) {
+    if (amount > 0) {
       color = ColorGenerator.fromHex(GColors.positiveNumber);
-      amount = amount * -1;
     } else {
       color = ColorGenerator.fromHex(GColors.negativeNumber);
+      amount = amount * -1;
     }
 
     return Text(

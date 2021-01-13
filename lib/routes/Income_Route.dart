@@ -1,5 +1,5 @@
 import 'package:budgetour/models/Meta/Transaction.dart';
-import 'package:budgetour/models/finance_objects/CashObject.dart';
+import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
@@ -23,10 +23,11 @@ class IncomeRoute extends StatelessWidget {
       ],
       tabPages: [
         EnterTransactionPage(
+          focusWithraw: false,
           onEnterPressed: (enteredDouble, _) {
             CashOnHand.instance.logTransaction(
               Transaction(
-                amount: (enteredDouble * -1),
+                amount: (enteredDouble),
               ),
             );
           },
