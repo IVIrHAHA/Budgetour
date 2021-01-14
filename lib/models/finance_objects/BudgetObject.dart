@@ -14,6 +14,7 @@ import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
+import '../CashManager.dart';
 import 'FinanceObject.dart';
 import '../interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +31,9 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   BudgetObject({
     @required String title,
     this.targetAlloctionAmount = 0,
-    double cashFeed = 0,
     BudgetStat stat1,
     BudgetStat stat2,
-  }) : super(FinanceObjectType.budget, name: title, cashFeed: cashFeed) {
+  }) : super(name: title,) {
     this.firstStat = stat1;
     this.secondStat = stat2;
   }
@@ -64,12 +64,18 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     super.logTransaction(transaction);
   }
 
+  @override
+  spendCash(double amount) {
+    
+    super.spendCash(amount);
+  }
+
   double addToReserve(double amount) {
-    cashReserve += amount;
-    if (cashReserve >= 0) {
-      return 0;
-    } else
-      return cashReserve;
+    // cashReserve += amount;
+    // if (cashReserve >= 0) {
+    //   return 0;
+    // } else
+    //   return cashReserve;
   }
 
   _isOverbudget() {
@@ -105,7 +111,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
         return QuickStat(
             title: 'Spent',
             evaluateValue: Future(() {
-              return Format.formatDouble(this.getMonthlyExpenses(), 2);
+              return Format.formatDouble(this.getMonthlyStatement(), 2);
             }));
         break;
     }
@@ -119,7 +125,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       affirmationColor = Colors.red;
     }
     // User has gone over targeted budget, but refilled
-    else if (this.getMonthlyExpenses() > this.targetAlloctionAmount &&
+    else if (this.getMonthlyStatement() > this.targetAlloctionAmount &&
         cashReserve > 0) {
       affirmation = 'exceeded allocation target';
       affirmationColor = ColorGenerator.fromHex(GColors.borderColor);

@@ -38,7 +38,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     @required this.monthlyFixedPayment,
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
-  }) : super(FinanceObjectType.fixed, name: name) {
+  }) : super(name: name) {
     this._lastDueDate = this.nextDueDate ?? DateTime.now();
     this.paymentAmount = 0;
   }
@@ -105,11 +105,5 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         );
         break;
     }
-  }
-
-  @override
-  deposit(Transaction deposit) {
-    // TODO: implement deposit
-    throw UnimplementedError();
   }
 }

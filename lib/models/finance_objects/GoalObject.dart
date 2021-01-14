@@ -36,7 +36,7 @@ class GoalObject extends FinanceObject<GoalStats> {
     this.contributeByFixedAmount,
     this.contributeByPercent,
     this.totalContribution = 0,
-  }) : super(FinanceObjectType.goal, name: name);
+  }) : super(name: name);
 
   contribute(double contributionAmount) {
     totalContribution += contributionAmount;

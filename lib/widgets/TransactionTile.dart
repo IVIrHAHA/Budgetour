@@ -1,3 +1,4 @@
+import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/EnhancedListTile.dart';

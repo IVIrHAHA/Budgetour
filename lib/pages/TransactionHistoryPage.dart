@@ -77,7 +77,7 @@ class TransactionHistoryPage extends StatelessWidget {
   }
 
   InfoTile _formatInfoTile() {
-    double expensesTotal = history.getMonthlyExpenses();
+    double expensesTotal = history.getMonthlyStatement();
     bool isNegative = false;
 
     if (expensesTotal < 0) {

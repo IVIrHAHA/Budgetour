@@ -1,7 +1,8 @@
+import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 
-class CashOnHand with TransactionHistory {
+class CashOnHand with CashHandler, TransactionHistory {
   /// Making of a singleton
   static final CashOnHand _instance = CashOnHand._internal();
 
@@ -10,18 +11,9 @@ class CashOnHand with TransactionHistory {
   }
 
   CashOnHand._internal() {
-    // TODO: Load liquidAmount
-    _amount = 0;
+    // TODO: Load CashOnHand
   }
 
   static CashOnHand get instance => _instance;
 
-  double _amount;
-
-  double get amount => _amount;
-
-  @override
-  logTransaction(Transaction transaction) {
-
-  }
-}
+} 

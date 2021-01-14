@@ -4,6 +4,7 @@ import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:flutter/material.dart';
 
+import 'models/CashManager.dart';
 import 'models/Meta/Transaction.dart';
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
@@ -73,6 +74,7 @@ class InitTestData {
 
     obj.firstStat = FixedPaymentStats.nextDue;
     obj.secondStat = FixedPaymentStats.nextDue;
+
     return obj;
   }
 

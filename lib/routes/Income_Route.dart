@@ -1,3 +1,4 @@
+import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
