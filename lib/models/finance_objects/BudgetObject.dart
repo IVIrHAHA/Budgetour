@@ -47,7 +47,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       /// User has gone overbudget, log transaction with what is
       /// available in cashReserve and make an auto input transaction
       /// which tells the user they have overdrawn
-      var overDrawn = this.withdraw(-transaction.amount);
+      var overDrawn = this.addToReserve(transaction.amount);
       if (overDrawn < 0) {
         transaction.amount = transaction.amount + overDrawn;
         super.logTransaction(transaction);
@@ -62,6 +62,14 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
 
     // Updates the log but does not update cashReserve
     super.logTransaction(transaction);
+  }
+
+  double addToReserve(double amount) {
+    cashReserve += amount;
+    if (cashReserve >= 0) {
+      return 0;
+    } else
+      return cashReserve;
   }
 
   _isOverbudget() {

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:flutter/material.dart';
 
 import 'models/Meta/Transaction.dart';
 import 'models/finance_objects/BudgetObject.dart';
@@ -31,7 +32,14 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.remaining,
       );
-      obj.deposit(150);
+      obj.logTransaction(
+        Transaction(
+          amount: 100,
+          description: 'refill',
+          date: DateTime(2021, 1, 1, 0, 0),
+          perceptibleColor: Colors.green,
+        ),
+      );
     } else {
       obj = BudgetObject(
         title: title,
@@ -39,7 +47,6 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.spent,
       );
-      obj.deposit(100);
     }
 
     // Log random transactions

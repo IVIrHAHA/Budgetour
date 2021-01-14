@@ -22,7 +22,7 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
   String name;
   final FinanceObjectType _type;
 
-  double _cashReserve;
+  double cashReserve;
 
   FinanceObject(
     this._type, {
@@ -31,39 +31,12 @@ abstract class FinanceObject<E> with TilePresenter, StatMixin<E> {
   }) {
     // Ensure there is enough cash on hand to feed
     if (CashOnHand.instance.amount >= cashFeed)
-      this._cashReserve = cashFeed;
+      this.cashReserve = cashFeed;
     else
-      this._cashReserve = 0;
+      this.cashReserve = 0;
   }
 
   getType() {
     return _type;
   }
-
-  /// Update [cashReserve] and [CashOnHand.amount]
-  bool deposit(double deposit) {
-    if (CashOnHand.instance.amount >= deposit) {
-      CashOnHand.instance.logTransaction(Transaction(
-        amount: -deposit,
-        description: 'Allocation to $name',
-      ));
-      _cashReserve += deposit;
-      return true;
-    } else
-      return false;
-  }
-
-  /// This method tracks the amount of cash this [FinanceObject] has at its disposal.
-  ///
-  /// If the withdrawal request is greater than the cash supply, then overdrawn amount
-  /// will be returned.
-  double withdraw(double withdrawlRequest) {
-    _cashReserve -= withdrawlRequest;
-    if (_cashReserve >= 0) {
-      return 0;
-    } else
-      return _cashReserve;
-  }
-
-  get cashReserve => _cashReserve;
 }

@@ -35,13 +35,7 @@ class RefillObjectPage extends StatelessWidget {
               child: EnterTransactionPage(
                 focusWithraw: false,
                 onEnterPressed: (amount, _) {
-                  if(onRefillComplete != null) {
-                    onRefillComplete(financeObj.deposit(amount));
-                  }
-                  else {
-                    financeObj.deposit(amount);
-                  }
-                  Navigator.of(context).pop();
+                  /// TODO: Transfer to FinanceObject
                 },
                 headerTitle: 'Refill',
                 headerColorAccent: Colors.grey,

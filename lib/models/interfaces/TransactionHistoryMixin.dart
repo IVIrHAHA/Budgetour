@@ -8,21 +8,21 @@ mixin TransactionHistory {
   List<Transaction> _transactionsList = List<Transaction>();
 
   /// Logs transactions according to date. Latest to oldest.
-  /// 
+  ///
   /// *** By default, this does not update the [FinanceObject.cashReserve]
   logTransaction(Transaction transaction) {
-  /// TODO: Can make this more efficient
+    /// TODO: Can make this more efficient
 
     // Add wherever if list is empty
     if (_transactionsList.isEmpty) {
       _transactionsList.add(transaction);
-    } 
+    }
 
     // Add to front of list if incoming transaction.date allows
     else if (_transactionsList.first.date.compareTo(transaction.date) < 1) {
       _transactionsList.insert(0, transaction);
-    } 
-    
+    }
+
     // Otherwise, add wherever and sort the list
     //
     // *** This is where we can improve. Rather than sorting the entire list
@@ -53,8 +53,9 @@ mixin TransactionHistory {
 
   List<Transaction> get getTransactions => _transactionsList;
 
-  // deleteTransaction(Transaction transaction);
-
-  // bool deposit(double deposit);
-  // double withdraw(double deposit);
+  deposit(Transaction deposit) {
+    if(deposit.amount > 0) {
+      logTransaction(deposit);
+    }
+  }
 }

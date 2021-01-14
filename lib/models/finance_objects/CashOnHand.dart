@@ -21,8 +21,7 @@ class CashOnHand with TransactionHistory {
   double get amount => _amount;
 
   @override
-  logTransaction(Transaction transaction) { 
-    _amount += transaction.amount;
-    super.logTransaction(transaction);
+  logTransaction(Transaction transaction) {
+
   }
 }
