@@ -57,7 +57,7 @@ class InitTestData {
         reciept.date = DateTime.now().subtract(Duration(days: i * 3));
         obj.logTransaction(reciept..description = 'auto gen trans${i+1}');
       }
-      else {
+      else { 
         print('trans did not register');
       }
     }

@@ -30,4 +30,4 @@ class CashOnHand with CashHandler, TransactionHistory {
 
   static CashOnHand get instance => _instance;
 
-} 
+}

@@ -1,6 +1,7 @@
 import 'package:budgetour/models/Meta/Transaction.dart';
 
 import '../CashManager.dart';
+
 /// Creates and manages [FinanceObject]s transaction history
 
 import '../finance_objects/FinanceObject.dart';
@@ -45,6 +46,19 @@ mixin TransactionHistory {
     _transactionsList
         .where((element) => element.date.month == DateTime.now().month)
         .forEach((element) {
+      amount += element.amount;
+    });
+
+    return amount;
+  }
+
+  double getMonthlyExpenses() {
+    double amount = 0;
+    _transactionsList.where((element) {
+      bool timeFrame = element.date.month == DateTime.now().month;
+      bool transactionType = element.amount < 0;
+      return timeFrame && transactionType;
+    }).forEach((element) {
       amount += element.amount;
     });
 
