@@ -65,6 +65,19 @@ mixin TransactionHistory {
     return amount;
   }
 
+  double getMonthlyDeposits() {
+    double amount = 0;
+    _transactionsList.where((element) {
+      bool timeFrame = element.date.month == DateTime.now().month;
+      bool transactionType = element.amount > 0;
+      return timeFrame && transactionType;
+    }).forEach((element) {
+      amount += element.amount;
+    });
+
+    return amount;
+  }
+
   /// Sorts [_transactionsList] from latest to oldest
   _sortList() {
     _transactionsList.sort((a, b) => b.date.compareTo(a.date));

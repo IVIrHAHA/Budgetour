@@ -23,6 +23,8 @@ class CashOnHand with CashHandler, TransactionHistory {
     return report;
   }
 
+  /// Auto Logs the amount deposited and gives [Transaction.description] the 
+  /// String value 'Deposited'
   void autoLogDeposit(double amount) {
     Transaction report = this.reportIncome(amount);
     logTransaction(report);

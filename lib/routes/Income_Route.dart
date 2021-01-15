@@ -36,12 +36,13 @@ class IncomeRoute extends StatelessWidget {
         TransactionHistoryPage(
           CashOnHand.instance,
           infoTileHeader: 'Cash On Hand',
+          infoValue: CashOnHand.instance.getMonthlyDeposits,
         ),
       ],
     );
   }
 
   _userEnteredIncome(double incomeAmount) {
-    CashOnHand.instance.reportIncome(incomeAmount);
+    CashOnHand.instance.autoLogDeposit(incomeAmount);
   }
 }

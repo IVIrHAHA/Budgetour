@@ -47,7 +47,7 @@ class InitTestData {
       depositReciept = CashOnHand.instance.transferToHolder(obj, 100);
     }
 
-    obj.logTransaction(depositReciept..date = DateTime(2021, 1, 1, 0, 0));
+    obj.logTransaction(depositReciept..date = DateTime(2020, 12, 1, 0, 0));
 
     // Spend random amounts
     for (int i = 0; i <= transactionQTY; i++) {
@@ -58,7 +58,7 @@ class InitTestData {
         obj.logTransaction(reciept..description = 'auto gen trans${i+1}');
       }
       else { 
-        print('trans did not register');
+        print('trans did not register: ${obj.name} - trans${i+1}');
       }
     }
 

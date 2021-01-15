@@ -14,8 +14,9 @@ import 'package:intl/intl.dart';
 class TransactionHistoryPage extends StatelessWidget {
   final TransactionHistory history;
   final String infoTileHeader;
+  final Function infoValue;
 
-  TransactionHistoryPage(this.history, {this.infoTileHeader});
+  TransactionHistoryPage(this.history, {this.infoTileHeader, this.infoValue});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,7 @@ class TransactionHistoryPage extends StatelessWidget {
   }
 
   InfoTile _formatInfoTile() {
-    double expensesTotal = history.getMonthlyExpenses();
+    double expensesTotal = infoValue != null ? infoValue() : history.getMonthlyExpenses();
     bool isNegative = false;
 
     if (expensesTotal < 0) {
