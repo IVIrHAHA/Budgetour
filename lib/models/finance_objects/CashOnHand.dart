@@ -2,6 +2,8 @@ import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 
+import 'FinanceObject.dart';
+
 class CashOnHand with CashHandler, TransactionHistory {
   /// Making of a singleton
   static final CashOnHand _instance = CashOnHand._internal();
@@ -31,5 +33,11 @@ class CashOnHand with CashHandler, TransactionHistory {
   }
 
   static CashOnHand get instance => _instance;
+
+  @override
+  void transferReciept(Transaction transferReciept, CashHolder to) {
+    transferReciept.description = 'refilled ${(to as FinanceObject).name}';
+    logTransaction(transferReciept);
+  }
 
 }

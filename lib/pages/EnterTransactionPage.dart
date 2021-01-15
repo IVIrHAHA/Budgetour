@@ -14,12 +14,10 @@ class EnterTransactionPage extends StatefulWidget {
   final Function(double, BuildContext) onEnterPressed;
   final String headerTitle;
   final Color headerColorAccent;
-  final bool focusWithraw;
 
   const EnterTransactionPage({
     @required this.onEnterPressed,
     @required this.headerTitle,
-    @required this.focusWithraw,
     this.headerColorAccent = Colors.grey,
   });
 
@@ -65,9 +63,6 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
               MediaQuery.of(context).size.height / 2,
               controller: calcController,
               onEnterPressed: (entry) {
-                if(widget.focusWithraw) {
-                  entry = entry * -1;
-                }
                 widget.onEnterPressed(
                   entry,
                   context,

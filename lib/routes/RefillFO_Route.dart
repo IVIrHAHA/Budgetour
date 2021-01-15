@@ -1,5 +1,7 @@
+import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
@@ -33,9 +35,20 @@ class RefillObjectPage extends StatelessWidget {
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
-                focusWithraw: false,
                 onEnterPressed: (amount, _) {
-                  /// TODO: Transfer to FinanceObject
+                  try {
+                    CashOnHand cashBag = CashOnHand.instance;
+
+                    cashBag.transferToHolder(financeObj, amount);
+                    
+                    Navigator.of(context).pop();
+                  }
+
+                  /// Transfer was unsuccessful
+                  catch (Exception) {
+                    /// TODO: Inform user via InfoTile that transfer was not completed
+                    print('not valid');
+                  }
                 },
                 headerTitle: 'Refill',
                 headerColorAccent: Colors.grey,

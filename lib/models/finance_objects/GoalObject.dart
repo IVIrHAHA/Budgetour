@@ -1,3 +1,4 @@
+import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/routes/GoalObj_Route.dart';
@@ -82,6 +83,11 @@ class GoalObject extends FinanceObject<GoalStats> {
   QuickStat determineStat(GoalStats statType) {
     // TODO: implement determineStat
     throw UnimplementedError();
+  }
+
+  @override
+  void transferReciept(Transaction transferReciept, CashHandler from) {
+    // Do nothing
   }
   
 }

@@ -24,7 +24,6 @@ class InitTestData {
   static BudgetObject _buildBudgetObjects(String title, double allocationAmount,
       {int transactionQTY}) {
     BudgetObject obj;
-    Transaction depositReciept;
     // Explicityly target an Object
     if (title == 'Food') {
       obj = BudgetObject(
@@ -33,7 +32,7 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.remaining,
       );
-      depositReciept = CashOnHand.instance.transferToHolder(obj, 150);
+      CashOnHand.instance.transferToHolder(obj, 150);
     }
 
     /// Build BudgetObject
@@ -44,10 +43,8 @@ class InitTestData {
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.spent,
       );
-      depositReciept = CashOnHand.instance.transferToHolder(obj, 100);
+      CashOnHand.instance.transferToHolder(obj, 100);
     }
-
-    obj.logTransaction(depositReciept..date = DateTime(2020, 12, 1, 0, 0));
 
     // Spend random amounts
     for (int i = 0; i <= transactionQTY; i++) {

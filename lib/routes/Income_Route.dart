@@ -24,8 +24,6 @@ class IncomeRoute extends StatelessWidget {
       ],
       tabPages: [
         EnterTransactionPage(
-          focusWithraw: false,
-
           /// User reported Income
           onEnterPressed: (enteredDouble, _) {
             _userEnteredIncome(enteredDouble);
@@ -35,7 +33,7 @@ class IncomeRoute extends StatelessWidget {
         ),
         TransactionHistoryPage(
           CashOnHand.instance,
-          infoTileHeader: 'Cash On Hand',
+          infoTileHeader: 'Monthly Deposits',
           infoValue: CashOnHand.instance.getMonthlyDeposits,
         ),
       ],

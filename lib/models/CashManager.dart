@@ -1,3 +1,4 @@
+import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
 
 import 'Meta/Transaction.dart';
@@ -37,7 +38,7 @@ class BudgetourReserve {
   /// outside this class.
   ///
   /// ** This is the only method that can subtract from [_totalCash]
-  /// 
+  ///
   /// ** IMPORTANT: [_expellCash] will make [Transaction.amount] negative
   static Transaction _expellCash(double amount) {
     if (amount > 0) {
@@ -84,23 +85,38 @@ mixin CashHandler {
     if (amount > 0) {
       reciept = BudgetourReserve._printCash(amount);
       _cashAccount += reciept.amount;
+      print('gain monay');
     }
     return reciept;
   }
 
-  Transaction transferToHolder(CashHolder holder, double amount) {
-    if (_cashAccount >= amount) {
+  /// Transfers [amount] from [this] to [holder] and provides each
+  /// with a copy of the transfer with [transferReciept]. Thus, 
+  /// if any object has a [TransactionHistory] mixin, there is no need to 
+  /// use [logTransaction].
+  void transferToHolder(CashHolder holder, double amount) {
+    if (_cashAccount >= amount && amount > 0) {
       /// Remove [amount] from [_cashAccount]
       this._cashAccount -= amount;
 
       /// Transfer [amount] to holder
       holder._cashAccount += amount;
-      return BudgetourReserve._validateTransaction(
-        Transaction(amount, description: 'transferred \$$amount'),
+
+      this.transferReciept(
+        BudgetourReserve._validateTransaction(Transaction(-amount)),
+        holder,
       );
+
+      holder.transferReciept(
+        BudgetourReserve._validateTransaction(Transaction(amount)),
+        this,
+      );
+      return;
     }
     throw Exception('Not a valid transfer');
   }
+
+  void transferReciept(Transaction transferReciept, CashHolder to);
 
   double get amount => _cashAccount;
 }
@@ -115,11 +131,14 @@ mixin CashHolder {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
       withdrawlReciept = BudgetourReserve._expellCash(amount);
+
       /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
       _cashAccount += withdrawlReciept.amount;
     }
     return withdrawlReciept;
   }
+
+  void transferReciept(Transaction transferReciept, CashHandler from);
 
   double get cashReserve => _cashAccount;
 }

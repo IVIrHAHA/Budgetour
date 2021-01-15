@@ -33,7 +33,6 @@ class FixedPaymentObjRoute extends StatelessWidget {
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
-                focusWithraw: true,
                 onEnterPressed: (amount, _) {
                     if (amount != null) {
                       paymentObj.paymentAmount = amount;

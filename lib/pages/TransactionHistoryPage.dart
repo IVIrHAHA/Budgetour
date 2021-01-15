@@ -78,7 +78,8 @@ class TransactionHistoryPage extends StatelessWidget {
   }
 
   InfoTile _formatInfoTile() {
-    double expensesTotal = infoValue != null ? infoValue() : history.getMonthlyExpenses();
+    double expensesTotal =
+        infoValue != null ? infoValue() : history.getMonthlyExpenses();
     bool isNegative = false;
 
     if (expensesTotal < 0) {
@@ -89,10 +90,7 @@ class TransactionHistoryPage extends StatelessWidget {
     return InfoTile(
       infoText: '\$ ${Format.formatDouble(expensesTotal, 2)}',
       infoTextColor: ColorGenerator.fromHex(
-        isNegative ?
-        GColors.negativeNumber :
-        GColors.greenish
-      ),
+          isNegative ? GColors.negativeNumber : GColors.greenish),
       title: infoTileHeader ?? 'Total Spent',
     );
   }

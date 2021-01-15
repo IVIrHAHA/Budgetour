@@ -42,7 +42,6 @@ class BudgetObjRoute extends StatelessWidget {
           onEnterPressed: _addTransaction,
           headerTitle: 'Withdraw',
           headerColorAccent: ColorGenerator.fromHex(GColors.redish),
-          focusWithraw: true,
         ),
 
         // History Page

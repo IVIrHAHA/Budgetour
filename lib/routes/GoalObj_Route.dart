@@ -27,7 +27,6 @@ class _GoalObjRouteState extends State<GoalObjRoute> {
       ],
       tabPages: [
         EnterTransactionPage(
-          focusWithraw: false,
           onEnterPressed: (_, __) {
             print('hello');
           },
