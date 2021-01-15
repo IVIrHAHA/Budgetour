@@ -11,15 +11,43 @@ import 'models/finance_objects/GoalObject.dart';
 
 class InitTestData {
   static final List<FinanceObject> dummyEssentialList = List<FinanceObject>();
+  static final List<FinanceObject> dummySecurityList = List<FinanceObject>();
+  static final List<FinanceObject> dummyGoalList = List<FinanceObject>();
+  static final List<FinanceObject> dummyLifeStyleList = List<FinanceObject>();
+  static final List<FinanceObject> dummyMiscList = List<FinanceObject>();
 
-  static initTileList() {
+  static void initTileList() {
+    buildEssentialList();
+    buildSecurityList();
+    buildGoalList();
+    buildLifeStyleList();
+    buildMiscList();
+  }
+
+  static buildEssentialList() {
     dummyEssentialList
         .add(_buildBudgetObjects('Food', 150, transactionQTY: 10));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
+    dummyEssentialList.add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
+    dummyEssentialList.add(_buildFixedPaymentObject('Car Insurance', 42));
 
-    return dummyEssentialList;
   }
+
+  static buildSecurityList() {
+    dummySecurityList.add(_buildFixedPaymentObject('Fidelity', 200));
+  }
+
+  static buildGoalList() {
+  }
+
+  static buildLifeStyleList() {
+    dummyLifeStyleList.add(_buildFixedPaymentObject('Spotify', 9.99));
+    dummyLifeStyleList.add(_buildFixedPaymentObject('Quip', 5.41));
+    dummyLifeStyleList.add(_buildFixedPaymentObject('Nuero Gum', 20.27));
+  }
+
+  static buildMiscList() {}
 
   static BudgetObject _buildBudgetObjects(String title, double allocationAmount,
       {int transactionQTY}) {
@@ -48,14 +76,13 @@ class InitTestData {
 
     // Spend random amounts
     for (int i = 0; i <= transactionQTY; i++) {
-      Transaction reciept  = obj.spendCash(_doubleInRange(5,25));
+      Transaction reciept = obj.spendCash(_doubleInRange(5, 25));
 
-      if(reciept != null) {
+      if (reciept != null) {
         reciept.date = DateTime.now().subtract(Duration(days: i * 3));
-        obj.logTransaction(reciept..description = 'auto gen trans${i+1}');
-      }
-      else { 
-        print('trans did not register: ${obj.name} - trans${i+1}');
+        obj.logTransaction(reciept..description = 'auto gen trans${i + 1}');
+      } else {
+        print('trans did not register: ${obj.name} - trans${i + 1}');
       }
     }
 

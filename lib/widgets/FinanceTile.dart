@@ -23,41 +23,45 @@ class FinanceTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// Affirmation Title
-          Padding(
-            /// Use 16.0 because [ListTile] default to 16.0
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              top: GlobalValues.financeTileMargin,
-            ),
-            child: Text(
-              financeObj.affirmation ?? '',
-              style: TextStyle(
-                color: financeObj.affirmationColor ?? Colors.black,
+          Expanded(
+            flex: 0,
+            child: Padding(
+              /// Use 16.0 because [ListTile] default to 16.0
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                top: GlobalValues.financeTileMargin,
+              ),
+              child: Text(
+                financeObj.affirmation ?? '',
+                style: TextStyle(
+                  color: financeObj.affirmationColor ?? Colors.black,
+                ),
               ),
             ),
           ),
 
           /// Card Contents
-          DragTarget<double>(
-            onWillAccept: (unallocatedCash) => unallocatedCash > 0,
-            onAccept: (cashQTY) {
-              /// Launch Refilling page
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) {
+          Expanded(
+            flex: 1,
+            child: DragTarget<double>(
+              onWillAccept: (unallocatedCash) => unallocatedCash > 0,
+              onAccept: (cashQTY) {
+                /// Launch Refilling page
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
                   return RefillObjectPage(financeObj);
-                })
-              );
-            },
-            builder: (ctx, candidates, rejects) {
-              return candidates.length > 0 ? _buildCard() : _buildCard();
-            },
+                }));
+              },
+              builder: (ctx, candidates, rejects) {
+                return candidates.length > 0 ? _buildCard() : _buildCard();
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Card _buildCard() {
+  Widget _buildCard() {
     return Card(
       margin: const EdgeInsets.all(GlobalValues.financeTileMargin),
       color: financeObj.getTileColor(),
@@ -77,28 +81,38 @@ class FinanceTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Main Title
-        ListTile(
-          leading: Text(financeObj.name),
-          trailing: Icon(Icons.more_vert),
+        Flexible(
+          flex: 3,
+          child: ListTile(
+            title: Text(financeObj.name),
+            trailing: Icon(Icons.more_vert),
+          ),
         ),
 
         // Stat Display #1
-        ListTile(
-          title: Text(
-              financeObj.hasFirstStat() ? financeObj.getFirstStat().title : ''),
-          trailing: financeObj.hasFirstStat()
-              ? _getQuickStatValue(financeObj.getFirstStat())
-              : Text(''),
+        Flexible(
+          flex: 3,
+          child: ListTile(
+            title: Text(financeObj.hasFirstStat()
+                ? financeObj.getFirstStat().title
+                : ''),
+            trailing: financeObj.hasFirstStat()
+                ? _getQuickStatValue(financeObj.getFirstStat())
+                : Text(''),
+          ),
         ),
 
         // Stat Display #2
-        ListTile(
-          title: Text(financeObj.hasSecondStat()
-              ? financeObj.getSecondStat().title
-              : ''),
-          trailing: financeObj.hasSecondStat()
-              ? _getQuickStatValue(financeObj.getSecondStat())
-              : Text(''),
+        Flexible(
+          flex: 3,
+          child: ListTile(
+            title: Text(financeObj.hasSecondStat()
+                ? financeObj.getSecondStat().title
+                : ''),
+            trailing: financeObj.hasSecondStat()
+                ? _getQuickStatValue(financeObj.getSecondStat())
+                : Text(''),
+          ),
         ),
       ],
     );

@@ -278,6 +278,8 @@ class TileLayout extends StatelessWidget {
     return Container(
       child: financeList.length != 0
           ? GridView.count(
+              scrollDirection: Axis.vertical,
+              // padding: const EdgeInsets.all(2),
               crossAxisCount: 2,
               children: financeList.map((element) {
                 return FinanceTile(element);

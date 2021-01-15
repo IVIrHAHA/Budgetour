@@ -42,10 +42,10 @@ class CategoryListManager extends _CategoryListBase {
   // Initialize the category lists
   CategoryListManager._internal() {
     _essentialList = InitTestData.dummyEssentialList;
-    _securityList = new List<FinanceObject>();
-    _goalList = new List<FinanceObject>();
-    _lifeStyleList = new List<FinanceObject>();
-    _miscList = new List<FinanceObject>();
+    _securityList = InitTestData.dummySecurityList;
+    _goalList = InitTestData.dummyGoalList;
+    _lifeStyleList = InitTestData.dummyLifeStyleList;
+    _miscList = InitTestData.dummyMiscList;
   }
 
   /// Get this [_instance]
