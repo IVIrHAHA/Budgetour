@@ -15,35 +15,59 @@ class BudgetourReserve {
 
   static BudgetourReserve get clerk => _instance;
 
+  get cashReport => _totalCash;
+
   static double _totalCash = 0;
 
-  static double _printCash(double amount) {
-    _totalCash += amount;
-    return amount;
+  /// Add to [_totalCash] by the amount passed.
+  /// Then return a validatedTransaction where amount is accessable
+  /// outside this class.
+  ///
+  /// ** This is the only method that can add to [_totalCash]
+  static Transaction _printCash(double amount) {
+    if (amount > 0) {
+      _totalCash += amount;
+      return _validateTransaction(Transaction(amount));
+    }
+    throw Exception('when depositing, ensure amount is greater than 0');
   }
 
-  static double _expellCash(double amount) {
-    _totalCash -= amount;
-    return amount;
+  /// Subtract from [_totalCash] by the amount passed.
+  /// Then return a validatedTransaction where amount is accessable
+  /// outside this class.
+  ///
+  /// ** This is the only method that can subtract from [_totalCash]
+  /// 
+  /// ** IMPORTANT: [_expellCash] will make [Transaction.amount] negative
+  static Transaction _expellCash(double amount) {
+    if (amount > 0) {
+      _totalCash -= amount;
+      return _validateTransaction(Transaction(-amount));
+    }
+    throw Exception('when withdrawing, ensure amount is greater than 0');
   }
 
-  Transaction mediateTransfer(CashHolder giver, CashHolder receiver, Transaction contract) {
-    if (giver.cashReserve >= contract.amount) {
+  /// Mediate the transfer of cash between two [CashHolder] objects.
+  /// This is useful in the case two [FinanceObject] objects want to exchange
+  /// resources.
+  Transaction mediateTransfer(
+      CashHolder giver, CashHolder receiver, double amount) {
+    if (giver._cashAccount >= amount && amount > 0) {
       /// Take amount from giver
-      giver._cashAccount -= contract.amount;
+      giver._cashAccount = giver._cashAccount - amount;
 
       /// Give amount to receiver
-      receiver._cashAccount += contract.amount;
-      
-      return _validateTransaction(contract);
+      receiver._cashAccount = receiver._cashAccount + amount;
+      return _validateTransaction(Transaction(amount));
     }
+
     /// void contract
-    contract = null;
-    return null;
+    throw Exception('not a valid transfer request');
   }
 
+  /// Only place a [Transaction] can be validated
   static Transaction _validateTransaction(Transaction contract) {
-    contract._validate = true;
+    contract._validated = true;
     return contract;
   }
 }
@@ -52,24 +76,30 @@ class BudgetourReserve {
 mixin CashHandler {
   double _cashAccount = 0;
 
-  depositCash(double amount) {
-    if (amount > 0) _cashAccount += BudgetourReserve._printCash(amount);
+  /// This brings cash into the system and provides a validated [Transaction]
+  /// with [Transaction.amount] equalling the amount passed.
+  Transaction reportIncome(double amount) {
+    Transaction reciept;
+
+    if (amount > 0) {
+      reciept = BudgetourReserve._printCash(amount);
+      _cashAccount += reciept.amount;
+    }
+    return reciept;
   }
 
   Transaction transferToHolder(CashHolder holder, double amount) {
-    Transaction reciept;
-
     if (_cashAccount >= amount) {
       /// Remove [amount] from [_cashAccount]
-      _cashAccount -= amount;
+      this._cashAccount -= amount;
 
       /// Transfer [amount] to holder
       holder._cashAccount += amount;
-
-      reciept =
-          Transaction(amount: amount, description: 'transferred \$$amount');
+      return BudgetourReserve._validateTransaction(
+        Transaction(amount, description: 'transferred \$$amount'),
+      );
     }
-    return reciept;
+    throw Exception('Not a valid transfer');
   }
 
   double get amount => _cashAccount;
@@ -81,9 +111,14 @@ mixin CashHandler {
 mixin CashHolder {
   double _cashAccount = 0;
 
-  spendCash(double amount) {
-    if (amount < 0)
-      _cashAccount -= BudgetourReserve._expellCash(amount);
+  Transaction spendCash(double amount) {
+    Transaction withdrawlReciept;
+    if (amount > 0 && _cashAccount >= amount) {
+      withdrawlReciept = BudgetourReserve._expellCash(amount);
+      /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
+      _cashAccount += withdrawlReciept.amount;
+    }
+    return withdrawlReciept;
   }
 
   double get cashReserve => _cashAccount;
@@ -96,25 +131,27 @@ class Transaction {
 
   Key key;
   String description;
-  double amount;
+  final double _amount;
   DateTime date;
   Color perceptibleColor;
 
-  bool _validate = false;
+  bool _validated = false;
 
   /// Defaults transaction [date] to [DateTime.now()]
-  Transaction({
+  Transaction(
+    this._amount, {
     this.description = defaultMessage,
-    @required this.amount,
     this.date,
     this.perceptibleColor,
   }) {
     this.date = this.date ?? DateTime.now();
   }
 
+  get amount => _validated ? _amount : null;
+
   bool isImportant() {
     return perceptibleColor != null;
   }
 
-  get isValid => _validate;
+  get isValid => _validated;
 }

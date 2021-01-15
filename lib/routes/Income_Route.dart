@@ -25,18 +25,23 @@ class IncomeRoute extends StatelessWidget {
       tabPages: [
         EnterTransactionPage(
           focusWithraw: false,
+
+          /// User reported Income
           onEnterPressed: (enteredDouble, _) {
-            CashOnHand.instance.logTransaction(
-              Transaction(
-                amount: (enteredDouble),
-              ),
-            );
+            _userEnteredIncome(enteredDouble);
           },
           headerTitle: 'Income',
           headerColorAccent: ColorGenerator.fromHex(GColors.greenish),
         ),
-        TransactionHistoryPage(CashOnHand.instance, infoTileHeader: 'Cash On Hand',),
+        TransactionHistoryPage(
+          CashOnHand.instance,
+          infoTileHeader: 'Cash On Hand',
+        ),
       ],
     );
+  }
+
+  _userEnteredIncome(double incomeAmount) {
+    CashOnHand.instance.reportIncome(incomeAmount);
   }
 }

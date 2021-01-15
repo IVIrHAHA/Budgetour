@@ -16,8 +16,11 @@ class BudgetObjRoute extends StatelessWidget {
   BudgetObjRoute(this.budgetObject);
 
   void _addTransaction(double valueEntered, BuildContext ctx) {
-    Transaction transaction = Transaction(amount: valueEntered);
-    budgetObject.logTransaction(transaction);
+    Transaction transaction = budgetObject.spendCash(valueEntered);
+    if (transaction != null)
+      budgetObject.logTransaction(transaction);
+    else
+      print('transaction was invalid');
     Navigator.of(ctx).pop();
   }
 
@@ -28,8 +31,7 @@ class BudgetObjRoute extends StatelessWidget {
     return MyAppBarView(
       headerName: budgetObject.name,
       quickStatTitle: 'Remaining',
-      quickStatInfo:
-          '\$${Format.formatDouble(budgetObject.cashReserve, 0)}',
+      quickStatInfo: '\$${Format.formatDouble(budgetObject.cashReserve, 0)}',
       tabTitles: [
         Text('Withdraw', style: style),
         Text('History', style: style),

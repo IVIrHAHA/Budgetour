@@ -17,11 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
 void main() {
-  CashOnHand.instance.logTransaction(Transaction(
-    description: 'Initial Deposit',
-    amount: 1000,
-    date: DateTime(2021, 1, 1, 0, 0),
-  ));
+  CashOnHand cashBag = CashOnHand.instance;
+  cashBag.logTransaction(
+      cashBag.reportIncome(1000)..description = 'Initial Deposit');
   runApp(MyApp());
 }
 

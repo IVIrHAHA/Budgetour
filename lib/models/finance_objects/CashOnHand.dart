@@ -14,6 +14,20 @@ class CashOnHand with CashHandler, TransactionHistory {
     // TODO: Load CashOnHand
   }
 
+  /// Produces a [Transaction] object with an automated 'Deposited' description.
+  /// However, does not log the transaction.
+  @override
+  reportIncome(double amount) {
+    Transaction report = super.reportIncome(amount);
+    report.description = 'Deposited';
+    return report;
+  }
+
+  void autoLogDeposit(double amount) {
+    Transaction report = this.reportIncome(amount);
+    logTransaction(report);
+  }
+
   static CashOnHand get instance => _instance;
 
 } 

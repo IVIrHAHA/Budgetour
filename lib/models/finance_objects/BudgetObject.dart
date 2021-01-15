@@ -38,45 +38,45 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     this.secondStat = stat2;
   }
 
-  @override
-  logTransaction(Transaction transaction) {
-    /// If the transaction takes place during current month
-    /// then update the financial state of this object
-    /// ie. update cashReserve
-    if (transaction.date.month == DateTime.now().month) {
-      /// User has gone overbudget, log transaction with what is
-      /// available in cashReserve and make an auto input transaction
-      /// which tells the user they have overdrawn
-      var overDrawn = this.addToReserve(transaction.amount);
-      if (overDrawn < 0) {
-        transaction.amount = transaction.amount + overDrawn;
-        super.logTransaction(transaction);
+  // @override
+  // logTransaction(Transaction transaction) {
+  //   /// If the transaction takes place during current month
+  //   /// then update the financial state of this object
+  //   /// ie. update cashReserve
+  //   if (transaction.date.month == DateTime.now().month) {
+  //     /// User has gone overbudget, log transaction with what is
+  //     /// available in cashReserve and make an auto input transaction
+  //     /// which tells the user they have overdrawn
+  //     var overDrawn = this.addToReserve(transaction.amount);
+  //     if (overDrawn < 0) {
+  //       transaction.amount = transaction.amount + overDrawn;
+  //       super.logTransaction(transaction);
 
-        transaction = Transaction(
-            amount: -overDrawn,
-            description: 'Overbudget! Replenish',
-            perceptibleColor: ColorGenerator.fromHex(GColors.blueish));
-      }
-      setAffirmation();
-    }
+  //       transaction = Transaction(
+  //           amount: -overDrawn,
+  //           description: 'Overbudget! Replenish',
+  //           perceptibleColor: ColorGenerator.fromHex(GColors.blueish));
+  //     }
+  //     setAffirmation();
+  //   }
 
-    // Updates the log but does not update cashReserve
-    super.logTransaction(transaction);
-  }
+  //   // Updates the log but does not update cashReserve
+  //   super.logTransaction(transaction);
+  // }
 
-  @override
-  spendCash(double amount) {
+  // @override
+  // spendCash(double amount) {
     
-    super.spendCash(amount);
-  }
+  //   super.spendCash(amount);
+  // }
 
-  double addToReserve(double amount) {
-    // cashReserve += amount;
-    // if (cashReserve >= 0) {
-    //   return 0;
-    // } else
-    //   return cashReserve;
-  }
+  // double addToReserve(double amount) {
+  //   // cashReserve += amount;
+  //   // if (cashReserve >= 0) {
+  //   //   return 0;
+  //   // } else
+  //   //   return cashReserve;
+  // }
 
   _isOverbudget() {
     return this.cashReserve < 0 ? true : false;
