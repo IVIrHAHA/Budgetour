@@ -1,4 +1,5 @@
 import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
@@ -16,8 +17,7 @@ class IncomeRoute extends StatelessWidget {
 
     return MyAppBarView(
       headerName: 'Income',
-      quickStatTitle: 'liquid',
-      quickStatInfo: Format.formatDouble(CashOnHand.instance.cashAmount, 2),
+      stat1: QuickStat(title: 'liquid', value: CashOnHand.instance.cashAmount),
       tabTitles: [
         Text('Deposit', style: style),
         Text('History', style: style),

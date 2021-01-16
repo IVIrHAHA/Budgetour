@@ -3,6 +3,7 @@
  *  TabView already formatted. 
  */
 
+import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 
 import '../../tools/GlobalValues.dart';
@@ -13,16 +14,11 @@ class MyAppBarView extends StatefulWidget {
   /// If null, will build the first [tabPages] provided
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
-  final String quickStatTitle, quickStatInfo; /// TODO: Make this take in a QuickStat instead
+  final QuickStat stat1, stat2;
   final String headerName;
 
-  MyAppBarView({
-    this.headerName,
-    this.tabPages,
-    this.tabTitles,
-    this.quickStatInfo = '',
-    this.quickStatTitle = '',
-  });
+  MyAppBarView(
+      {this.headerName, this.tabPages, this.tabTitles, this.stat1, this.stat2});
 
   @override
   _MyAppBarViewState createState() => _MyAppBarViewState();
@@ -67,11 +63,13 @@ class _MyAppBarViewState extends State<MyAppBarView>
                 color: ColorGenerator.fromHex(GColors.borderColor), width: 1),
           ),
         ),
+
+        /// TODO: Add room for second stat
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(widget.quickStatTitle),
-            Text(widget.quickStatInfo),
+            widget.stat1 != null ?  Text(widget.stat1.title) : Container(),
+            widget.stat1 != null ? widget.stat1.getValueToString() : Container(),
           ],
         ),
       ),
@@ -79,9 +77,8 @@ class _MyAppBarViewState extends State<MyAppBarView>
 
     return Scaffold(
       appBar: appBar,
-      body: widget.tabTitles != null
-          ? buildBody(context)
-          : widget.tabPages.first,
+      body:
+          widget.tabTitles != null ? buildBody(context) : widget.tabPages.first,
     );
   }
 

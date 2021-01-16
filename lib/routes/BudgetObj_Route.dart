@@ -30,8 +30,7 @@ class BudgetObjRoute extends StatelessWidget {
 
     return MyAppBarView(
       headerName: budgetObject.name,
-      quickStatTitle: 'Remaining',
-      quickStatInfo: '\$${Format.formatDouble(budgetObject.cashReserve, 0)}',
+      stat1: budgetObject.determineStat(BudgetStat.remaining),
       tabTitles: [
         Text('Withdraw', style: style),
         Text('History', style: style),

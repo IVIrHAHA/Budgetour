@@ -19,8 +19,7 @@ class RefillObjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MyAppBarView(
       headerName: financeObj.name,
-      quickStatTitle: financeObj.getFirstStat().title,
-      quickStatInfo: financeObj.getFirstStat().value.toString(),
+      stat1: financeObj.getFirstStat(),
       tabPages: [
         Column(
           children: [
