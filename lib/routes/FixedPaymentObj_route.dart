@@ -15,6 +15,7 @@ class FixedPaymentObjRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return MyAppBarView(
       headerName: paymentObj.name,
+      stat1: paymentObj.determineStat(FixedPaymentStats.pending),
       tabPages: [
         Column(
           children: [
@@ -31,7 +32,7 @@ class FixedPaymentObjRoute extends StatelessWidget {
                 /// Making the payment
                 onEnterPressed: (amount, _) {
                   if (amount != null) {
-                    
+                    paymentObj.spendCash(amount);
                     Navigator.of(context).pop();
                   }
                 },

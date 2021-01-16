@@ -122,7 +122,12 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    print('given: ${transferReciept.amount}');
+    var pending = fixedPayment - _amountPaid;
+
+    if(pending == transferReciept.amount) {
+      affirmation = 'This bill is ready to pay';
+    }
+
   }
 
   @override
