@@ -6,9 +6,7 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
-enum GoalStats {
-  date
-}
+enum GoalStats { date }
 
 class GoalObject extends FinanceObject<GoalStats> {
   double targetAmount;
@@ -89,5 +87,9 @@ class GoalObject extends FinanceObject<GoalStats> {
   void transferReciept(Transaction transferReciept, CashHandler from) {
     // Do nothing
   }
-  
+
+  @override
+  bool acceptTransfer(double amount) {
+    return true;
+  }
 }

@@ -13,7 +13,7 @@ class MyAppBarView extends StatefulWidget {
   /// If null, will build the first [tabPages] provided
   final List<Widget> tabTitles;
   final List<Widget> tabPages;
-  final String quickStatTitle, quickStatInfo;
+  final String quickStatTitle, quickStatInfo; /// TODO: Make this take in a QuickStat instead
   final String headerName;
 
   MyAppBarView({

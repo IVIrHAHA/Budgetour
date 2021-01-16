@@ -20,12 +20,13 @@ enum FixedPaymentStats {
   monthlyPayment,
   pending,
   nextDue,
+  supplied,
 }
 
 class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     with TransactionHistory {
-  final double monthlyFixedPayment;
-  double paymentAmount;
+  final double fixedPayment;
+  double _amountPaid;
   FixedPaymentFrequency frequency;
 
   /// when the next due date is coming
@@ -36,12 +37,12 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   FixedPaymentObject({
     @required String name,
-    @required this.monthlyFixedPayment,
+    @required this.fixedPayment,
     this.frequency = FixedPaymentFrequency.monthly,
     this.nextDueDate,
   }) : super(name: name) {
     this._lastDueDate = this.nextDueDate ?? DateTime.now();
-    this.paymentAmount = 0;
+    this._amountPaid = 0.0;
   }
 
   get lastDueDate => _lastDueDate;
@@ -66,7 +67,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     return nextDueDate;
   }
 
-  isPaid() => paymentAmount == monthlyFixedPayment ? true : false;
+  isPaid() => _amountPaid == fixedPayment;
 
   @override
   Widget getLandingPage() {
@@ -84,7 +85,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   QuickStat determineStat(statType) {
     switch (statType) {
       case FixedPaymentStats.monthlyPayment:
-        return QuickStat(title: 'Payment Amount', value: monthlyFixedPayment);
+        return QuickStat(title: 'Payment Amount', value: fixedPayment);
         break;
       case FixedPaymentStats.nextDue:
         return QuickStat(
@@ -96,20 +97,41 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         break;
       case FixedPaymentStats.pending:
         return QuickStat(
-          title: 'pending',
+          title: 'Pending',
           evaluateValue: Future(
             () {
-              var pendingAmount = monthlyFixedPayment - paymentAmount;
+              var pendingAmount = fixedPayment - _amountPaid;
               return Format.formatDouble(pendingAmount, 2);
             },
           ),
         );
         break;
+      case FixedPaymentStats.supplied:
+        return QuickStat(title: 'Supplied', value: cashReserve);
+        break;
     }
   }
 
   @override
+  Transaction spendCash(double amount) {
+    /// Update paidAmount
+    _amountPaid += amount;
+    print('amount paid: $_amountPaid');
+    return super.spendCash(amount);
+  }
+
+  @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    /// do nothing
+    print('given: ${transferReciept.amount}');
+  }
+
+  @override
+  bool acceptTransfer(double amount) {
+    /// Only accept if amount to transfer plus the amount already passed and paid is less
+    /// than the fixedPayment minus the amount already contributed and not paid.
+    if ((amount + _amountPaid) <= (fixedPayment - cashReserve)) {
+      return true;
+    } else
+      return false;
   }
 }

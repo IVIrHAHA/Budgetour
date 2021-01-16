@@ -138,6 +138,16 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
   }
 
   @override
+  bool acceptTransfer(double amount) {
+    if(amount <= this.targetAlloctionAmount) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
     transferReciept.description = 'refill';
     logTransaction(transferReciept);

@@ -1,3 +1,4 @@
+import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -14,11 +15,6 @@ class FixedPaymentObjRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return MyAppBarView(
       headerName: paymentObj.name,
-      quickStatTitle: 'Pending',
-      quickStatInfo: '\$ ${Format.formatDouble(
-        paymentObj.monthlyFixedPayment - paymentObj.paymentAmount,
-        2,
-      )}',
       tabPages: [
         Column(
           children: [
@@ -26,18 +22,18 @@ class FixedPaymentObjRoute extends StatelessWidget {
               flex: 1,
               child: InfoTile(
                 title: paymentObj.isPaid() ? 'paid' : 'pending payment',
-                titleColor:
-                    paymentObj.isPaid() ? Colors.green : Colors.red,
+                titleColor: paymentObj.isPaid() ? Colors.green : Colors.red,
               ),
             ),
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
+                /// Making the payment
                 onEnterPressed: (amount, _) {
-                    if (amount != null) {
-                      paymentObj.paymentAmount = amount;
-                      Navigator.of(context).pop();
-                    }
+                  if (amount != null) {
+                    
+                    Navigator.of(context).pop();
+                  }
                 },
                 headerTitle: 'Payment',
                 headerColorAccent: Colors.grey,

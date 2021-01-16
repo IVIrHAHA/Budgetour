@@ -1,4 +1,5 @@
 import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
@@ -28,7 +29,7 @@ class RefillObjectPage extends StatelessWidget {
               child: InfoTile(
                 title: 'Unallocated',
                 infoText:
-                    '\$ ${Format.formatDouble(CashOnHand.instance.amount, 2)}',
+                    '\$ ${Format.formatDouble(CashOnHand.instance.cashAmount, 2)}',
                 infoTextColor: Colors.green,
               ),
             ),
@@ -38,16 +39,12 @@ class RefillObjectPage extends StatelessWidget {
                 onEnterPressed: (amount, _) {
                   try {
                     CashOnHand cashBag = CashOnHand.instance;
-
                     cashBag.transferToHolder(financeObj, amount);
-                    
                     Navigator.of(context).pop();
-                  }
-
-                  /// Transfer was unsuccessful
-                  catch (Exception) {
-                    /// TODO: Inform user via InfoTile that transfer was not completed
-                    print('not valid');
+                  } on PartisanException {
+                    print('both parties did not agree');
+                  } on InvalidTransferException {
+                    print('invalid transfer');
                   }
                 },
                 headerTitle: 'Refill',

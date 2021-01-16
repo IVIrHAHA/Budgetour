@@ -1,3 +1,4 @@
+import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
 
@@ -91,34 +92,41 @@ mixin CashHandler {
   }
 
   /// Transfers [amount] from [this] to [holder] and provides each
-  /// with a copy of the transfer with [transferReciept]. Thus, 
-  /// if any object has a [TransactionHistory] mixin, there is no need to 
+  /// with a copy of the transfer with [transferReciept]. Thus,
+  /// if any object has a [TransactionHistory] mixin, there is no need to
   /// use [logTransaction].
   void transferToHolder(CashHolder holder, double amount) {
     if (_cashAccount >= amount && amount > 0) {
-      /// Remove [amount] from [_cashAccount]
-      this._cashAccount -= amount;
+      /// Verify with each object to agree to the transfer
+      if (this.acceptTransfer(amount) && holder.acceptTransfer(amount)) {
+        /// Remove [amount] from [_cashAccount]
+        this._cashAccount -= amount;
 
-      /// Transfer [amount] to holder
-      holder._cashAccount += amount;
+        /// Transfer [amount] to holder
+        holder._cashAccount += amount;
 
-      this.transferReciept(
-        BudgetourReserve._validateTransaction(Transaction(-amount)),
-        holder,
-      );
+        this.transferReciept(
+          BudgetourReserve._validateTransaction(Transaction(-amount)),
+          holder,
+        );
 
-      holder.transferReciept(
-        BudgetourReserve._validateTransaction(Transaction(amount)),
-        this,
-      );
-      return;
+        holder.transferReciept(
+          BudgetourReserve._validateTransaction(Transaction(amount)),
+          this,
+        );
+        return;
+      }
+      else {
+        throw PartisanException('Both parties did not agree to transfer');
+      }
     }
-    throw Exception('Not a valid transfer');
+    throw InvalidTransferException('The transfer was invalid');
   }
 
+  bool acceptTransfer(double amount);
   void transferReciept(Transaction transferReciept, CashHolder to);
 
-  double get amount => _cashAccount;
+  double get cashAmount => _cashAccount;
 }
 
 /// Can expell money out of the system, but can't bring it in
@@ -127,6 +135,7 @@ mixin CashHandler {
 mixin CashHolder {
   double _cashAccount = 0;
 
+  /// Returns a validated [Transaction] given a valid [amount]. Otherwise, return null.
   Transaction spendCash(double amount) {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
@@ -134,9 +143,12 @@ mixin CashHolder {
 
       /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
       _cashAccount += withdrawlReciept.amount;
+      return withdrawlReciept;
     }
-    return withdrawlReciept;
+    return null;
   }
+
+  bool acceptTransfer(double amount);
 
   void transferReciept(Transaction transferReciept, CashHandler from);
 

@@ -17,7 +17,7 @@ class IncomeRoute extends StatelessWidget {
     return MyAppBarView(
       headerName: 'Income',
       quickStatTitle: 'liquid',
-      quickStatInfo: Format.formatDouble(CashOnHand.instance.amount, 2),
+      quickStatInfo: Format.formatDouble(CashOnHand.instance.cashAmount, 2),
       tabTitles: [
         Text('Deposit', style: style),
         Text('History', style: style),

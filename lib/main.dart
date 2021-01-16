@@ -161,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               flex: 1,
               child: Draggable<double>(
                 dragAnchor: DragAnchor.pointer,
-                data: CashOnHand.instance.amount,
+                data: CashOnHand.instance.cashAmount,
                 onDragCompleted: () {
                   setState(() {
                     /// Update main screen ui
@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   color: Colors.black,
                   child: Text(
                     '\$ ${Format.formatDouble(
-                      CashOnHand.instance.amount,
+                      CashOnHand.instance.cashAmount,
                       2,
                     )}',
                     style: TextStyle(color: Colors.red),
@@ -204,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return InfoTile(
       title: 'Unallocated',
       infoText: '\$ ${Format.formatDouble(
-        CashOnHand.instance.amount,
+        CashOnHand.instance.cashAmount,
         2,
       )}',
       infoTextColor: ColorGenerator.fromHex(GColors.redish),

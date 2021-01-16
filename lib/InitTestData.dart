@@ -94,10 +94,10 @@ class InitTestData {
       String title, double amount) {
     FixedPaymentObject obj = FixedPaymentObject(
       name: title,
-      monthlyFixedPayment: amount,
+      fixedPayment: amount,
     );
 
-    obj.firstStat = FixedPaymentStats.nextDue;
+    obj.firstStat = FixedPaymentStats.supplied;
     obj.secondStat = FixedPaymentStats.nextDue;
 
     return obj;

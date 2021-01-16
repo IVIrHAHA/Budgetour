@@ -1,4 +1,3 @@
-
 import 'package:budgetour/models/Meta/QuickStat.dart';
 
 /// To use this correctly ensure to make an [enum]
@@ -27,7 +26,7 @@ mixin StatMixin<E> {
     this._stat1 = stat;
   }
 
-  set secondStat(E stat){
+  set secondStat(E stat) {
     this._stat2 = stat;
   }
 
@@ -43,7 +42,7 @@ mixin StatMixin<E> {
     return _stat1 != null;
   }
 
-    bool hasSecondStat() {
+  bool hasSecondStat() {
     return _stat2 != null;
   }
 

@@ -40,4 +40,14 @@ class CashOnHand with CashHandler, TransactionHistory {
     logTransaction(transferReciept);
   }
 
+  @override
+  bool acceptTransfer(double amount) {
+    if(amount <= this.cashAmount) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
 }

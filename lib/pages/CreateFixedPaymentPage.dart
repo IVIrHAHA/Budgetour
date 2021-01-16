@@ -175,7 +175,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
       CategoryListManager.instance.add(
         FixedPaymentObject(
           name: _billName,
-          monthlyFixedPayment: _calcValue,
+          fixedPayment: _calcValue,
           nextDueDate: _selectedDate,
           frequency: _selectedFrequency,
         ),

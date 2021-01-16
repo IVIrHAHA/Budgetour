@@ -111,7 +111,7 @@ class CategoryListAnalyzer {
       if (obj is BudgetObject) {
         amount += obj.targetAlloctionAmount;
       } else if (obj is FixedPaymentObject) {
-        amount += obj.monthlyFixedPayment;
+        amount += obj.fixedPayment;
       }
     }
 
@@ -128,7 +128,7 @@ class CategoryListAnalyzer {
       if (obj is BudgetObject) {
         unspent += obj.cashReserve;
       } else if (obj is FixedPaymentObject) {
-        if (!obj.isPaid()) unspent += obj.monthlyFixedPayment;
+        if (!obj.isPaid()) unspent += obj.fixedPayment;
       }
     }
 

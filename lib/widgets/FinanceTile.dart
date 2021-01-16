@@ -97,7 +97,7 @@ class FinanceTile extends StatelessWidget {
                 ? financeObj.getFirstStat().title
                 : ''),
             trailing: financeObj.hasFirstStat()
-                ? _getQuickStatValue(financeObj.getFirstStat())
+                ? financeObj.getFirstStat().getValueToString()
                 : Text(''),
           ),
         ),
@@ -110,7 +110,7 @@ class FinanceTile extends StatelessWidget {
                 ? financeObj.getSecondStat().title
                 : ''),
             trailing: financeObj.hasSecondStat()
-                ? _getQuickStatValue(financeObj.getSecondStat())
+                ? financeObj.getSecondStat().getValueToString()
                 : Text(''),
           ),
         ),
