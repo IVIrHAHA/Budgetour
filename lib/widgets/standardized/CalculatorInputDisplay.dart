@@ -1,10 +1,8 @@
-import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
-import 'package:common_tools/ColorGenerator.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorInputDisplay extends StatefulWidget {
-  final String overrideText;
   // final bool focusable;
   final Color indicatorColor, textColor;
   final CalculatorController controller;
@@ -12,7 +10,6 @@ class CalculatorInputDisplay extends StatefulWidget {
 
   CalculatorInputDisplay({
     this.controller,
-    this.overrideText,
     this.textColor = Colors.black,
     this.indicatorColor = Colors.grey,
     this.indicatorSize = 2,
@@ -33,7 +30,22 @@ class _CalculatorInputDisplayState extends State<CalculatorInputDisplay> {
   void initState() {
     // Make the calculatorView control what is displayed directly
     // Otherwise, parent controls what is displayed
-    if (widget.overrideText == null && widget.controller != null) {
+    if (widget.controller.defaultValue == null && widget.controller != null) {
+      widget.controller.addListener((formatedText) {
+        setState(() {
+          displayedText = '\$ ' + formatedText;
+        });
+      });
+    } 
+    
+    /// Parent wants [CalculatorController.defaultValue] to be displayed
+    else if (widget.controller.defaultValue != null &&
+        widget.controller != null) {
+      // Sets initial value text view, if a defaultValue was provided to controller
+      // beyond this the controller will return defaultValue view the formatedText params
+      displayedText =
+          '\$ ' + '${Format.formatDouble(widget.controller.defaultValue, 2)}';
+
       widget.controller.addListener((formatedText) {
         setState(() {
           displayedText = '\$ ' + formatedText;
@@ -45,7 +57,6 @@ class _CalculatorInputDisplayState extends State<CalculatorInputDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    displayedText = widget.overrideText ?? displayedText;
     return Expanded(
       flex: 0,
       child: Column(

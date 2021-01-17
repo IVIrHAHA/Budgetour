@@ -1,3 +1,5 @@
+import 'package:common_tools/StringFormater.dart';
+
 import '../tools/GlobalValues.dart';
 import '../widgets/standardized/CalculatorView.dart';
 import '../widgets/standardized/EnteredHeader.dart';
@@ -15,9 +17,12 @@ class EnterTransactionPage extends StatefulWidget {
   final String headerTitle;
   final Color headerColorAccent;
 
+  final double initialValue;
+
   const EnterTransactionPage({
     @required this.onEnterPressed,
     @required this.headerTitle,
+    this.initialValue,
     this.headerColorAccent = Colors.grey,
   });
 
@@ -30,7 +35,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
 
   @override
   void initState() {
-    calcController = CalculatorController();
+    calcController = CalculatorController(defaultValue: widget.initialValue);
     super.initState();
   }
 
@@ -63,6 +68,7 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
               MediaQuery.of(context).size.height / 2,
               controller: calcController,
               onEnterPressed: (entry) {
+                print('$entry');
                 widget.onEnterPressed(
                   entry,
                   context,
@@ -87,7 +93,9 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
             text: widget.headerTitle,
             color: widget.headerColorAccent,
           ),
-          CalculatorInputDisplay(controller: calcController),
+          CalculatorInputDisplay(
+            controller: calcController,
+          ),
           //TODO: implement options menu
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

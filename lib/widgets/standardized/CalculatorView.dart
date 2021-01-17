@@ -1,5 +1,6 @@
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
+import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -13,7 +14,8 @@ class CalculatorView extends StatefulWidget
 
   final ValueNotifier<String> notifier;
 
-  CalculatorView(this._height, {this.controller, this.onEnterPressed, this.notifier});
+  CalculatorView(this._height,
+      {this.controller, this.onEnterPressed, this.notifier});
 
   @override
   _CalculatorViewState createState() => _CalculatorViewState();
@@ -236,12 +238,16 @@ class _CalculatorViewState extends State<CalculatorView> {
 
 class CalculatorController {
   String _enteredValue;
+
+  /// If non-null, this value will be returned when nothing no value was entered
+  /// and the onEnterePressed method is called.
+  final double defaultValue;
   List<Function> listeners;
 
   bool decimalInUse;
   bool _entryGate;
 
-  CalculatorController() {
+  CalculatorController({this.defaultValue}) {
     listeners = new List<Function>();
     _enteredValue = '';
     decimalInUse = false;
@@ -264,9 +270,13 @@ class CalculatorController {
    *  This outputs parsed double. 
    */
   double getEntry() {
+    /// Nothing was entered, return the [defaultValue] if one was provided
+    if (_enteredValue == '' && this.defaultValue != null) {
+      return defaultValue;
+    }
     // _enteredValue can equal to just '.', so ensure case is included
     // in if statement
-    if (_enteredValue != '.' || _enteredValue != '') {
+    else if (_enteredValue != '.' || _enteredValue != '') {
       try {
         double entry = double.parse(_enteredValue);
 
@@ -314,7 +324,9 @@ class CalculatorController {
    * everytime it executes.
    */
   String _prepareListenersText() {
-    String listenersText = _enteredValue.length != 0 ? _enteredValue : '0.00';
+    /// Set listenersText to default texts
+    String listenersText = _enteredValue.length != 0 ? _enteredValue : 
+    (defaultValue != null ? Format.formatDouble(defaultValue, 2) : '0.00');
 
     // Checks whether to add a zero in front or not, without interfering with
     // _enteredText

@@ -1,4 +1,3 @@
-import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -22,13 +21,15 @@ class FixedPaymentObjRoute extends StatelessWidget {
             Expanded(
               flex: 1,
               child: InfoTile(
-                title: paymentObj.isPaid() ? 'paid' : 'pending payment',
+                title: paymentObj.isPaid() ? 'paid' : 'avail. funds',
+                infoText: '\$ ${Format.formatDouble(paymentObj.cashReserve, 2)}',
                 titleColor: paymentObj.isPaid() ? Colors.green : Colors.red,
               ),
             ),
             Expanded(
               flex: 12,
               child: EnterTransactionPage(
+                initialValue: paymentObj.cashReserve,
                 /// Making the payment
                 onEnterPressed: (amount, _) {
                   if (amount != null) {
