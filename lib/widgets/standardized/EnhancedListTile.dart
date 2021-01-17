@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Used as the primary formating Widget for Transaction Tile.
 class EnhancedListTile extends StatelessWidget {
   final Widget leading, center, trailing;
   final Color backgroundColor;

@@ -203,6 +203,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   InfoTile _allocationInfoTile(BuildContext context) {
     return InfoTile(
       title: 'Unallocated',
+      padding: const EdgeInsets.symmetric(
+        horizontal: GlobalValues.defaultTilePadding + GlobalValues.financeTileMargin,
+      ),
       infoText: '\$ ${Format.formatDouble(
         CashOnHand.instance.cashAmount,
         2,
