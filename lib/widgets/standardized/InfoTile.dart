@@ -1,8 +1,6 @@
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:flutter/material.dart';
 
-import 'EnhancedListTile.dart';
-
 class InfoTile extends StatelessWidget {
   final String title;
   final String infoText;
@@ -83,39 +81,3 @@ class InfoTile extends StatelessWidget {
     );
   }
 }
-
-// child: ListTile(
-//   // backgroundColor: Colors.black,
-//   // padding: const EdgeInsets.symmetric(horizontal: 16),
-
-//   leading: Expanded(
-//     flex: 2,
-//     child: Container(
-//       child: Text(
-//         title,
-//         style: TextStyle(
-//           color: titleColor,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     ),
-//   ),
-//   trailing: Expanded(
-//     flex: 2,
-//     child: Row(
-//       children: [
-//         infoText != null
-//             ? Text(
-//                 infoText,
-//                 style: TextStyle(
-//                     color: infoTextColor, fontWeight: FontWeight.bold),
-//               )
-//             : Container(),
-//         Icon(
-//           Icons.more_vert,
-//           color: Colors.white,
-//         ),
-//       ],
-//     ),
-//   ),
-// ),

@@ -4,7 +4,6 @@
  */
 
 import 'package:budgetour/models/Meta/QuickStat.dart';
-import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 
 import '../../tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -47,6 +46,7 @@ class _MyAppBarViewState extends State<MyAppBarView>
   @override
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
+      
       title: ListTile(
         leading: Card(
           child: Padding(
@@ -68,8 +68,10 @@ class _MyAppBarViewState extends State<MyAppBarView>
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            widget.stat1 != null ?  Text(widget.stat1.title) : Container(),
-            widget.stat1 != null ? widget.stat1.getValueToString() : Container(),
+            widget.stat1 != null ? Text(widget.stat1.title) : Container(),
+            widget.stat1 != null
+                ? widget.stat1.getValueToString()
+                : Container(),
           ],
         ),
       ),
