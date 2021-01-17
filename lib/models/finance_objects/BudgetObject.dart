@@ -78,6 +78,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       // Try and get unallocated resources to cover this transaction
       try {
         _overBudget = true;
+        _thisRequested = true;
         // Get missing funds
         var amountNeeded = amount - cashReserve;
         CashOnHand.instance.transferToHolder(this, amountNeeded);
@@ -89,7 +90,6 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       // Transfer was unsuccessful, cannot spend cash
       catch (Exception) {
         _overBudget = false;
-
       }
     }
     setAffirmation();
@@ -141,17 +141,33 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     return true;
   }
 
+  bool _thisRequested = false;
+
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    if (!_overBudget) {
+    ///
+    ///
+    /// [this] did not request the transfer, rather an external object initiated the
+    /// transfer
+    if (!_thisRequested) {
       transferReciept.description = 'refill';
+
+      print('filled from outsied');
 
       /// TODO: REMOVE THIS
       transferReciept.date = DateTime(2020, 12, 1, 0, 0);
-    } else {
+    }
+
+    /// Should only enter when [this] had to pull missing funds.
+    ///
+    /// [this] initiated the transfer during [this.spendCash]
+    /// Mark transaction as 'went overbudget'.
+    else if (_overBudget && _thisRequested) {
+      print('filled from inside');
       transferReciept.description = 'went overbudget';
       transferReciept.perceptibleColor =
           ColorGenerator.fromHex(GColors.blueish);
+      _thisRequested = false;
     }
 
     logTransaction(transferReciept);

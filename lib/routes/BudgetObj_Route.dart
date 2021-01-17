@@ -15,11 +15,12 @@ class BudgetObjRoute extends StatelessWidget {
 
   void _addTransaction(double valueEntered, BuildContext ctx) {
     Transaction transaction = budgetObject.spendCash(valueEntered);
-    if (transaction != null)
+    if (transaction != null) {
       budgetObject.logTransaction(transaction);
-    else
+      Navigator.of(ctx).pop();
+    } else
+      /// TODO: TELL USER NOT ENOUGH FUNDS TO COVER TRANSACTION
       print('transaction was invalid');
-    Navigator.of(ctx).pop();
   }
 
   @override

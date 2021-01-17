@@ -120,6 +120,7 @@ mixin CashHandler {
     throw InvalidTransferException('The transfer was invalid');
   }
 
+  /// Finishes executing before [CashHandler.transferToHolder]
   bool acceptTransfer(double amount);
   void transferReciept(Transaction transferReciept, CashHolder to);
 
@@ -148,12 +149,15 @@ mixin CashHolder {
   /// When a transfer has been initiated, as the recipient,
   /// [this] should specify an amount to be transferred. Default is 0.
   /// 
+  /// This is not called during the [CashHandler.transferToHolder] process.
+  /// Rather, it is referred to explicitly.
+  /// 
   /// *** This only acts as a suggestion
   double suggestedTransferAmount() {
     return 0;
   }
 
-  /// Determine whether [this] is willing to accept transfer [transferAmount]
+  /// Determine whether [this] is willing to accept [transferAmount]
   bool acceptTransfer(double transferAmount);
 
   void transferReciept(Transaction transferReciept, CashHandler from);
