@@ -10,6 +10,7 @@
 
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/Meta/Transaction.dart';
+import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -33,66 +34,83 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     this.targetAlloctionAmount = 0,
     BudgetStat stat1,
     BudgetStat stat2,
-  }) : super(name: title,) {
+  }) : super(
+          name: title,
+        ) {
     this.firstStat = stat1;
     this.secondStat = stat2;
   }
 
-  // @override
-  // logTransaction(Transaction transaction) {
-  //   /// If the transaction takes place during current month
-  //   /// then update the financial state of this object
-  //   /// ie. update cashReserve
-  //   if (transaction.date.month == DateTime.now().month) {
-  //     /// User has gone overbudget, log transaction with what is
-  //     /// available in cashReserve and make an auto input transaction
-  //     /// which tells the user they have overdrawn
-  //     var overDrawn = this.addToReserve(transaction.amount);
-  //     if (overDrawn < 0) {
-  //       transaction.amount = transaction.amount + overDrawn;
-  //       super.logTransaction(transaction);
+  /// Things BudgetObject needs to communicate to user
+  /// 1. User is overbudget
+  /// 2. User needs to refill budget
+  /// 3. (Optional for now) Budget is almost out
+  ///   3a. Budget is almost out and still has a lot of time left
+  /// 4. User went targeted budget
 
-  //       transaction = Transaction(
-  //           amount: -overDrawn,
-  //           description: 'Overbudget! Replenish',
-  //           perceptibleColor: ColorGenerator.fromHex(GColors.blueish));
-  //     }
-  //     setAffirmation();
-  //   }
-
-  //   // Updates the log but does not update cashReserve
-  //   super.logTransaction(transaction);
-  // }
-
-  // @override
-  // spendCash(double amount) {
-    
-  //   super.spendCash(amount);
-  // }
-
-  // double addToReserve(double amount) {
-  //   // cashReserve += amount;
-  //   // if (cashReserve >= 0) {
-  //   //   return 0;
-  //   // } else
-  //   //   return cashReserve;
-  // }
-
-  _isOverbudget() {
-    return this.cashReserve < 0 ? true : false;
+  setAffirmation() {
+    // Currently overbudget
+    if (_overBudget) {
+      affirmation = 'Overbudget!';
+      affirmationColor = Colors.red;
+    }
+    // User has gone over targeted budget, but refilled
+    else if (this.getMonthlyStatement() > this.targetAlloctionAmount &&
+        cashReserve > 0) {
+      affirmation = 'exceeded allocation target';
+      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
+    }
+    // User is on track thus far
+    else {
+      affirmation = '';
+      affirmationColor = null;
+    }
   }
+
+  /// Does not logTransaction, in case user want to add a note
+  /// of their own.
+  @override
+  Transaction spendCash(double amount) {
+    Transaction cashTransaction = super.spendCash(amount);
+
+    // User has gone overBudget
+    if (cashTransaction == null) {
+      // Try and get unallocated resources to cover this transaction
+      try {
+        _overBudget = true;
+        // Get missing funds
+        var amountNeeded = amount - cashReserve;
+        CashOnHand.instance.transferToHolder(this, amountNeeded);
+
+        // Transfer was successful
+        // Try and spend cash again
+        cashTransaction = super.spendCash(amount);
+      }
+      // Transfer was unsuccessful, cannot spend cash
+      catch (Exception) {
+        _overBudget = false;
+
+      }
+    }
+    setAffirmation();
+    return cashTransaction;
+  }
+
+  /// Tile Color will display red when user has gone over budget
+  /// Otherwise, keep as neutral color
+  @override
+  Color getTileColor() {
+    if (_overBudget) {
+      return ColorGenerator.fromHex(GColors.warningColor);
+    } else
+      return ColorGenerator.fromHex(GColors.neutralColor);
+  }
+
+  bool _overBudget = false;
 
   @override
   Widget getLandingPage() {
     return BudgetObjRoute(this);
-  }
-
-  @override
-  Color getTileColor() {
-    if (this._isOverbudget()) {
-      return ColorGenerator.fromHex(GColors.warningColor);
-    } else
-      return ColorGenerator.fromHex(GColors.neutralColor);
   }
 
   @override
@@ -118,43 +136,29 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     return null;
   }
 
-  setAffirmation() {
-    // Currently overbudget
-    if (cashReserve < 0) {
-      affirmation = 'Overbudget!';
-      affirmationColor = Colors.red;
-    }
-    // User has gone over targeted budget, but refilled
-    else if (this.getMonthlyStatement() > this.targetAlloctionAmount &&
-        cashReserve > 0) {
-      affirmation = 'exceeded allocation target';
-      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
-    }
-    // User is on track thus far
-    else {
-      affirmation = '';
-      affirmationColor = null;
-    }
-  }
-
   @override
-  bool acceptTransfer(double amount) {
-    if(amount <= this.targetAlloctionAmount) {
-      return true;
-    }
-    else {
-      return false;
-    }
+  bool acceptTransfer(double transferAmount) {
+    return true;
   }
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    transferReciept.description = 'refill';
+    if (!_overBudget) {
+      transferReciept.description = 'refill';
+
+      /// TODO: REMOVE THIS
+      transferReciept.date = DateTime(2020, 12, 1, 0, 0);
+    } else {
+      transferReciept.description = 'went overbudget';
+      transferReciept.perceptibleColor =
+          ColorGenerator.fromHex(GColors.blueish);
+    }
+
     logTransaction(transferReciept);
   }
 
   @override
-  double transferRequest() {
+  double suggestedTransferAmount() {
     return this.targetAlloctionAmount - this.cashReserve;
   }
 }

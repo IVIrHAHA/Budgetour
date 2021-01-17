@@ -139,7 +139,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   }
 
   @override
-  double transferRequest() {
+  double suggestedTransferAmount() {
     return pending;
   }
 }

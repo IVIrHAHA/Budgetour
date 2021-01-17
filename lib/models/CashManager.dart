@@ -147,11 +147,14 @@ mixin CashHolder {
 
   /// When a transfer has been initiated, as the recipient,
   /// [this] should specify an amount to be transferred. Default is 0.
-  double transferRequest() {
+  /// 
+  /// *** This only acts as a suggestion
+  double suggestedTransferAmount() {
     return 0;
   }
 
-  bool acceptTransfer(double amount);
+  /// Determine whether [this] is willing to accept transfer [transferAmount]
+  bool acceptTransfer(double transferAmount);
 
   void transferReciept(Transaction transferReciept, CashHandler from);
 
@@ -183,7 +186,7 @@ class Transaction {
 
   get amount => _validated ? _amount : null;
 
-  bool isImportant() {
+  bool makePerceptible() {
     return perceptibleColor != null;
   }
 

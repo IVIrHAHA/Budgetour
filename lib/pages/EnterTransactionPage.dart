@@ -73,7 +73,6 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
               MediaQuery.of(context).size.height / 2,
               controller: calcController,
               onEnterPressed: (entry) {
-                print('$entry');
                 widget.onEnterPressed(
                   entry,
                   context,

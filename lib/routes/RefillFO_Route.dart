@@ -23,7 +23,7 @@ class RefillObjectPage extends StatelessWidget {
       headerName: targetedFinanceObj.name,
       stat1: QuickStat(
         title: 'Requested',
-        value: targetedFinanceObj.transferRequest(),
+        value: targetedFinanceObj.suggestedTransferAmount(),
       ),
       tabPages: [
         Column(

@@ -26,7 +26,7 @@ class InitTestData {
 
   static buildEssentialList() {
     dummyEssentialList
-        .add(_buildBudgetObjects('Food', 150, transactionQTY: 10));
+        .add(_buildBudgetObjects('Food', 150, transactionQTY: 0));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
     dummyEssentialList.add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
@@ -52,7 +52,7 @@ class InitTestData {
   static BudgetObject _buildBudgetObjects(String title, double allocationAmount,
       {int transactionQTY}) {
     BudgetObject obj;
-    // Explicityly target an Object
+    // Explicitly target an Object
     if (title == 'Food') {
       obj = BudgetObject(
         title: title,
@@ -75,7 +75,7 @@ class InitTestData {
     }
 
     // Spend random amounts
-    for (int i = 0; i <= transactionQTY; i++) {
+    for (int i = 0; i < transactionQTY; i++) {
       Transaction reciept = obj.spendCash(_doubleInRange(5, 25));
 
       if (reciept != null) {
