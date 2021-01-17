@@ -2,8 +2,6 @@ import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
 
-import 'Meta/Transaction.dart';
-
 /// Tracks all the cash flowing through the system
 /// Keeping things in sync and accurate
 class BudgetourReserve {
@@ -146,6 +144,12 @@ mixin CashHolder {
       return withdrawlReciept;
     }
     return null;
+  }
+
+  /// When a transfer has been initiated, as the recipient,
+  /// [this] should specify an amount to be transferred. Default is 0.
+  double transferRequest() {
+    return 0;
   }
 
   bool acceptTransfer(double amount);

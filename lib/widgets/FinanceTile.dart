@@ -45,7 +45,7 @@ class FinanceTile extends StatelessWidget {
             flex: 1,
             child: DragTarget<double>(
               onWillAccept: (unallocatedCash) => unallocatedCash > 0,
-              onAccept: (cashQTY) {
+              onAccept: (_) {
                 /// Launch Refilling page
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) {
                   return RefillObjectPage(financeObj);
@@ -118,6 +118,8 @@ class FinanceTile extends StatelessWidget {
     );
   }
 
+  /// Use [QuickStat.getValueToString]
+  @deprecated
   _getQuickStatValue(QuickStat stat) {
     if (!stat.hasToEvaluate()) {
       return Text('${Format.formatDouble(stat.value, 2)}');

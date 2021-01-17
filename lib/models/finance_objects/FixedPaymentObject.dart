@@ -67,6 +67,8 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     return nextDueDate;
   }
 
+  get pending => fixedPayment - _amountPaid;
+
   isPaid() => _amountPaid == fixedPayment;
 
   @override
@@ -100,8 +102,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
           title: 'Pending',
           evaluateValue: Future(
             () {
-              var pendingAmount = fixedPayment - _amountPaid;
-              return Format.formatDouble(pendingAmount, 2);
+              return Format.formatDouble(pending, 2);
             },
           ),
         );
@@ -122,12 +123,9 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    var pending = fixedPayment - _amountPaid;
-
-    if(pending == transferReciept.amount) {
+    if(this.pending == transferReciept.amount) {
       affirmation = 'This bill is ready to pay';
     }
-
   }
 
   @override
@@ -138,5 +136,10 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
       return true;
     } else
       return false;
+  }
+
+  @override
+  double transferRequest() {
+    return pending;
   }
 }

@@ -35,7 +35,12 @@ class _EnterTransactionPageState extends State<EnterTransactionPage> {
 
   @override
   void initState() {
-    calcController = CalculatorController(defaultValue: widget.initialValue);
+    double defaultDisplayValue;
+
+    if (widget.initialValue != null && widget.initialValue != 0)
+      defaultDisplayValue = widget.initialValue;
+
+    calcController = CalculatorController(defaultValue: defaultDisplayValue);
     super.initState();
   }
 

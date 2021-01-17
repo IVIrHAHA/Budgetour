@@ -1,7 +1,9 @@
 import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
+import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
@@ -10,16 +12,19 @@ import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
 class RefillObjectPage extends StatelessWidget {
-  final FinanceObject financeObj;
+  final FinanceObject targetedFinanceObj;
   final Function(bool refilled) onRefillComplete;
 
-  RefillObjectPage(this.financeObj, {this.onRefillComplete});
+  RefillObjectPage(this.targetedFinanceObj, {this.onRefillComplete});
 
   @override
   Widget build(BuildContext context) {
     return MyAppBarView(
-      headerName: financeObj.name,
-      stat1: financeObj.getFirstStat(),
+      headerName: targetedFinanceObj.name,
+      stat1: QuickStat(
+        title: 'Requested',
+        value: targetedFinanceObj.transferRequest(),
+      ),
       tabPages: [
         Column(
           children: [
@@ -38,7 +43,7 @@ class RefillObjectPage extends StatelessWidget {
                 onEnterPressed: (amount, _) {
                   try {
                     CashOnHand cashBag = CashOnHand.instance;
-                    cashBag.transferToHolder(financeObj, amount);
+                    cashBag.transferToHolder(targetedFinanceObj, amount);
                     Navigator.of(context).pop();
                   } on PartisanException {
                     print('both parties did not agree');

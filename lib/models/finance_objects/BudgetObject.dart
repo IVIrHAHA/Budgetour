@@ -152,4 +152,9 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     transferReciept.description = 'refill';
     logTransaction(transferReciept);
   }
+
+  @override
+  double transferRequest() {
+    return this.targetAlloctionAmount - this.cashReserve;
+  }
 }
