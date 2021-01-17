@@ -84,7 +84,6 @@ mixin CashHandler {
     if (amount > 0) {
       reciept = BudgetourReserve._printCash(amount);
       _cashAccount += reciept.amount;
-      print('gain monay');
     }
     return reciept;
   }

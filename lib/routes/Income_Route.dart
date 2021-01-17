@@ -1,6 +1,4 @@
-import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
-import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/pages/EnterTransactionPage.dart';
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
@@ -11,13 +9,18 @@ import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 
 class IncomeRoute extends StatelessWidget {
+  final CashOnHand cashOnHand = CashOnHand.instance;
+
   @override
   Widget build(BuildContext context) {
     const TextStyle style = TextStyle(color: Colors.black);
 
     return MyAppBarView(
       headerName: 'Income',
-      stat1: QuickStat(title: 'liquid', value: CashOnHand.instance.cashAmount),
+      stat1: QuickStat(
+        title: 'Cash On Hand',
+        lazyValue: '\$ ${Format.formatDouble(cashOnHand.cashAmount, 0)}',
+      ),
       tabTitles: [
         Text('Deposit', style: style),
         Text('History', style: style),
@@ -32,15 +35,15 @@ class IncomeRoute extends StatelessWidget {
           headerColorAccent: ColorGenerator.fromHex(GColors.greenish),
         ),
         TransactionHistoryPage(
-          CashOnHand.instance,
+          cashOnHand,
           infoTileHeader: 'Monthly Deposits',
-          infoValue: CashOnHand.instance.getMonthlyDeposits,
+          infoValue: cashOnHand.getMonthlyDeposits,
         ),
       ],
     );
   }
 
   _userEnteredIncome(double incomeAmount) {
-    CashOnHand.instance.autoLogDeposit(incomeAmount);
+    cashOnHand.autoLogDeposit(incomeAmount);
   }
 }
