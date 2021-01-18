@@ -136,6 +136,36 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     return null;
   }
 
+  /// The first of current month
+  DateTime nextRefill = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    1,
+    0,
+    0,
+  );
+
+  /// TODO: Eventually, let user determine this
+  timeToRefill() {
+    Duration duration = nextRefill.difference(DateTime.now());
+    if (duration.inDays > 0) {
+      return false;
+    } else {
+      _updateRefillDate();
+      return true;
+    }
+  }
+
+  _updateRefillDate() {
+    nextRefill = DateTime(
+      DateTime.now().year,
+      DateTime.now().month+1,
+      1,
+      0,
+      0,
+    );
+  }
+
   @override
   bool acceptTransfer(double transferAmount) {
     return true;
@@ -145,17 +175,26 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    ///
+    /// *BUG if user goes over budget and refills, and then refills again, it appears
+    /// as though the user never violated the targeted alloted amount.
     ///
     /// [this] did not request the transfer, rather an external object initiated the
     /// transfer
     if (!_thisRequested) {
       transferReciept.description = 'refill';
 
-      print('filled from outsied');
+      /// Went overbudget before alloted time frame
+      if(_overBudget && !timeToRefill()) {
+        affirmation = 'exceeded target budget';
+        affirmationColor = Colors.grey;
+        _overBudget = false;
+      }
 
-      /// TODO: REMOVE THIS
-      transferReciept.date = DateTime(2020, 12, 1, 0, 0);
+      /// Refilling on own accord
+      else {
+        setAffirmation();
+        _overBudget = false;
+      }
     }
 
     /// Should only enter when [this] had to pull missing funds.
@@ -163,7 +202,6 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     /// [this] initiated the transfer during [this.spendCash]
     /// Mark transaction as 'went overbudget'.
     else if (_overBudget && _thisRequested) {
-      print('filled from inside');
       transferReciept.description = 'went overbudget';
       transferReciept.perceptibleColor =
           ColorGenerator.fromHex(GColors.blueish);
