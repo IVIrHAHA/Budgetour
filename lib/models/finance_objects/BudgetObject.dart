@@ -8,6 +8,8 @@
  *    2. Track how much user has spent/not spent.
  */
 
+import 'dart:developer';
+
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -37,7 +39,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
           name: title,
         ) {
     /// TODO: Testing. REMOVE WHEN DONE
-    this.startingDate = DateTime.now();
+    this.startingDate = DateTime(2020, 3, 3, 0, 0);
     this.frequency = DefinedOccurence.monthly;
 
     this.firstStat = stat1;
@@ -56,20 +58,19 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   setAffirmation() {
     // Currently overbudget and has not refilled funds
-    if (isOverAllotedBudget && targetAlloctionAmount == 0 && !isDue) {
-      print('thissss was called');
+    if (_overBudget && cashReserve == 0 && !isDue) {
       affirmation = 'over budget, out of funds';
       affirmationColor = Colors.red;
     }
     // User has gone over targeted budget, but refilled
-    else if (isOverAllotedBudget && targetAlloctionAmount > 0 && !isDue) {
+    else if (_overBudget && cashReserve > 0 && !isDue) {
       affirmation = 'exceeded allocation target';
       affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
     }
     // Time to refill and reset
     else if (!isDue && cashReserve < targetAlloctionAmount) {
       affirmation = 'needs refill';
-      affirmationColor = Colors.yellow;
+      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
     }
     // User is on track thus far
     else {
@@ -124,7 +125,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
   }
 
-
   /// True when auditing a transaction [_auditTransaction]
   /// False when Transfer completes [transferReciept]
   bool _thisRequested = false;
@@ -149,9 +149,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
       _thisRequested = false;
     }
 
-    setAffirmation();
-
     logTransaction(transferReciept);
+    setAffirmation();
   }
 
   bool get isOverAllotedBudget => getMonthlyExpenses() > targetAlloctionAmount;
@@ -174,10 +173,61 @@ class BudgetObject extends FinanceObject<BudgetStat>
   /// Otherwise, keep as neutral color
   @override
   Color getTileColor() {
-    if (_overBudget) {
-      return ColorGenerator.fromHex(GColors.warningColor);
-    } else
-      return ColorGenerator.fromHex(GColors.neutralColor);
+    switch (_getStatus()) {
+      case _BudgetStatus.onTrack:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+
+      case _BudgetStatus.over_NotRefilled_NotDue:
+        return ColorGenerator.fromHex(GColors.warningColor);
+        break;
+
+      case _BudgetStatus.over_Refilled_NotDue:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+
+      case _BudgetStatus.needsRefill:
+        return Colors.yellow;
+        break;
+
+      case _BudgetStatus.spentExactAmount:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+
+      case _BudgetStatus.noNeedRefill:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+    }
+    return ColorGenerator.fromHex(GColors.neutralColor);
+  }
+
+  _BudgetStatus _getStatus() {
+    // On track, thus far
+    if (!_overBudget && cashReserve > 0 && !isDue) {
+      return _BudgetStatus.onTrack;
+    }
+    // Currently overbudget and has not refilled funds
+    else if (_overBudget && cashReserve == 0 && !isDue) {
+      return _BudgetStatus.over_NotRefilled_NotDue;
+    }
+    // User has gone over targeted budget, but refilled
+    else if (_overBudget && cashReserve > 0 && !isDue) {
+      return _BudgetStatus.over_Refilled_NotDue;
+    }
+    // Time to refill and reset
+    else if (isDue && cashReserve < targetAlloctionAmount) {
+      return _BudgetStatus.needsRefill;
+    }
+    // BudgetObject already financed, ready to go
+    else if(isDue && cashReserve >= targetAlloctionAmount) {
+      return _BudgetStatus.noNeedRefill;
+    }
+    // Spent exact amount
+    else if (!isDue && cashReserve == 0) {
+      return _BudgetStatus.spentExactAmount;
+    } else {
+      throw Exception('Unexpected circumstance');
+    }
   }
 
   @override
@@ -207,4 +257,13 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
     return null;
   }
+}
+
+enum _BudgetStatus {
+  onTrack,
+  over_NotRefilled_NotDue,
+  over_Refilled_NotDue,
+  needsRefill,
+  noNeedRefill,
+  spentExactAmount,
 }

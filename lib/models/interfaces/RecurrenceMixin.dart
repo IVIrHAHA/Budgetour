@@ -41,7 +41,7 @@ mixin Recurrence {
     _determineNextOccurence();
   }
 
-  bool get isDue => DateTime.now().isBefore(this.nextOccurence ?? _determineNextOccurence());
+  bool get isDue => DateTime.now().isAfter(this.nextOccurence ?? _determineNextOccurence());
 
   get nextOccurence => _determineNextOccurence();
 
