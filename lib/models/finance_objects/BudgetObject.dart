@@ -9,7 +9,6 @@
  */
 
 import 'package:budgetour/models/Meta/QuickStat.dart';
-import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';

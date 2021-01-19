@@ -17,3 +17,23 @@ class InvalidTransferException implements Exception {
     return message;
   }
 }
+
+class UndefinedStartingDateException implements Exception {
+  final String message;
+
+  const UndefinedStartingDateException([this.message]);
+
+  String toString() {
+    return message;
+  }
+}
+
+class MultipleFrequenciesDefinedException implements Exception {
+  final String message;
+
+  const MultipleFrequenciesDefinedException([this.message]);
+
+  String toString() {
+    return message;
+  }
+}
