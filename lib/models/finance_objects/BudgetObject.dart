@@ -10,6 +10,7 @@
 
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
+import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -25,7 +26,8 @@ enum BudgetStat {
   spent,
 }
 
-class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
+class BudgetObject extends FinanceObject<BudgetStat>
+    with TransactionHistory, Recurrence {
   double targetAlloctionAmount;
 
   BudgetObject({
@@ -144,27 +146,6 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
     0,
   );
 
-  /// TODO: Eventually, let user determine this
-  timeToRefill() {
-    Duration duration = nextRefill.difference(DateTime.now());
-    if (duration.inDays > 0) {
-      return false;
-    } else {
-      _updateRefillDate();
-      return true;
-    }
-  }
-
-  _updateRefillDate() {
-    nextRefill = DateTime(
-      DateTime.now().year,
-      DateTime.now().month+1,
-      1,
-      0,
-      0,
-    );
-  }
-
   @override
   bool acceptTransfer(double transferAmount) {
     return true;
@@ -183,7 +164,7 @@ class BudgetObject extends FinanceObject<BudgetStat> with TransactionHistory {
       transferReciept.description = 'refill';
 
       /// Went overbudget before alloted time frame
-      if(_overBudget && !timeToRefill()) {
+      if (_overBudget && !isDue) {
         affirmation = 'exceeded target budget';
         affirmationColor = Colors.grey;
         _overBudget = false;

@@ -1,6 +1,6 @@
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 
-enum DefinedFrequencies {
+enum DefinedOccurence {
   yearly,
   semi_yearly,
   monthly,
@@ -8,32 +8,55 @@ enum DefinedFrequencies {
   weekly,
 }
 
-mixin FrequencyOccurence {
+/// How to use
+/// 1. set [startingDate]
+/// 2. Give **either** [frequency] or [customFrequency], using [DefinedOccurence] 
+///     or [Duration] respectfully.
+/// 3. [nextOccurence] will give you next occurence or will update nextOccurence if 
+///     needed.
+/// 4. Use [nofityDates] to update both [startingDate] and [nextOccurence] when 
+///     [isDue] == true
+
+mixin Recurrence {
   DateTime startingDate;
   DateTime _nextOccurence;
 
   /// Sets [nextOccurence] with respect to a fixed due-day.
   /// Taking into account the variance of days in a month.
   ///
-  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurance] = Feb. 16th
-  DefinedFrequencies frequency;
+  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurence] = Feb. 16th
+  DefinedOccurence frequency;
 
   /// Sets [nextOccurence] with disregard of due-day.
   Duration customFrequency;
 
-  /// TODO: Look into adding an observer to observe when the FinanceObject
-  /// is ready to have _nextOccurance updated.
+  notifyDates() {
+    /// set startingDate as current _nextOccurence
+    this.startingDate = this._nextOccurence ?? _determineNextOccurence();
 
-  bool get isDue => DateTime.now().isAfter(this.nextOccurance);
+    /// Make _nextOccurence null
+    this._nextOccurence = null;
 
-  get nextOccurance => _determineNextOccurence();
+    /// determine _nextOccurence
+    _determineNextOccurence();
+  }
+
+  bool get isDue => DateTime.now().isBefore(this.nextOccurence);
+
+  get nextOccurence => _determineNextOccurence();
 
   /// Sets [_nextOccurence] if needed. Otherwise, returns [_nextOccurence].
   DateTime _determineNextOccurence() {
-    if (startingDate != null && this._nextOccurence == null) {
+    /// _nextOccurence is already set and up to date
+    if (startingDate != null && this._nextOccurence != null) {
+      return this._nextOccurence;
+    }
+
+    /// _nextOccurence needs to be set or updated
+    else if (startingDate != null && this._nextOccurence == null) {
       var duratedFreq = _getFrequency();
 
-      if (duratedFreq is DefinedFrequencies) {
+      if (duratedFreq is DefinedOccurence) {
         _handlePredefined(duratedFreq);
       } else if (duratedFreq is Duration) {
         this._nextOccurence = startingDate.add(duratedFreq);
@@ -45,8 +68,6 @@ mixin FrequencyOccurence {
       }
 
       return this._nextOccurence;
-    } else if (startingDate != null && nextOccurance != null) {
-      return this.nextOccurance;
     } else {
       throw UndefinedStartingDateException('startingDate is undefined');
     }
@@ -55,17 +76,17 @@ mixin FrequencyOccurence {
   /// This sets [nextOccurence] with respect to a fixed due-day.
   /// Taking into account the variance of days in a month.
   ///
-  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurance] = Feb. 16th
-  void _handlePredefined(DefinedFrequencies frequency) {
+  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurence] = Feb. 16th
+  void _handlePredefined(DefinedOccurence frequency) {
     switch (frequency) {
-      case DefinedFrequencies.yearly:
+      case DefinedOccurence.yearly:
         // TODO: Handle this case.
         break;
-      case DefinedFrequencies.semi_yearly:
+      case DefinedOccurence.semi_yearly:
         // TODO: Handle this case.
         break;
 
-      case DefinedFrequencies.monthly:
+      case DefinedOccurence.monthly:
         // ensure date doesn't have to rollover year
         if (startingDate.month < 12) {
           this._nextOccurence = DateTime(
@@ -89,10 +110,10 @@ mixin FrequencyOccurence {
         }
         break;
 
-      case DefinedFrequencies.bi_weekly:
+      case DefinedOccurence.bi_weekly:
         // TODO: Handle this case.
         break;
-      case DefinedFrequencies.weekly:
+      case DefinedOccurence.weekly:
         // TODO: Handle this case.
         break;
     }
