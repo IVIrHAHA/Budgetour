@@ -123,9 +123,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    if(this.pending == transferReciept.amount) {
-      affirmation = 'This bill is ready to pay';
-    }
+    
   }
 
   @override
@@ -141,5 +139,10 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   @override
   double suggestedTransferAmount() {
     return pending;
+  }
+
+  @override
+  Text getAffirmation() {
+    return null;
   }
 }

@@ -31,12 +31,7 @@ class FinanceTile extends StatelessWidget {
                 left: 16.0,
                 top: GlobalValues.financeTileMargin,
               ),
-              child: Text(
-                financeObj.affirmation ?? '',
-                style: TextStyle(
-                  color: financeObj.affirmationColor ?? Colors.black,
-                ),
-              ),
+              child: financeObj.getAffirmation() ?? Text(''),
             ),
           ),
 

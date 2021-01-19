@@ -8,8 +8,6 @@
  *    2. Track how much user has spent/not spent.
  */
 
-import 'dart:developer';
-
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -56,29 +54,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
   ///   3a. Budget is almost out and still has a lot of time left
   /// 4. User went over targeted budget
 
-  setAffirmation() {
-    // Currently overbudget and has not refilled funds
-    if (_overBudget && cashReserve == 0 && !isDue) {
-      affirmation = 'over budget, out of funds';
-      affirmationColor = Colors.red;
-    }
-    // User has gone over targeted budget, but refilled
-    else if (_overBudget && cashReserve > 0 && !isDue) {
-      affirmation = 'exceeded allocation target';
-      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
-    }
-    // Time to refill and reset
-    else if (!isDue && cashReserve < targetAlloctionAmount) {
-      affirmation = 'needs refill';
-      affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
-    }
-    // User is on track thus far
-    else {
-      affirmation = '';
-      affirmationColor = null;
-    }
-  }
-
   /// Does not logTransaction, in case user wants to add a note
   /// of their own.
   @override
@@ -89,7 +64,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
       cashTransaction = _auditTransaction(cashTransaction, amount);
     }
 
-    setAffirmation();
     return cashTransaction;
   }
 
@@ -150,7 +124,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
 
     logTransaction(transferReciept);
-    setAffirmation();
   }
 
   bool get isOverAllotedBudget => getMonthlyExpenses() > targetAlloctionAmount;
@@ -167,6 +140,40 @@ class BudgetObject extends FinanceObject<BudgetStat>
   @override
   double suggestedTransferAmount() {
     return this.targetAlloctionAmount - this.cashReserve;
+  }
+
+  @override
+  Text getAffirmation() {
+    switch (_getStatus()) {
+      case _BudgetStatus.onTrack:
+        return _buildText('');
+        break;
+
+      case _BudgetStatus.over_NotRefilled_NotDue:
+        return _buildText('over budget, out of funds', color: Colors.red);
+        break;
+
+      case _BudgetStatus.over_Refilled_NotDue:
+        return _buildText('over targeted amount', color: Colors.grey);
+        break;
+
+      case _BudgetStatus.needsRefill:
+        return _buildText('needs refill', color: Colors.red);
+        break;
+
+      case _BudgetStatus.roll_over:
+        return _buildText('');
+        break;
+
+      case _BudgetStatus.spentExactAmount:
+        return _buildText('out of funds, consider refill', color: Colors.grey);
+        break;
+    }
+    return _buildText('');
+  }
+
+  _buildText(String text, {Color color = Colors.black}) {
+    return Text(text, style: TextStyle(color: color));
   }
 
   /// Tile Color will display red when user has gone over budget
@@ -194,13 +201,14 @@ class BudgetObject extends FinanceObject<BudgetStat>
         return ColorGenerator.fromHex(GColors.neutralColor);
         break;
 
-      case _BudgetStatus.noNeedRefill:
+      case _BudgetStatus.roll_over:
         return ColorGenerator.fromHex(GColors.neutralColor);
         break;
     }
     return ColorGenerator.fromHex(GColors.neutralColor);
   }
 
+  /// Lists possible outcomes after dealing with a [BudgetObject]
   _BudgetStatus _getStatus() {
     // On track, thus far
     if (!_overBudget && cashReserve > 0 && !isDue) {
@@ -218,9 +226,9 @@ class BudgetObject extends FinanceObject<BudgetStat>
     else if (isDue && cashReserve < targetAlloctionAmount) {
       return _BudgetStatus.needsRefill;
     }
-    // BudgetObject already financed, ready to go
-    else if(isDue && cashReserve >= targetAlloctionAmount) {
-      return _BudgetStatus.noNeedRefill;
+    // BudgetObject already financed, roll-over to next period
+    else if (isDue && cashReserve >= targetAlloctionAmount) {
+      return _BudgetStatus.roll_over;
     }
     // Spent exact amount
     else if (!isDue && cashReserve == 0) {
@@ -264,6 +272,6 @@ enum _BudgetStatus {
   over_NotRefilled_NotDue,
   over_Refilled_NotDue,
   needsRefill,
-  noNeedRefill,
+  roll_over,
   spentExactAmount,
 }

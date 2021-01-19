@@ -92,4 +92,9 @@ class GoalObject extends FinanceObject<GoalStats> {
   bool acceptTransfer(double amount) {
     return true;
   }
+
+  @override
+  Text getAffirmation() {
+    return null;
+  }
 }
