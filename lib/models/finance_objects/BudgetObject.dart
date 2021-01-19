@@ -36,6 +36,10 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }) : super(
           name: title,
         ) {
+    /// TODO: Testing. REMOVE WHEN DONE
+    this.startingDate = DateTime.now();
+    this.frequency = DefinedOccurence.monthly;
+
     this.firstStat = stat1;
     this.secondStat = stat2;
   }
@@ -48,19 +52,24 @@ class BudgetObject extends FinanceObject<BudgetStat>
   /// 2. User needs to refill budget
   /// 3. (Optional for now) Budget is almost out
   ///   3a. Budget is almost out and still has a lot of time left
-  /// 4. User went targeted budget
+  /// 4. User went over targeted budget
 
   setAffirmation() {
-    // Currently overbudget
-    if (_overBudget) {
-      affirmation = 'Overbudget!';
+    // Currently overbudget and has not refilled funds
+    if (isOverAllotedBudget && targetAlloctionAmount == 0 && !isDue) {
+      print('thissss was called');
+      affirmation = 'over budget, out of funds';
       affirmationColor = Colors.red;
     }
     // User has gone over targeted budget, but refilled
-    else if (this.getMonthlyStatement() > this.targetAlloctionAmount &&
-        cashReserve > 0) {
+    else if (isOverAllotedBudget && targetAlloctionAmount > 0 && !isDue) {
       affirmation = 'exceeded allocation target';
       affirmationColor = ColorGenerator.fromHex(GColors.borderColor);
+    }
+    // Time to refill and reset
+    else if (!isDue && cashReserve < targetAlloctionAmount) {
+      affirmation = 'needs refill';
+      affirmationColor = Colors.yellow;
     }
     // User is on track thus far
     else {
@@ -98,7 +107,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     try {
       _overBudget = true;
       _thisRequested = true;
-      // Get missing funds
+      // Calculate missing funds
       var amountNeeded = amount - cashReserve;
       // This will throw exception if not successful
       CashOnHand.instance.transferToHolder(this, amountNeeded);
@@ -116,7 +125,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
 
-
   /// True when auditing a transaction [_auditTransaction]
   /// False when Transfer completes [transferReciept]
   bool _thisRequested = false;
@@ -130,34 +138,23 @@ class BudgetObject extends FinanceObject<BudgetStat>
     /// transfer
     if (!_thisRequested) {
       transferReciept.description = 'refill';
-
-      /// Went overbudget before alloted time frame
-      if (_overBudget && !isDue) {
-        affirmation = 'exceeded target budget';
-        affirmationColor = Colors.grey;
-        _overBudget = false;
-      }
-
-      /// Refilling on own accord
-      else {
-        setAffirmation();
-        _overBudget = false;
-      }
     }
 
-    /// Should only enter when [this] had to pull missing funds.
-    ///
-    /// [this] initiated the transfer during [this.spendCash]
+    /// Only enters when auditing a transaction.
     /// Mark transaction as 'went overbudget'.
-    else if (_overBudget && _thisRequested) {
+    else if (_thisRequested) {
       transferReciept.description = 'went overbudget';
       transferReciept.perceptibleColor =
           ColorGenerator.fromHex(GColors.blueish);
       _thisRequested = false;
     }
 
+    setAffirmation();
+
     logTransaction(transferReciept);
   }
+
+  bool get isOverAllotedBudget => getMonthlyExpenses() > targetAlloctionAmount;
 
   /* ----------------------------------------------------------------------------
    *  Tile Formating and misc methods
@@ -167,7 +164,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
   bool acceptTransfer(double transferAmount) {
     return true;
   }
-  
+
   @override
   double suggestedTransferAmount() {
     return this.targetAlloctionAmount - this.cashReserve;
