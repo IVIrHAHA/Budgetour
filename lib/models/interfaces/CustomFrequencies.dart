@@ -12,20 +12,31 @@ mixin FrequencyOccurence {
   DateTime startingDate;
   DateTime _nextOccurence;
 
-  /// Could be enum or custom amount of days
+  /// Sets [nextOccurence] with respect to a fixed due-day.
+  /// Taking into account the variance of days in a month.
+  ///
+  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurance] = Feb. 16th
   DefinedFrequencies frequency;
+
+  /// Sets [nextOccurence] with disregard of due-day.
   Duration customFrequency;
+
+  /// TODO: Look into adding an observer to observe when the FinanceObject
+  /// is ready to have _nextOccurance updated.
+
+  bool get isDue => DateTime.now().isAfter(this.nextOccurance);
 
   get nextOccurance => _determineNextOccurence();
 
+  /// Sets [_nextOccurence] if needed. Otherwise, returns [_nextOccurence].
   DateTime _determineNextOccurence() {
-    if (startingDate != null) {
+    if (startingDate != null && this._nextOccurence == null) {
       var duratedFreq = _getFrequency();
 
       if (duratedFreq is DefinedFrequencies) {
         _handlePredefined(duratedFreq);
       } else if (duratedFreq is Duration) {
-        _handleDuration(duratedFreq);
+        this._nextOccurence = startingDate.add(duratedFreq);
       }
 
       // This should never be called
@@ -34,11 +45,17 @@ mixin FrequencyOccurence {
       }
 
       return this._nextOccurence;
+    } else if (startingDate != null && nextOccurance != null) {
+      return this.nextOccurance;
     } else {
       throw UndefinedStartingDateException('startingDate is undefined');
     }
   }
 
+  /// This sets [nextOccurence] with respect to a fixed due-day.
+  /// Taking into account the variance of days in a month.
+  ///
+  /// Example: Monthly? Due Date = Jan. 16th, [nextOccurance] = Feb. 16th
   void _handlePredefined(DefinedFrequencies frequency) {
     switch (frequency) {
       case DefinedFrequencies.yearly:
@@ -81,10 +98,8 @@ mixin FrequencyOccurence {
     }
   }
 
-  void _handleDuration(Duration duration) {
-    this._nextOccurence = startingDate.add(duration);
-  }
-
+  /// Interprets the Frequency set by dev/user.
+  /// Ensure only one has been defined.
   _getFrequency() {
     if (frequency != null && customFrequency == null) {
       return this.frequency;
