@@ -28,8 +28,6 @@ enum BudgetStat {
 
 class BudgetObject extends FinanceObject<BudgetStat>
     with TransactionHistory, Recurrence {
-  double targetAlloctionAmount;
-
   BudgetObject({
     @required String title,
     this.targetAlloctionAmount = 0,
@@ -41,6 +39,9 @@ class BudgetObject extends FinanceObject<BudgetStat>
     this.firstStat = stat1;
     this.secondStat = stat2;
   }
+
+  double targetAlloctionAmount;
+  bool _overBudget = false;
 
   /// Things BudgetObject needs to communicate to user
   /// 1. User is overbudget
@@ -68,89 +69,56 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
   }
 
-  /// Does not logTransaction, in case user want to add a note
+  /// Does not logTransaction, in case user wants to add a note
   /// of their own.
   @override
   Transaction spendCash(double amount) {
     Transaction cashTransaction = super.spendCash(amount);
 
-    // User has gone overBudget
     if (cashTransaction == null) {
-      // Try and get unallocated resources to cover this transaction
-      try {
-        _overBudget = true;
-        _thisRequested = true;
-        // Get missing funds
-        var amountNeeded = amount - cashReserve;
-        CashOnHand.instance.transferToHolder(this, amountNeeded);
-
-        // Transfer was successful
-        // Try and spend cash again
-        cashTransaction = super.spendCash(amount);
-      }
-      // Transfer was unsuccessful, cannot spend cash
-      catch (Exception) {
-        _overBudget = false;
-      }
+      cashTransaction = _auditTransaction(cashTransaction, amount);
     }
+
     setAffirmation();
     return cashTransaction;
   }
 
-  /// Tile Color will display red when user has gone over budget
-  /// Otherwise, keep as neutral color
-  @override
-  Color getTileColor() {
-    if (_overBudget) {
-      return ColorGenerator.fromHex(GColors.warningColor);
-    } else
-      return ColorGenerator.fromHex(GColors.neutralColor);
-  }
+  /// Determines if the transaction will cause this budget to go over.
+  /// If so, then tries to pull unallocated funds to process transaction
+  ///
+  /// Post-Case A: Transaction is processed by using any remaining funds in
+  ///              in this budget and pulls the rest from unallocated resources.
+  ///
+  /// Post-Case B: This [BudgetObject] freezes and the Transaction is unable to process.
+  ///              As a result, user must manually unallocate resources from other
+  ///              [FinanceObject]s. At which point, this [BudgetObject] will try again
+  ///              to process the Transaction.
+  Transaction _auditTransaction(Transaction fromSuper, double amount) {
+    // Try and get unallocated resources to cover this transaction
+    try {
+      _overBudget = true;
+      _thisRequested = true;
+      // Get missing funds
+      var amountNeeded = amount - cashReserve;
+      // This will throw exception if not successful
+      CashOnHand.instance.transferToHolder(this, amountNeeded);
 
-  bool _overBudget = false;
-
-  @override
-  Widget getLandingPage() {
-    return BudgetObjRoute(this);
-  }
-
-  @override
-  QuickStat determineStat(BudgetStat statType) {
-    switch (statType) {
-      case BudgetStat.allocated:
-        return QuickStat(title: 'Allocated', value: targetAlloctionAmount);
-        break;
-      case BudgetStat.remaining:
-        return QuickStat(
-          title: 'Remaining',
-          value: cashReserve,
-        );
-        break;
-      case BudgetStat.spent:
-        return QuickStat(
-            title: 'Spent',
-            evaluateValue: Future(() {
-              return Format.formatDouble(this.getMonthlyStatement(), 2);
-            }));
-        break;
+      // Transfer was successful
+      // Re-do Transaction
+      return super.spendCash(amount);
     }
-    return null;
+    // Transfer was unsuccessful, cannot spend cash
+    catch (Exception) {
+      /// TODO: FREEZE THIS AND HOLD THE TRANSACTION
+      /// UNIL USER FINDS RESOURCES OR DELETES THIS TRANSACTION
+      throw Exception('TODO: FREEZE THIS: $name');
+    }
   }
 
-  /// The first of current month
-  DateTime nextRefill = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    1,
-    0,
-    0,
-  );
 
-  @override
-  bool acceptTransfer(double transferAmount) {
-    return true;
-  }
 
+  /// True when auditing a transaction [_auditTransaction]
+  /// False when Transfer completes [transferReciept]
   bool _thisRequested = false;
 
   @override
@@ -191,8 +159,55 @@ class BudgetObject extends FinanceObject<BudgetStat>
     logTransaction(transferReciept);
   }
 
+  /* ----------------------------------------------------------------------------
+   *  Tile Formating and misc methods
+   * ----------------------------------------------------------------------------
+   */
+  @override
+  bool acceptTransfer(double transferAmount) {
+    return true;
+  }
+  
   @override
   double suggestedTransferAmount() {
     return this.targetAlloctionAmount - this.cashReserve;
+  }
+
+  /// Tile Color will display red when user has gone over budget
+  /// Otherwise, keep as neutral color
+  @override
+  Color getTileColor() {
+    if (_overBudget) {
+      return ColorGenerator.fromHex(GColors.warningColor);
+    } else
+      return ColorGenerator.fromHex(GColors.neutralColor);
+  }
+
+  @override
+  Widget getLandingPage() {
+    return BudgetObjRoute(this);
+  }
+
+  @override
+  QuickStat determineStat(BudgetStat statType) {
+    switch (statType) {
+      case BudgetStat.allocated:
+        return QuickStat(title: 'Allocated', value: targetAlloctionAmount);
+        break;
+      case BudgetStat.remaining:
+        return QuickStat(
+          title: 'Remaining',
+          value: cashReserve,
+        );
+        break;
+      case BudgetStat.spent:
+        return QuickStat(
+            title: 'Spent',
+            evaluateValue: Future(() {
+              return Format.formatDouble(this.getMonthlyStatement(), 2);
+            }));
+        break;
+    }
+    return null;
   }
 }
