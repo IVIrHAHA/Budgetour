@@ -37,7 +37,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
           name: title,
         ) {
     /// TODO: Testing. REMOVE WHEN DONE
-    this.startingDate = DateTime(2020, 3, 3, 0, 0);
+    this.startingDate = DateTime(2020, 12, 1, 0, 0);
     this.frequency = DefinedOccurence.monthly;
 
     this.firstStat = stat1;
@@ -46,6 +46,10 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   double targetAlloctionAmount;
   bool _overBudget = false;
+
+  /// True when auditing a transaction [_auditTransaction]
+  /// False when Transfer completes [transferReciept]
+  bool _thisRequested = false;
 
   /// Things BudgetObject needs to communicate to user
   /// 1. User is overbudget
@@ -99,19 +103,16 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
   }
 
-  /// True when auditing a transaction [_auditTransaction]
-  /// False when Transfer completes [transferReciept]
-  bool _thisRequested = false;
-
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    /// *BUG if user goes over budget and refills, and then refills again, it appears
-    /// as though the user never violated the targeted alloted amount.
-    ///
     /// [this] did not request the transfer, rather an external object initiated the
     /// transfer
     if (!_thisRequested) {
       transferReciept.description = 'refill';
+
+      if (isDue && cashReserve >= targetAlloctionAmount) {
+        _reset();
+      }
     }
 
     /// Only enters when auditing a transaction.
@@ -126,12 +127,9 @@ class BudgetObject extends FinanceObject<BudgetStat>
     logTransaction(transferReciept);
   }
 
-  bool get isOverAllotedBudget => getMonthlyExpenses() > targetAlloctionAmount;
-
   /* ----------------------------------------------------------------------------
    *  Tile Formating and misc methods
-   * ----------------------------------------------------------------------------
-   */
+   * --------------------------------------------------------------------------*/
   @override
   bool acceptTransfer(double transferAmount) {
     return true;
@@ -170,6 +168,13 @@ class BudgetObject extends FinanceObject<BudgetStat>
         break;
     }
     return _buildText('');
+  }
+
+  int amount = 1;
+  _reset() {
+    amount++;
+    _overBudget = false;
+    notifyDates();
   }
 
   _buildText(String text, {Color color = Colors.black}) {
@@ -228,6 +233,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     }
     // BudgetObject already financed, roll-over to next period
     else if (isDue && cashReserve >= targetAlloctionAmount) {
+      _reset();
       return _BudgetStatus.roll_over;
     }
     // Spent exact amount

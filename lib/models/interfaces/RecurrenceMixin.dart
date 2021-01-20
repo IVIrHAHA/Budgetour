@@ -10,11 +10,11 @@ enum DefinedOccurence {
 
 /// How to use
 /// 1. set [startingDate]
-/// 2. Give **either** [frequency] or [customFrequency], using [DefinedOccurence] 
+/// 2. Give **either** [frequency] or [customFrequency], using [DefinedOccurence]
 ///     or [Duration] respectfully.
-/// 3. [nextOccurence] will give you next occurence or will update nextOccurence if 
+/// 3. [nextOccurence] will give you next occurence or will update nextOccurence if
 ///     needed.
-/// 4. Use [nofityDates] to update both [startingDate] and [nextOccurence] when 
+/// 4. Use [nofityDates] to update both [startingDate] and [nextOccurence] when
 ///     [isDue] == true
 
 mixin Recurrence {
@@ -41,7 +41,8 @@ mixin Recurrence {
     _determineNextOccurence();
   }
 
-  bool get isDue => DateTime.now().isAfter(this.nextOccurence ?? _determineNextOccurence());
+  bool get isDue =>
+      DateTime.now().isAfter(this.nextOccurence ?? _determineNextOccurence());
 
   get nextOccurence => _determineNextOccurence();
 
@@ -57,8 +58,10 @@ mixin Recurrence {
       var duratedFreq = _getFrequency();
 
       if (duratedFreq is DefinedOccurence) {
-        _handlePredefined(duratedFreq);
-      } else if (duratedFreq is Duration) {
+        this._nextOccurence = _handlePredefined(duratedFreq);
+      } 
+      // Frequency is of a Duration type
+      else if (duratedFreq is Duration) {
         this._nextOccurence = startingDate.add(duratedFreq);
       }
 
@@ -77,19 +80,19 @@ mixin Recurrence {
   /// Taking into account the variance of days in a month.
   ///
   /// Example: Monthly? Due Date = Jan. 16th, [nextOccurence] = Feb. 16th
-  void _handlePredefined(DefinedOccurence frequency) {
+  DateTime _handlePredefined(DefinedOccurence frequency) {
     switch (frequency) {
       case DefinedOccurence.yearly:
-        // TODO: Handle this case.
+        throw UnimplementedError('implement yearly frequency');
         break;
       case DefinedOccurence.semi_yearly:
-        // TODO: Handle this case.
+        throw UnimplementedError('implement semi-yearly frequency');
         break;
 
       case DefinedOccurence.monthly:
         // ensure date doesn't have to rollover year
         if (startingDate.month < 12) {
-          this._nextOccurence = DateTime(
+          return DateTime(
             startingDate.year,
             startingDate.month + 1,
             startingDate.day,
@@ -100,7 +103,7 @@ mixin Recurrence {
 
         // rollover year as well
         else {
-          this._nextOccurence = DateTime(
+          return DateTime(
             startingDate.year + 1,
             1,
             startingDate.day,
@@ -111,12 +114,13 @@ mixin Recurrence {
         break;
 
       case DefinedOccurence.bi_weekly:
-        // TODO: Handle this case.
+        throw UnimplementedError('implement bi-weekly frequency');
         break;
       case DefinedOccurence.weekly:
-        // TODO: Handle this case.
+        throw UnimplementedError('implement weekly frequency');
         break;
     }
+    throw Exception('Unhandled frequency');
   }
 
   /// Interprets the Frequency set by dev/user.
