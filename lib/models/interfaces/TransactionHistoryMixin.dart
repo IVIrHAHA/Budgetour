@@ -1,5 +1,3 @@
-import 'package:budgetour/models/Meta/Transaction.dart';
-
 import '../CashManager.dart';
 
 /// Creates and manages [FinanceObject]s transaction history

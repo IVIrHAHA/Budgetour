@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
-import 'package:flutter/material.dart';
 
 import 'models/CashManager.dart';
 import 'models/finance_objects/BudgetObject.dart';
@@ -57,7 +56,7 @@ class InitTestData {
       obj = BudgetObject(
         title: title,
         targetAlloctionAmount: allocationAmount,
-        stat1: BudgetStat.allocated,
+        stat1: BudgetStat.spent,
         stat2: BudgetStat.remaining,
       );
       CashOnHand.instance.transferToHolder(obj, 150);

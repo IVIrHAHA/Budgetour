@@ -9,8 +9,6 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
-import 'models/CashManager.dart';
-import 'models/Meta/Transaction.dart';
 import 'models/finance_objects/CashOnHand.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';

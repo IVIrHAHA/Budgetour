@@ -90,7 +90,7 @@ class FinanceTile extends StatelessWidget {
           child: ListTile(
             title: Text(financeObj.hasFirstStat()
                 ? financeObj.getFirstStat().title
-                : ''),
+                : '', overflow: TextOverflow.fade, softWrap: false,),
             trailing: financeObj.hasFirstStat()
                 ? financeObj.getFirstStat().getValueToString()
                 : Text(''),
@@ -115,6 +115,7 @@ class FinanceTile extends StatelessWidget {
 
   /// Use [QuickStat.getValueToString]
   @deprecated
+  // ignore: unused_element
   _getQuickStatValue(QuickStat stat) {
     if (!stat.hasToEvaluate()) {
       return Text('${Format.formatDouble(stat.value, 2)}');

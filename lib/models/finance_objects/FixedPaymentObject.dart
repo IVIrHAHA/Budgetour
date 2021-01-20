@@ -1,6 +1,5 @@
 import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
-import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
@@ -111,6 +110,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         return QuickStat(title: 'Supplied', value: cashReserve);
         break;
     }
+    return null;
   }
 
   @override

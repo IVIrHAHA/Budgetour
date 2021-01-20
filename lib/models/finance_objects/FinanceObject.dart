@@ -1,7 +1,6 @@
 /*
  * Allows program to interface with all FinaceObjects
  */
-import 'package:budgetour/models/Meta/Transaction.dart';
 import 'package:budgetour/models/interfaces/StatMixin.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';

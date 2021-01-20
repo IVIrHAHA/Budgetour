@@ -37,7 +37,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
           name: title,
         ) {
     /// TODO: Testing. REMOVE WHEN DONE
-    this.startingDate = DateTime(2020, 12, 1, 0, 0);
+    this.startingDate = DateTime.now();
     this.frequency = DefinedOccurence.monthly;
 
     this.firstStat = stat1;
@@ -253,7 +253,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
   QuickStat determineStat(BudgetStat statType) {
     switch (statType) {
       case BudgetStat.allocated:
-        return QuickStat(title: 'Allocated', value: targetAlloctionAmount);
+        return QuickStat(title: 'Target Allocation', value: targetAlloctionAmount);
         break;
       case BudgetStat.remaining:
         return QuickStat(
@@ -265,7 +265,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
         return QuickStat(
             title: 'Spent',
             evaluateValue: Future(() {
-              return Format.formatDouble(this.getMonthlyStatement(), 2);
+              return Format.formatDouble(-this.getMonthlyExpenses(), 2);
             }));
         break;
     }

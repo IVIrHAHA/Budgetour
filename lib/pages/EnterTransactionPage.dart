@@ -1,5 +1,3 @@
-import 'package:common_tools/StringFormater.dart';
-
 import '../tools/GlobalValues.dart';
 import '../widgets/standardized/CalculatorView.dart';
 import '../widgets/standardized/EnteredHeader.dart';

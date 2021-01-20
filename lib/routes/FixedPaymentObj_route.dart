@@ -21,7 +21,7 @@ class FixedPaymentObjRoute extends StatelessWidget {
             Expanded(
               flex: 1,
               child: InfoTile(
-                title: paymentObj.isPaid() ? 'paid' : 'avail. funds',
+                title: paymentObj.isPaid() ? 'paid' : 'available funds',
                 infoText: '\$ ${Format.formatDouble(paymentObj.cashReserve, 2)}',
                 titleColor: paymentObj.isPaid() ? Colors.green : Colors.red,
               ),

@@ -1,6 +1,5 @@
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 
-import '../models/finance_objects/BudgetObject.dart';
 import '../tools/GlobalValues.dart';
 import '../widgets/TransactionTile.dart';
 import '../widgets/standardized/EnhancedListTile.dart';
