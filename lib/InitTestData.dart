@@ -29,20 +29,26 @@ class InitTestData {
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
     dummyEssentialList
         .add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
-    dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
-    dummyEssentialList.add(_buildFixedPaymentObject('Car Insurance', 42));
+    dummyEssentialList
+        .add(_buildFixedPaymentObject('Rent', 578, DateTime(2021, 1, 1)));
+    dummyEssentialList.add(
+        _buildFixedPaymentObject('Car Insurance', 42, DateTime(2021, 1, 8)));
   }
 
   static buildSecurityList() {
-    dummySecurityList.add(_buildFixedPaymentObject('Fidelity', 200));
+    dummySecurityList
+        .add(_buildFixedPaymentObject('Fidelity', 200, DateTime(2021, 1, 14)));
   }
 
   static buildGoalList() {}
 
   static buildLifeStyleList() {
-    dummyLifeStyleList.add(_buildFixedPaymentObject('Spotify', 9.99));
-    dummyLifeStyleList.add(_buildFixedPaymentObject('Quip', 5.41));
-    dummyLifeStyleList.add(_buildFixedPaymentObject('Nuero Gum', 20.27));
+    dummyLifeStyleList
+        .add(_buildFixedPaymentObject('Spotify', 9.99, DateTime(2021, 1, 21)));
+    dummyLifeStyleList
+        .add(_buildFixedPaymentObject('Quip', 5.41, DateTime(2021, 1, 26)));
+    dummyLifeStyleList.add(
+        _buildFixedPaymentObject('Nuero Gum', 20.27, DateTime(2021, 1, 3)));
   }
 
   static buildMiscList() {}
@@ -89,12 +95,12 @@ class InitTestData {
 
   // Eventually have history, labels and due dates
   static FixedPaymentObject _buildFixedPaymentObject(
-      String title, double amount) {
+      String title, double amount, DateTime lastDue) {
     FixedPaymentObject obj = FixedPaymentObject(
       name: title,
       fixedPayment: amount,
       definedOccurence: DefinedOccurence.monthly,
-      lastDueDate: DateTime(2021, 1, 1, 0, 0, 0, 0, 0),
+      lastDueDate: lastDue,
     );
 
     obj.firstStat = FixedPaymentStats.supplied;
