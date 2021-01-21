@@ -159,6 +159,13 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// Splite status change between paid, idle, and not-ready into thirds,
   /// between beginning and ending pay period.
   _Status _getStatus() {
+    List<Duration> list = _splitTime();
+
+    if (name == 'Rent') {
+      print(list[0].inDays.toString() + ' paid');
+      print(list[1].inDays.toString() + ' idle');
+      print(list[2].inDays.toString() + ' not ready');
+    }
     // ready - filled but not paid
     if (_isReady && !_isPaid && !isDue) {
       return _Status.ready;
@@ -166,7 +173,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     // late payment - unfilled and has gone passed due date
     else if (!_isPaid && !_isReady && isDue) {
       return _Status.late_payment;
-    } 
+    }
     // Determine Time frames
     else {
       List<Duration> timeFrames = _splitTime();
@@ -193,36 +200,49 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// 2 = not-ready
   List<Duration> _splitTime() {
     Duration period = nextOccurence.difference(startingDate);
+    Duration timeLeft = DateTime.now().difference(startingDate);
 
-    int leftOverDays = period.inDays % _timeSplit;
+    int registeredDays = period.inDays - timeLeft.inDays;
+
+    int equalizingDays = period.inDays % _timeSplit;
+
+    int cycles = 0;
+    int days = period.inDays ~/ _timeSplit;
+
+    List<int> dayList = [days, days, days];
+    int i = 0;
+    for (i = 0; registeredDays > days; i++) {
+      dayList[i] = 0;
+      registeredDays = registeredDays - days;
+    }
+
+    dayList[i] = days - registeredDays;
+
 
     // Split evenly
-    if (leftOverDays == 0) {
-      int days = (period.inDays / _timeSplit) as int;
+    if (equalizingDays == 0) {
       return <Duration>[
-        Duration(days: days), // paid
-        Duration(days: days), // idle
-        Duration(days: days) // not-ready
+        Duration(days: dayList[0]), // paid
+        Duration(days: dayList[1]), // idle
+        Duration(days: dayList[2]) // not-ready
       ];
     }
 
     // add leftOverDay to idle
-    else if (leftOverDays == 1) {
-      int days = (period.inDays - 1) ~/ _timeSplit;
+    else if (equalizingDays == 1) {
       return <Duration>[
-        Duration(days: days), // paid
-        Duration(days: days + 1), // idle
-        Duration(days: days) // not-ready
+        Duration(days: dayList[0]), // paid
+        Duration(days: dayList[1]), // idle
+        Duration(days: dayList[2]) // not-ready
       ];
     }
 
     // add leftOverDays to paid and (not-ready or idle)
-    else if (leftOverDays == 2) {
-      int days = (period.inDays - 2) ~/ _timeSplit;
+    else if (equalizingDays == 2) {
       return <Duration>[
-        Duration(days: days + 1), // paid
-        Duration(days: days), // idle
-        Duration(days: days + 1) // not-ready
+        Duration(days: cycles < 1 ? days - registeredDays : 0), // paid
+        Duration(days: cycles < 2 ? days - registeredDays : 0), // idle
+        Duration(days: cycles < 3 ? days - registeredDays : 0) // not-ready
       ];
     } else {
       throw Exception('failed splitting days');
