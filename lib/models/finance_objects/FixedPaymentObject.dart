@@ -226,7 +226,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     Duration period = nextOccurence.difference(startingDate);
 
     /// Get time left until next due-date
-    Duration timeLeft = nextOccurence.difference(DateTime(2021, 2, 15, 0, 0));
+    Duration timeLeft = nextOccurence.difference(DateTime.now());
 
     /// Track uneven day count (these days will be appended to 'not-ready')
     /// Example: January has 31 days, so this result will be 1
@@ -248,7 +248,6 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
     dayList[i] = timeChunk - xDays; // Use up remaining xDays
 
-    /// TODO: TEST THIS
     /// set _isPaid to false if time is up
     if (dayList[0] == 0 && _isPaid) {
       _isPaid = false;
