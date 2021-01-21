@@ -19,8 +19,10 @@ enum _Status {
   idle,
   paid,
   ready,
+  ready_set_as_manual,
   not_ready,
   late_payment,
+  late_set_as_manual,
 }
 
 /// FixedPayment what to convey to user
@@ -45,12 +47,21 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// Recurring payment amount
   final double fixedPayment;
 
+  /// This gets set as true when spendCash is equal to fixedPayment
+  /// Gets set as false when _isReady is set as true during [transferReciept]
+  /// Also, set to false when its Duration is up, in [_splitTime]
   bool _isPaid;
+
+  /// Is set true only during [transferReciept]
+  /// Set false only during [spendCash]
   bool _isReady;
+
+  bool markAsAutoPay;
 
   FixedPaymentObject({
     @required String name,
     @required this.fixedPayment,
+    this.markAsAutoPay = false,
     DateTime lastDueDate,
     DefinedOccurence definedOccurence,
 
@@ -106,6 +117,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     /// Recieved amount needed to complete [fixedPayment]
     if (cashReserve == fixedPayment) {
       _isReady = true;
+      _isPaid = false;
     }
   }
 
@@ -135,6 +147,10 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         break;
 
       case _Status.ready:
+        return ColorGenerator.fromHex(GColors.positiveColor);
+        break;
+
+      case _Status.ready_set_as_manual:
         return ColorGenerator.fromHex(GColors.neutralColor);
         break;
 
@@ -145,9 +161,20 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
       case _Status.late_payment:
         return ColorGenerator.fromHex(GColors.alertColor);
         break;
+      case _Status.late_set_as_manual:
+        return ColorGenerator.fromHex(GColors.alertColor);
+        break;
+    }
+    throw UnimplementedError('Unhandled Case in $name');
+  }
 
-      default:
-        throw UnimplementedError('Unhandled Case in $name');
+  _runUpdate() {
+    if (markAsAutoPay && _isReady && !_isPaid && isDue) {
+      if (this.spendCash(this.cashReserve) != null) notifyDates();
+    }
+    // Reset if paid and is due
+    else if (_isPaid && isDue) {
+      notifyDates();
     }
   }
 
@@ -155,18 +182,25 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// between beginning and ending pay period.
   _Status _getStatus() {
     // ready - filled but not paid
-    if (_isReady && !_isPaid && !isDue) {
+    if (_isReady && !_isPaid && !isDue && markAsAutoPay) {
       return _Status.ready;
+    } else if (_isReady && !_isPaid && !isDue && !markAsAutoPay) {
+      return _Status.ready_set_as_manual;
     }
     // late payment - unfilled and has gone passed due date
     else if (!_isPaid && !_isReady && isDue) {
       return _Status.late_payment;
     }
+
+    /// Ready but forgot to make payment
+    else if (!_isPaid && _isReady && isDue && !markAsAutoPay) {
+      return _Status.late_set_as_manual;
+    }
     // Determine Time frames
     else {
       List<Duration> timeFrames = _splitTime();
       // paid - paid on time
-      if (_isPaid && timeFrames[0].inDays != 0 && !_isReady) {
+      if (_isPaid || timeFrames[0].inDays != 0 && !_isReady && _isPaid) {
         return _Status.paid;
       }
       // idle - unfilled, but has time
@@ -188,23 +222,37 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// 1 = idle
   /// 2 = not-ready
   List<Duration> _splitTime() {
+    /// Get the entire pay-period
     Duration period = nextOccurence.difference(startingDate);
-    Duration timeLeft = nextOccurence.difference(DateTime(2021, 1, 2));
 
-    int registeredDays = period.inDays - timeLeft.inDays;
+    /// Get time left until next due-date
+    Duration timeLeft = nextOccurence.difference(DateTime(2021, 2, 15, 0, 0));
 
+    /// Track uneven day count (these days will be appended to 'not-ready')
+    /// Example: January has 31 days, so this result will be 1
     int equalizingDays = period.inDays % _timeSplit;
 
-    int days = period.inDays ~/ _timeSplit;
+    /// Marks how far along this FixedPaymentObject is on its pay-period
+    int xDays = period.inDays - timeLeft.inDays;
 
-    List<int> dayList = [days, days, days];
+    /// Actual amount of days dictated by [_timeSplit].
+    int timeChunk = period.inDays ~/ _timeSplit;
+
+    List<int> dayList = [timeChunk, timeChunk, timeChunk];
     int i = 0;
-    for (i = 0; registeredDays > days; i++) {
-      dayList[i] = 0;
-      registeredDays = registeredDays - days;
+
+    for (i = 0; xDays > timeChunk && i < dayList.length - 1; i++) {
+      dayList[i] = 0; // For every chunk removed, mark the dayChunk as used up
+      xDays = xDays - timeChunk; // Chunk away xDays
     }
 
-    dayList[i] = days - registeredDays;
+    dayList[i] = timeChunk - xDays; // Use up remaining xDays
+
+    /// TODO: TEST THIS
+    /// set _isPaid to false if time is up
+    if (dayList[0] == 0 && _isPaid) {
+      _isPaid = false;
+    }
 
     return <Duration>[
       Duration(days: dayList[0]), // paid
@@ -215,15 +263,18 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   Text getAffirmation() {
+    /// Set here because this gets called first
+    _runUpdate();
     switch (_getStatus()) {
       case _Status.idle:
         return _affirmText('idle');
         break;
       case _Status.paid:
-        return _affirmText('paid');
+        return _affirmText('paid',
+            color: ColorGenerator.fromHex(GColors.greenish));
         break;
       case _Status.ready:
-        return _affirmText('ready');
+        return _affirmText('ready, no further action required');
         break;
       case _Status.not_ready:
         return _affirmText('not ready');
@@ -231,11 +282,22 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
       case _Status.late_payment:
         return _affirmText('late payment');
         break;
+      case _Status.late_set_as_manual:
+        return _affirmText('It\'s ready but forgetting to pay');
+        break;
+      case _Status.ready_set_as_manual:
+        return _affirmText('ready to pay, when you choose');
+        break;
     }
     throw UnimplementedError('Unforeseen error in $name');
   }
 
-  Text _affirmText(String text) {
-    return Text(text);
+  Text _affirmText(String text, {Color color = Colors.grey}) {
+    return Text(
+      text,
+      style: TextStyle(color: color),
+      softWrap: false,
+      overflow: TextOverflow.fade,
+    );
   }
 }

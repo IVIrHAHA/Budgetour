@@ -42,7 +42,7 @@ mixin Recurrence {
   }
 
   bool get isDue =>
-      DateTime.now().isAfter(this.nextOccurence ?? _determineNextOccurence());
+      DateTime(2021, 2, 15, 0, 0).isAfter(this.nextOccurence ?? _determineNextOccurence());
 
   DateTime get nextOccurence => _determineNextOccurence();
 

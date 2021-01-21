@@ -103,6 +103,9 @@ class InitTestData {
       lastDueDate: lastDue,
     );
 
+    if(obj.name == 'Fidelity')
+      obj.markAsAutoPay = true;
+
     obj.firstStat = FixedPaymentStats.supplied;
     obj.secondStat = FixedPaymentStats.nextDue;
 
