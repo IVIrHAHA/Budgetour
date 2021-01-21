@@ -159,13 +159,6 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// Splite status change between paid, idle, and not-ready into thirds,
   /// between beginning and ending pay period.
   _Status _getStatus() {
-    List<Duration> list = _splitTime();
-
-    if (name == 'Rent') {
-      print(list[0].inDays.toString() + ' paid');
-      print(list[1].inDays.toString() + ' idle');
-      print(list[2].inDays.toString() + ' not ready');
-    }
     // ready - filled but not paid
     if (_isReady && !_isPaid && !isDue) {
       return _Status.ready;
@@ -177,19 +170,20 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     // Determine Time frames
     else {
       List<Duration> timeFrames = _splitTime();
-      if (_isPaid) {
+      // paid - paid on time
+      if (_isPaid && timeFrames[0].inDays != 0) {
         return _Status.paid;
       }
       // idle - unfilled, but has time
-      else if (!_isReady && !_isPaid && !isDue) {
+      else if (!_isReady && !_isPaid && !isDue && timeFrames[1].inDays != 0) {
         return _Status.idle;
       }
       // not ready - unfilled and is almost due
-      else if (!_isReady && !_isPaid) {
+      else if (!_isReady && !_isPaid && timeFrames[2].inDays != 0) {
         return _Status.not_ready;
       }
     }
-    // paid - paid on time
+    throw UnimplementedError('unforeseen case occurred in $name');
   }
 
   static const int _timeSplit = 3;
@@ -200,13 +194,12 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   /// 2 = not-ready
   List<Duration> _splitTime() {
     Duration period = nextOccurence.difference(startingDate);
-    Duration timeLeft = DateTime.now().difference(startingDate);
+    Duration timeLeft = nextOccurence.difference(DateTime(2021, 1, 2));
 
     int registeredDays = period.inDays - timeLeft.inDays;
 
     int equalizingDays = period.inDays % _timeSplit;
 
-    int cycles = 0;
     int days = period.inDays ~/ _timeSplit;
 
     List<int> dayList = [days, days, days];
@@ -218,39 +211,36 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
     dayList[i] = days - registeredDays;
 
-
-    // Split evenly
-    if (equalizingDays == 0) {
-      return <Duration>[
-        Duration(days: dayList[0]), // paid
-        Duration(days: dayList[1]), // idle
-        Duration(days: dayList[2]) // not-ready
-      ];
-    }
-
-    // add leftOverDay to idle
-    else if (equalizingDays == 1) {
-      return <Duration>[
-        Duration(days: dayList[0]), // paid
-        Duration(days: dayList[1]), // idle
-        Duration(days: dayList[2]) // not-ready
-      ];
-    }
-
-    // add leftOverDays to paid and (not-ready or idle)
-    else if (equalizingDays == 2) {
-      return <Duration>[
-        Duration(days: cycles < 1 ? days - registeredDays : 0), // paid
-        Duration(days: cycles < 2 ? days - registeredDays : 0), // idle
-        Duration(days: cycles < 3 ? days - registeredDays : 0) // not-ready
-      ];
-    } else {
-      throw Exception('failed splitting days');
-    }
+    return <Duration>[
+      Duration(days: dayList[0]), // paid
+      Duration(days: dayList[1]), // idle
+      Duration(days: dayList[2] + equalizingDays) // not-ready
+    ];
   }
 
   @override
   Text getAffirmation() {
-    return null;
+    switch (_getStatus()) {
+      case _Status.idle:
+        return _affirmText('idle');
+        break;
+      case _Status.paid:
+        return _affirmText('paid');
+        break;
+      case _Status.ready:
+        return _affirmText('ready');
+        break;
+      case _Status.not_ready:
+        return _affirmText('not ready');
+        break;
+      case _Status.late_payment:
+        return _affirmText('late payment');
+        break;
+    }
+    throw UnimplementedError('Unforeseen error in $name');
+  }
+
+  Text _affirmText(String text) {
+    return Text(text);
   }
 }

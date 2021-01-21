@@ -94,7 +94,7 @@ class InitTestData {
       name: title,
       fixedPayment: amount,
       definedOccurence: DefinedOccurence.monthly,
-      lastDueDate: DateTime(2021, 1, 1, 0, 0),
+      lastDueDate: DateTime(2021, 1, 1, 0, 0, 0, 0, 0),
     );
 
     obj.firstStat = FixedPaymentStats.supplied;
