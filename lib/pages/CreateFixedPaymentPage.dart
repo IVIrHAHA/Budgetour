@@ -1,5 +1,6 @@
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/NameInputBox.dart';
 import 'package:budgetour/widgets/standardized/CalculatorView.dart';
@@ -39,7 +40,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
 
   Function _enterFunction;
 
-  FixedPaymentFrequency _selectedFrequency = FixedPaymentFrequency.monthly;
+  var _selectedFrequency = DefinedOccurence.monthly;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,8 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
                             controller: startdata,
                             keyboardType: TextInputType.datetime,
                             decoration: InputDecoration(
-                              hintText:  DateFormat('MM-dd-yyyy').format(_selectedDate),
+                              hintText: DateFormat('MM-dd-yyyy')
+                                  .format(_selectedDate),
                               suffixIcon: Icon(
                                 Icons.calendar_today,
                                 color: ColorGenerator.fromHex(GColors.blueish),
@@ -154,10 +156,9 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
         _calcValue != null &&
         _selectedFrequency != null &&
         _billName != null) {
-      
       // FixedPayment is valid and return to main screen
       _returnFixedPayment();
-    } 
+    }
 
     // Try to gather information and notify user what is missing
     else {
@@ -176,8 +177,8 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
         FixedPaymentObject(
           name: _billName,
           fixedPayment: _calcValue,
-          nextDueDate: _selectedDate,
-          frequency: _selectedFrequency,
+          lastDueDate: DateTime(2020, 12, 1, 0, 0), /// TODO: EDIT THIS
+          definedOccurence: _selectedFrequency,
         ),
         widget.targetCategory,
       );
@@ -234,16 +235,16 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
               'Frequency',
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            DropdownButton<FixedPaymentFrequency>(
+            DropdownButton<DefinedOccurence>(
               value: _selectedFrequency,
               icon: Icon(Icons.arrow_drop_down),
               onChanged: (newValue) {
                 _selectedFrequency = newValue;
               },
-              items: FixedPaymentFrequency.values
-                  .map<DropdownMenuItem<FixedPaymentFrequency>>(
-                      (FixedPaymentFrequency value) {
-                return DropdownMenuItem<FixedPaymentFrequency>(
+              items: DefinedOccurence.values
+                  .map<DropdownMenuItem<DefinedOccurence>>(
+                      (DefinedOccurence value) {
+                return DropdownMenuItem<DefinedOccurence>(
                   value: value,
                   child: Text(_convertEnumToString(value)),
                 );
@@ -260,7 +261,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     );
   }
 
-  String _convertEnumToString(FixedPaymentFrequency evalue) {
+  String _convertEnumToString(DefinedOccurence evalue) {
     String string = evalue.toString().split('.').last.toString();
 
     // TODO: Revise non-working logic

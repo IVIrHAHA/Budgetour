@@ -1,7 +1,8 @@
 class GColors {
   // FinanceTile color scheme
   static const String borderColor = '#DCDCDC';
-  static const String warningColor = '#FFEFEF';
+  static const String alertColor = '#FFEFEF';
+  static const String warningColor = '#FFF4D5';
   static const String neutralColor = '#FCFCFC';
   static const String positiveColor = '#F0FCE5';
 

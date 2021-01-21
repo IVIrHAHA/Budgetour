@@ -14,16 +14,16 @@ class FixedPaymentObjRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return MyAppBarView(
       headerName: paymentObj.name,
-      stat1: paymentObj.determineStat(FixedPaymentStats.pending),
+      stat1: paymentObj.determineStat(FixedPaymentStats.monthlyPayment),
       tabPages: [
         Column(
           children: [
             Expanded(
               flex: 1,
               child: InfoTile(
-                title: paymentObj.isPaid() ? 'paid' : 'available funds',
+                title: paymentObj.isPaid ? 'paid' : 'available funds',
                 infoText: '\$ ${Format.formatDouble(paymentObj.cashReserve, 2)}',
-                titleColor: paymentObj.isPaid() ? Colors.green : Colors.red,
+                titleColor: paymentObj.isPaid ? Colors.green : Colors.red,
               ),
             ),
             Expanded(

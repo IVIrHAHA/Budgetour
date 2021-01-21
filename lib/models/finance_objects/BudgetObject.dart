@@ -26,6 +26,7 @@ enum BudgetStat {
   spent,
 }
 
+/// TODO: CONTEMPLATE RENAMING THIS AS DynamicPaymentObject 
 class BudgetObject extends FinanceObject<BudgetStat>
     with TransactionHistory, Recurrence {
   BudgetObject({
@@ -191,7 +192,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
         break;
 
       case _BudgetStatus.over_NotRefilled_NotDue:
-        return ColorGenerator.fromHex(GColors.warningColor);
+        return ColorGenerator.fromHex(GColors.alertColor);
         break;
 
       case _BudgetStatus.over_Refilled_NotDue:
@@ -199,7 +200,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
         break;
 
       case _BudgetStatus.needsRefill:
-        return Colors.yellow;
+        return ColorGenerator.fromHex(GColors.warningColor);
         break;
 
       case _BudgetStatus.spentExactAmount:

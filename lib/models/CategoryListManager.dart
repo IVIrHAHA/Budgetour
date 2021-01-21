@@ -125,11 +125,7 @@ class CategoryListAnalyzer {
     double unspent = 0;
 
     for (FinanceObject obj in list) {
-      if (obj is BudgetObject) {
-        unspent += obj.cashReserve;
-      } else if (obj is FixedPaymentObject) {
-        if (!obj.isPaid()) unspent += obj.fixedPayment;
-      }
+      unspent += obj.cashReserve;
     }
 
     return unspent;

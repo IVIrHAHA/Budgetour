@@ -1,85 +1,72 @@
 import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
-import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-enum FixedPaymentFrequency {
-  monthly,
-  weekly,
-  bi_monthly,
-}
-
 enum FixedPaymentStats {
   monthlyPayment,
-  pending,
   nextDue,
   supplied,
 }
 
+enum _Status {
+  idle,
+  paid,
+  ready,
+  not_ready,
+  late_payment,
+}
+
+/// FixedPayment what to convey to user
+/// - idle
+///   not filled but has time before due date
+///
+/// - Paid
+///   mark as green, paid
+///
+/// - Filled and awaiting payment
+///   leave nuetral and set as ready No action required
+///   automatically process payment
+///
+/// - Not filled and payment is coming
+///   make yellow and set needs allocation of resources
+///
+/// - Not filled and late
+///   make red and set as late. Make payment, Action Required
+
 class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
-    with TransactionHistory {
+    with TransactionHistory, Recurrence {
+  /// Recurring payment amount
   final double fixedPayment;
-  double _amountPaid;
-  FixedPaymentFrequency frequency;
 
-  /// when the next due date is coming
-  DateTime nextDueDate;
-
-  /// Determine dueDate reference
-  DateTime _lastDueDate; // If nothing entered for nextDueDate, use date created
+  bool _isPaid;
+  bool _isReady;
 
   FixedPaymentObject({
     @required String name,
     @required this.fixedPayment,
-    this.frequency = FixedPaymentFrequency.monthly,
-    this.nextDueDate,
+    DateTime lastDueDate,
+    DefinedOccurence definedOccurence,
+
+    /// Make this versitile
   }) : super(name: name) {
-    this._lastDueDate = this.nextDueDate ?? DateTime.now();
-    this._amountPaid = 0.0;
+    this.startingDate = lastDueDate ?? DateTime.now();
+    this.frequency = definedOccurence;
+    this._isPaid = false;
+    this._isReady = false;
   }
 
-  get lastDueDate => _lastDueDate;
-
-  setDueDate(DateTime dueDate) {
-    this.nextDueDate = dueDate;
-    this._lastDueDate = dueDate;
-  }
-
-  DateTime _setNextDueDate() {
-    switch (frequency) {
-      case FixedPaymentFrequency.monthly:
-        nextDueDate = _lastDueDate.add(Duration(days: 30)); // TODO: Revise
-        break;
-      case FixedPaymentFrequency.weekly:
-        nextDueDate = _lastDueDate.add(Duration(days: 7));
-        break;
-      case FixedPaymentFrequency.bi_monthly:
-        return _lastDueDate;
-        break;
-    }
-    return nextDueDate;
-  }
-
-  get pending => fixedPayment - _amountPaid;
-
-  isPaid() => _amountPaid == fixedPayment;
+  bool get isPaid => _isPaid;
 
   @override
   Widget getLandingPage() {
     return FixedPaymentObjRoute(this);
-  }
-
-  @override
-  Color getTileColor() {
-    return this.isPaid()
-        ? ColorGenerator.fromHex(GColors.positiveColor)
-        : ColorGenerator.fromHex(GColors.neutralColor);
   }
 
   @override
@@ -92,18 +79,8 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
         return QuickStat(
           title: 'Due',
           evaluateValue: Future<String>(() {
-            return DateFormat('M/d').format(_setNextDueDate());
+            return DateFormat('M/d').format(nextOccurence);
           }),
-        );
-        break;
-      case FixedPaymentStats.pending:
-        return QuickStat(
-          title: 'Pending',
-          evaluateValue: Future(
-            () {
-              return Format.formatDouble(pending, 2);
-            },
-          ),
         );
         break;
       case FixedPaymentStats.supplied:
@@ -115,22 +92,32 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   Transaction spendCash(double amount) {
-    /// Update paidAmount
-    _amountPaid += amount;
-    print('amount paid: $_amountPaid');
+    if (amount == fixedPayment) {
+      _isPaid = true;
+    } else {
+      return null;
+    }
     return super.spendCash(amount);
   }
 
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
-    
+    /// Recieved amount needed to complete [fixedPayment]
+    if ((transferReciept.amount + cashReserve) == fixedPayment) {
+      _isReady = true;
+    }
+
+    /// Somehow cashReserve went over fixedPayment
+    else if ((transferReciept.amount + cashReserve) > fixedPayment) {
+      /// Maybe return any excess back to [from]
+      throw Exception('exceeded amount needed by $name');
+    }
   }
 
   @override
   bool acceptTransfer(double amount) {
-    /// Only accept if amount to transfer plus the amount already passed and paid is less
-    /// than the fixedPayment minus the amount already contributed and not paid.
-    if ((amount + _amountPaid) <= (fixedPayment - cashReserve)) {
+    /// Ensure cashReserve never exceeds fixedPayment
+    if ((amount + cashReserve) <= fixedPayment) {
       return true;
     } else
       return false;
@@ -138,7 +125,108 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   double suggestedTransferAmount() {
-    return pending;
+    return fixedPayment - cashReserve;
+  }
+
+  @override
+  Color getTileColor() {
+    switch (_getStatus()) {
+      case _Status.idle:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+
+      case _Status.paid:
+        return ColorGenerator.fromHex(GColors.positiveColor);
+        break;
+
+      case _Status.ready:
+        return ColorGenerator.fromHex(GColors.neutralColor);
+        break;
+
+      case _Status.not_ready:
+        return ColorGenerator.fromHex(GColors.warningColor);
+        break;
+
+      case _Status.late_payment:
+        return ColorGenerator.fromHex(GColors.alertColor);
+        break;
+
+      default:
+        throw UnimplementedError('Unhandled Case in $name');
+    }
+  }
+
+  /// Splite status change between paid, idle, and not-ready into thirds,
+  /// between beginning and ending pay period.
+  _Status _getStatus() {
+    // ready - filled but not paid
+    if (_isReady && !_isPaid && !isDue) {
+      return _Status.ready;
+    }
+    // late payment - unfilled and has gone passed due date
+    else if (!_isPaid && !_isReady && isDue) {
+      return _Status.late_payment;
+    } 
+    // Determine Time frames
+    else {
+      List<Duration> timeFrames = _splitTime();
+      if (_isPaid) {
+        return _Status.paid;
+      }
+      // idle - unfilled, but has time
+      else if (!_isReady && !_isPaid && !isDue) {
+        return _Status.idle;
+      }
+      // not ready - unfilled and is almost due
+      else if (!_isReady && !_isPaid) {
+        return _Status.not_ready;
+      }
+    }
+    // paid - paid on time
+  }
+
+  static const int _timeSplit = 3;
+
+  /// List assignment values
+  /// 0 = paid
+  /// 1 = idle
+  /// 2 = not-ready
+  List<Duration> _splitTime() {
+    Duration period = nextOccurence.difference(startingDate);
+
+    int leftOverDays = period.inDays % _timeSplit;
+
+    // Split evenly
+    if (leftOverDays == 0) {
+      int days = (period.inDays / _timeSplit) as int;
+      return <Duration>[
+        Duration(days: days), // paid
+        Duration(days: days), // idle
+        Duration(days: days) // not-ready
+      ];
+    }
+
+    // add leftOverDay to idle
+    else if (leftOverDays == 1) {
+      int days = (period.inDays - 1) ~/ _timeSplit;
+      return <Duration>[
+        Duration(days: days), // paid
+        Duration(days: days + 1), // idle
+        Duration(days: days) // not-ready
+      ];
+    }
+
+    // add leftOverDays to paid and (not-ready or idle)
+    else if (leftOverDays == 2) {
+      int days = (period.inDays - 2) ~/ _timeSplit;
+      return <Duration>[
+        Duration(days: days + 1), // paid
+        Duration(days: days), // idle
+        Duration(days: days + 1) // not-ready
+      ];
+    } else {
+      throw Exception('failed splitting days');
+    }
   }
 
   @override

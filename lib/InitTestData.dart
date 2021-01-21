@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 
 import 'models/CashManager.dart';
 import 'models/finance_objects/BudgetObject.dart';
@@ -24,21 +25,19 @@ class InitTestData {
   }
 
   static buildEssentialList() {
-    dummyEssentialList
-        .add(_buildBudgetObjects('Food', 150, transactionQTY: 0));
+    dummyEssentialList.add(_buildBudgetObjects('Food', 150, transactionQTY: 0));
     dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
-    dummyEssentialList.add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
+    dummyEssentialList
+        .add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
     dummyEssentialList.add(_buildFixedPaymentObject('Rent', 578));
     dummyEssentialList.add(_buildFixedPaymentObject('Car Insurance', 42));
-
   }
 
   static buildSecurityList() {
     dummySecurityList.add(_buildFixedPaymentObject('Fidelity', 200));
   }
 
-  static buildGoalList() {
-  }
+  static buildGoalList() {}
 
   static buildLifeStyleList() {
     dummyLifeStyleList.add(_buildFixedPaymentObject('Spotify', 9.99));
@@ -94,6 +93,8 @@ class InitTestData {
     FixedPaymentObject obj = FixedPaymentObject(
       name: title,
       fixedPayment: amount,
+      definedOccurence: DefinedOccurence.monthly,
+      lastDueDate: DateTime(2021, 1, 1, 0, 0),
     );
 
     obj.firstStat = FixedPaymentStats.supplied;
