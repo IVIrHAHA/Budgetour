@@ -94,6 +94,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   Transaction spendCash(double amount) {
     if (amount == fixedPayment) {
       _isPaid = true;
+      _isReady = false;
     } else {
       return null;
     }
@@ -103,14 +104,8 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   @override
   void transferReciept(Transaction transferReciept, CashHandler from) {
     /// Recieved amount needed to complete [fixedPayment]
-    if ((transferReciept.amount + cashReserve) == fixedPayment) {
+    if (cashReserve == fixedPayment) {
       _isReady = true;
-    }
-
-    /// Somehow cashReserve went over fixedPayment
-    else if ((transferReciept.amount + cashReserve) > fixedPayment) {
-      /// Maybe return any excess back to [from]
-      throw Exception('exceeded amount needed by $name');
     }
   }
 
@@ -171,7 +166,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     else {
       List<Duration> timeFrames = _splitTime();
       // paid - paid on time
-      if (_isPaid && timeFrames[0].inDays != 0) {
+      if (_isPaid && timeFrames[0].inDays != 0 && !_isReady) {
         return _Status.paid;
       }
       // idle - unfilled, but has time
