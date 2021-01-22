@@ -34,12 +34,13 @@ class BudgetObject extends FinanceObject<BudgetStat>
     this.targetAlloctionAmount = 0,
     BudgetStat stat1,
     BudgetStat stat2,
+    DateTime startingDate,
+    DefinedOccurence definedOccurence,
   }) : super(
           name: title,
         ) {
-    /// TODO: Testing. REMOVE WHEN DONE
-    this.startingDate = DateTime.now();
-    this.frequency = DefinedOccurence.monthly;
+    this.startingDate = startingDate ?? DateTime.now();
+    this.frequency = definedOccurence ?? DefinedOccurence.monthly;
 
     this.firstStat = stat1;
     this.secondStat = stat2;
@@ -271,6 +272,12 @@ class BudgetObject extends FinanceObject<BudgetStat>
         break;
     }
     return null;
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
   }
 }
 

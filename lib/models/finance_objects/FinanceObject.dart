@@ -14,4 +14,8 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
   FinanceObject({
     @required this.name,
   });
+
+  Map<String, dynamic> toMap();
+
+  FinanceObject.fromMap(Map<String, dynamic> map);
 }
