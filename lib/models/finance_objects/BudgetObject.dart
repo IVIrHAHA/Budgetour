@@ -279,6 +279,19 @@ class BudgetObject extends FinanceObject<BudgetStat>
     // TODO: implement toMap
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement tableName
+  String get tableName => throw UnimplementedError();
+
+  static String tableCreator() {
+    String tableName;
+    String categoryId;      // Which Category this instance belongs 
+    String transactionsId;  // The group of transactions that belong to this
+
+    
+    
+  }
 }
 
 enum _BudgetStatus {

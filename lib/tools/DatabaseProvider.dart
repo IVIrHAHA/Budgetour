@@ -3,9 +3,6 @@ import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-const String FINANCEOBJTABLE = 'financeObjectTable';
-const String FINANCE_ID = 'financeObjID';
-
 class DatabaseProvider {
   static final _databaseName = 'budgetour_table';
   static final _databaseVersion = 1;
@@ -25,7 +22,7 @@ class DatabaseProvider {
     return _database;
   }
 
-  // Open database
+  // Connect to database
   Future<Database> _initDatabase() async {
     String directoryPath = await getDatabasesPath();
     String path = join(directoryPath, _databaseName);
@@ -38,31 +35,35 @@ class DatabaseProvider {
   }
 
   Future _onCreate(Database db, int version) async {
-    await db.execute(
-      "CREATE TABLE $FINANCEOBJTABLE("
-      "$FINANCE_ID INTEGER PRIMARY KEY,"
-      ")",
-    );
+    Batch creationBatch = db.batch();
+
+    /// Create main tables (finance objects)
+    creationBatch.execute("CREATE TABLE ");
+
+    await creationBatch.commit();
   }
 
   Future<int> insert(FinanceObject object) async {
-        // Connect to database
+    // Connect to database
     Database db = await database;
-    int id = await db.insert(FINANCEOBJTABLE, object.toMap(),
+    int id = await db.insert(object.tableName, object.toMap(),
+
+        /// TODO: REVISE THIS
         conflictAlgorithm: ConflictAlgorithm.replace);
+
     return id;
   }
 
-    Future<FinanceObject> query(int id) async {
+  Future<FinanceObject> query(int id) async {
     Database db = await database;
-    List<Map> maps = await db.query(FinanceObject,
-        columns: [TASK_ID, TASK_NAME, TASK_TIME, TASK_CONTEXT],
-        where: '$TASK_ID = ?',
+    List<Map> maps = await db.query('TASKTABLE',
+        columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
+        where: '\$TASK_ID = ?',
         whereArgs: [id]);
 
     if (maps.length > 0) {
-      Task task = Task.fromMap(maps.first);
-      return task;
+      //FinanceObject task = FinanceObject.fromMap(maps.first);
+      //return task;
     }
     return null;
   }
