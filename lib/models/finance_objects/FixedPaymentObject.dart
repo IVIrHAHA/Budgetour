@@ -61,12 +61,11 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   FixedPaymentObject({
     @required String name,
     @required this.fixedPayment,
+    @required int categoryID,
     this.markAsAutoPay = false,
     DateTime lastDueDate,
     DefinedOccurence definedOccurence,
-
-    /// Make this versitile
-  }) : super(name: name) {
+  }) : super(name: name, categoryID: categoryID) {
     this.startingDate = lastDueDate ?? DateTime.now();
     this.frequency = definedOccurence;
     this._isPaid = false;

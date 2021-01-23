@@ -23,9 +23,9 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
     this._objectID = double.parse(('${this.name.hashCode}.${this.categoryID}'));
   }
 
-  Map<String, dynamic> toMap();
+  // Map<String, dynamic> toMap();
 
-  String get tableName;
+  // String get tableName;
 
   double get id => this._objectID;
 }

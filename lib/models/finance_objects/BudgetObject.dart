@@ -26,11 +26,12 @@ enum BudgetStat {
   spent,
 }
 
-/// TODO: CONTEMPLATE RENAMING THIS AS DynamicPaymentObject 
+/// TODO: CONTEMPLATE RENAMING THIS AS DynamicPaymentObject
 class BudgetObject extends FinanceObject<BudgetStat>
     with TransactionHistory, Recurrence {
   BudgetObject({
     @required String title,
+    @required int categoryID,
     this.targetAlloctionAmount = 0,
     BudgetStat stat1,
     BudgetStat stat2,
@@ -38,6 +39,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     DefinedOccurence definedOccurence,
   }) : super(
           name: title,
+          categoryID: categoryID,
         ) {
     this.startingDate = startingDate ?? DateTime.now();
     this.frequency = definedOccurence ?? DefinedOccurence.monthly;
@@ -255,7 +257,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
   QuickStat determineStat(BudgetStat statType) {
     switch (statType) {
       case BudgetStat.allocated:
-        return QuickStat(title: 'Target Allocation', value: targetAlloctionAmount);
+        return QuickStat(
+            title: 'Target Allocation', value: targetAlloctionAmount);
         break;
       case BudgetStat.remaining:
         return QuickStat(
@@ -286,11 +289,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   static String tableCreator() {
     String tableName;
-    String categoryId;      // Which Category this instance belongs 
-    String transactionsId;  // The group of transactions that belong to this
-
-    
-    
+    String categoryId; // Which Category this instance belongs
+    String transactionsId; // The group of transactions that belong to this
   }
 }
 

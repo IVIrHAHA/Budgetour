@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -25,41 +26,83 @@ class InitTestData {
   }
 
   static buildEssentialList() {
-    dummyEssentialList.add(_buildBudgetObjects('Food', 150, transactionQTY: 0));
-    dummyEssentialList.add(_buildBudgetObjects('Gas', 135, transactionQTY: 4));
-    dummyEssentialList
-        .add(_buildBudgetObjects('House Bills', 120, transactionQTY: 0));
-    dummyEssentialList
-        .add(_buildFixedPaymentObject('Rent', 578, DateTime(2021, 1, 1)));
+    dummyEssentialList.add(_buildBudgetObjects(
+      'Food',
+      150,
+      CategoryType.essential.hashCode,
+      transactionQTY: 0,
+    ));
+    dummyEssentialList.add(_buildBudgetObjects(
+      'Gas',
+      135,
+      CategoryType.essential.hashCode,
+      transactionQTY: 4,
+    ));
+    dummyEssentialList.add(_buildBudgetObjects(
+      'House Bills',
+      120,
+      CategoryType.essential.hashCode,
+      transactionQTY: 0,
+    ));
+    dummyEssentialList.add(_buildFixedPaymentObject(
+      'Rent',
+      578,
+      DateTime(2021, 1, 1),
+      CategoryType.essential.hashCode,
+    ));
     dummyEssentialList.add(
-        _buildFixedPaymentObject('Car Insurance', 42, DateTime(2021, 1, 8)));
+      _buildFixedPaymentObject(
+        'Car Insurance',
+        42,
+        DateTime(2021, 1, 8),
+        CategoryType.essential.hashCode,
+      ),
+    );
   }
 
   static buildSecurityList() {
-    dummySecurityList
-        .add(_buildFixedPaymentObject('Fidelity', 200, DateTime(2021, 1, 14)));
+    dummySecurityList.add(_buildFixedPaymentObject(
+      'Fidelity',
+      200,
+      DateTime(2021, 1, 14),
+      CategoryType.security.hashCode,
+    ));
   }
 
   static buildGoalList() {}
 
   static buildLifeStyleList() {
-    dummyLifeStyleList
-        .add(_buildFixedPaymentObject('Spotify', 9.99, DateTime(2021, 1, 21)));
-    dummyLifeStyleList
-        .add(_buildFixedPaymentObject('Quip', 5.41, DateTime(2021, 1, 26)));
-    dummyLifeStyleList.add(
-        _buildFixedPaymentObject('Nuero Gum', 20.27, DateTime(2021, 1, 3)));
+    dummyLifeStyleList.add(_buildFixedPaymentObject(
+      'Spotify',
+      9.99,
+      DateTime(2021, 1, 21),
+      CategoryType.lifestyle.hashCode,
+    ));
+    dummyLifeStyleList.add(_buildFixedPaymentObject(
+      'Quip',
+      5.41,
+      DateTime(2021, 1, 26),
+      CategoryType.lifestyle.hashCode,
+    ));
+    dummyLifeStyleList.add(_buildFixedPaymentObject(
+      'Nuero Gum',
+      20.27,
+      DateTime(2021, 1, 3),
+      CategoryType.lifestyle.hashCode,
+    ));
   }
 
   static buildMiscList() {}
 
-  static BudgetObject _buildBudgetObjects(String title, double allocationAmount,
+  static BudgetObject _buildBudgetObjects(
+      String title, double allocationAmount, int categoryID,
       {int transactionQTY}) {
     BudgetObject obj;
     // Explicitly target an Object
     if (title == 'Food') {
       obj = BudgetObject(
         title: title,
+        categoryID: categoryID,
         targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.spent,
         stat2: BudgetStat.remaining,
@@ -71,6 +114,7 @@ class InitTestData {
     else {
       obj = BudgetObject(
         title: title,
+        categoryID: categoryID,
         targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.spent,
@@ -95,16 +139,16 @@ class InitTestData {
 
   // Eventually have history, labels and due dates
   static FixedPaymentObject _buildFixedPaymentObject(
-      String title, double amount, DateTime lastDue) {
+      String title, double amount, DateTime lastDue, int categoryID) {
     FixedPaymentObject obj = FixedPaymentObject(
       name: title,
+      categoryID: categoryID,
       fixedPayment: amount,
       definedOccurence: DefinedOccurence.monthly,
       lastDueDate: lastDue,
     );
 
-    if(obj.name == 'Fidelity')
-      obj.markAsAutoPay = true;
+    if (obj.name == 'Fidelity') obj.markAsAutoPay = true;
 
     obj.firstStat = FixedPaymentStats.supplied;
     obj.secondStat = FixedPaymentStats.nextDue;
@@ -114,6 +158,7 @@ class InitTestData {
 
   static GoalObject _buildGoalObject(
     String name,
+    int categoryID,
     double targetAmount, {
     double fixedAmount,
     double percentage,
@@ -122,6 +167,7 @@ class InitTestData {
     if (fixedAmount != null) {
       return GoalObject(
         targetAmount,
+        categoryID: categoryID,
         name: name,
         contributeByFixedAmount: fixedAmount,
       );
@@ -129,11 +175,13 @@ class InitTestData {
       return GoalObject(
         targetAmount,
         name: name,
+        categoryID: categoryID,
         contributeByPercent: percentage,
       );
     } else if (date != null) {
       return GoalObject(
         targetAmount,
+        categoryID: categoryID,
         name: name,
         completeByDate: date,
       );

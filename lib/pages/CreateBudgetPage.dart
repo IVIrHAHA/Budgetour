@@ -11,9 +11,9 @@ import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
-  final CategoryType targetedCategory;
+  final CategoryType targetCategory;
 
-  CreateBudgetPage(this.targetedCategory);
+  CreateBudgetPage(this.targetCategory);
 
   @override
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
@@ -151,6 +151,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     if (_calcValue != null && _budgetName != null) {
       _theBudgetObject = BudgetObject(
         title: _budgetName,
+        categoryID: widget.targetCategory.hashCode,
         targetAlloctionAmount: _calcController.getEntry(),
       );
 
@@ -159,7 +160,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     
       CategoryListManager.instance.add(
         _theBudgetObject,
-        widget.targetedCategory,
+        widget.targetCategory,
       );
 
       Navigator.of(context).pop();

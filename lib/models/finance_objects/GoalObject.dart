@@ -31,11 +31,12 @@ class GoalObject extends FinanceObject<GoalStats> {
   GoalObject(
     this.targetAmount, {
     @required String name,
+    @required int categoryID,
     this.completeByDate,
     this.contributeByFixedAmount,
     this.contributeByPercent,
     this.totalContribution = 0,
-  }) : super(name: name);
+  }) : super(name: name, categoryID: categoryID);
 
   contribute(double contributionAmount) {
     totalContribution += contributionAmount;
