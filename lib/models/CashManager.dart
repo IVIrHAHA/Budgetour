@@ -1,6 +1,7 @@
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Tracks all the cash flowing through the system
 /// Keeping things in sync and accurate
@@ -24,32 +25,34 @@ class BudgetourReserve {
   /// outside this class.
   ///
   /// ** This is the only method that can add to [_totalCash]
-  static Transaction _printCash(double amount) {
-    if (amount > 0) {
-      _totalCash += amount;
-      return _validateTransaction(Transaction(amount));
+  static Transaction _printCash(Transaction transaction) {
+    if (transaction._amount > 0) {
+      _totalCash += transaction._amount;
+      return _validateTransaction(transaction);
     }
     throw Exception('when depositing, ensure amount is greater than 0');
   }
 
-  /// Subtract from [_totalCash] by the amount passed.
+  /// Subtract from [_totalCash] by [Transaction.amount] passed.
   /// Then return a validatedTransaction where amount is accessable
   /// outside this class.
   ///
   /// ** This is the only method that can subtract from [_totalCash]
   ///
   /// ** IMPORTANT: [_expellCash] will make [Transaction.amount] negative
-  static Transaction _expellCash(double amount) {
-    if (amount > 0) {
-      _totalCash -= amount;
-      return _validateTransaction(Transaction(-amount));
+  static Transaction _expellCash(Transaction transaction) {
+    if (transaction._amount > 0) {
+      _totalCash -= transaction._amount;
+      return _validateTransaction(Transaction._copy(transaction, -transaction._amount));
     }
     throw Exception('when withdrawing, ensure amount is greater than 0');
   }
 
+  /// THIS IS ACTUALLY NOT BEING USED ANYMORE
   /// Mediate the transfer of cash between two [CashHolder] objects.
   /// This is useful in the case two [FinanceObject] objects want to exchange
   /// resources.
+  @deprecated
   Transaction mediateTransfer(
       CashHolder giver, CashHolder receiver, double amount) {
     if (giver._cashAccount >= amount && amount > 0) {
@@ -58,7 +61,7 @@ class BudgetourReserve {
 
       /// Give amount to receiver
       receiver._cashAccount = receiver._cashAccount + amount;
-      return _validateTransaction(Transaction(amount));
+      return _validateTransaction(Transaction(amount, null));
     }
 
     /// void contract
@@ -72,9 +75,16 @@ class BudgetourReserve {
   }
 }
 
+/* -----------------------------------------------------------------------------
+ * CASH HANDLER
+ *------------------------------------------------------------------------------*/
 /// Can bring money into the system but can't expell it
 mixin CashHandler {
   double _cashAccount = 0;
+
+  /// Links transactionHistory if there is one to the transactionHistoryTable
+  /// Otherwise, return null
+  double get transactionLink;
 
   /// This brings cash into the system and provides a validated [Transaction]
   /// with [Transaction.amount] equalling the amount passed.
@@ -82,7 +92,7 @@ mixin CashHandler {
     Transaction reciept;
 
     if (amount > 0) {
-      reciept = BudgetourReserve._printCash(amount);
+      reciept = BudgetourReserve._printCash(Transaction(amount, this.transactionLink));
       _cashAccount += reciept.amount;
     }
     return reciept;
@@ -103,17 +113,17 @@ mixin CashHandler {
         holder._cashAccount += amount;
 
         this.transferReciept(
-          BudgetourReserve._validateTransaction(Transaction(-amount)),
+          BudgetourReserve._validateTransaction(Transaction(-amount, this.transactionLink)),
           holder,
         );
 
         holder.transferReciept(
-          BudgetourReserve._validateTransaction(Transaction(amount)),
+          BudgetourReserve._validateTransaction(
+              Transaction(amount, holder.transactionLink)),
           this,
         );
         return;
-      }
-      else {
+      } else {
         throw PartisanException('Both parties did not agree to transfer');
       }
     }
@@ -127,17 +137,24 @@ mixin CashHandler {
   double get cashAmount => _cashAccount;
 }
 
+/* -------------------------------------------------------------------------------------
+ * CASH HOLDER
+ *--------------------------------------------------------------------------------------*/
 /// Can expell money out of the system, but can't bring it in
 ///
 /// CashHolder can be filled however, using [BudgetReserve]'s [mediateTransfer] method
 mixin CashHolder {
   double _cashAccount = 0;
 
+  /// Links transactionHistory if there is one to the transactionHistoryTable
+  /// Otherwise, return null
+  double get transactionLink;
+
   /// Returns a validated [Transaction] given a valid [amount]. Otherwise, return null.
   Transaction spendCash(double amount) {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
-      withdrawlReciept = BudgetourReserve._expellCash(amount);
+      withdrawlReciept = BudgetourReserve._expellCash(Transaction(amount, this.transactionLink));
 
       /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
       _cashAccount += withdrawlReciept.amount;
@@ -148,10 +165,10 @@ mixin CashHolder {
 
   /// When a transfer has been initiated, as the recipient,
   /// [this] should specify an amount to be transferred. Default is 0.
-  /// 
+  ///
   /// This is not called during the [CashHandler.transferToHolder] process.
   /// Rather, it is referred to explicitly.
-  /// 
+  ///
   /// *** This only acts as a suggestion
   double suggestedTransferAmount() {
     return 0;
@@ -165,12 +182,16 @@ mixin CashHolder {
   double get cashReserve => _cashAccount;
 }
 
+/* -------------------------------------------------------------------------------------
+ * TRANSACTION
+ *--------------------------------------------------------------------------------------*/
 /// When exchanging money from any Finance Object it will be done
 /// with a Transaction object.
 class Transaction {
   static const String defaultMessage = '*missing note';
 
   Key key;
+  final double pertainenceID;
   String description;
   final double _amount;
   DateTime date;
@@ -180,7 +201,8 @@ class Transaction {
 
   /// Defaults transaction [date] to [DateTime.now()]
   Transaction(
-    this._amount, {
+    this._amount,
+    this.pertainenceID, {
     this.description = defaultMessage,
     this.date,
     this.perceptibleColor,
@@ -195,4 +217,14 @@ class Transaction {
   }
 
   get isValid => _validated;
+
+  static Transaction _copy(Transaction transaction, double newAmount) {
+    return Transaction(
+      newAmount,
+      transaction.pertainenceID,
+      description: transaction.description,
+      date: transaction.date,
+      perceptibleColor: transaction.perceptibleColor,
+    );
+  }
 }

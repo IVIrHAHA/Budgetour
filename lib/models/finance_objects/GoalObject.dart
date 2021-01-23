@@ -98,4 +98,8 @@ class GoalObject extends FinanceObject<GoalStats> {
   Text getAffirmation() {
     return null;
   }
+
+  @override
+  // TODO: implement transactionLink
+  double get transactionLink => throw UnimplementedError();
 }

@@ -37,9 +37,16 @@ class DatabaseProvider {
   Future _onCreate(Database db, int version) async {
     Batch creationBatch = db.batch();
 
-    /// Create main tables (finance objects)
+    /// Create main tables
+    // Budget Table
     creationBatch.execute("CREATE TABLE ");
 
+    // FixedPayment Table
+    creationBatch.execute("CREATE TABLE");
+    
+    // Transaction Table
+    creationBatch.execute("CREATE TABLE");
+    
     await creationBatch.commit();
   }
 

@@ -2,7 +2,6 @@ import 'package:budgetour/models/CashManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
-import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/routes/FixedPaymentObj_route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -25,6 +24,9 @@ enum _Status {
   late_set_as_manual,
 }
 
+/// TODO: BUG When payment is made really early the _Status remains the same as if
+/// no payment was made
+
 /// FixedPayment what to convey to user
 /// - idle
 ///   not filled but has time before due date
@@ -43,7 +45,7 @@ enum _Status {
 ///   make red and set as late. Make payment, Action Required
 
 class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
-    with TransactionHistory, Recurrence {
+    with Recurrence {
   /// Recurring payment amount
   final double fixedPayment;
 
@@ -298,4 +300,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
       overflow: TextOverflow.fade,
     );
   }
+
+  @override
+  double get transactionLink => null;
 }

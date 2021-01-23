@@ -289,9 +289,12 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   static String tableCreator() {
     String tableName;
-    String categoryId; // Which Category this instance belongs
-    String transactionsId; // The group of transactions that belong to this
+    String categoryIdName; // Which Category this instance belongs
+    String transactionsIdName; // The group of transactions that belong to this
   }
+
+  @override
+  double get transactionLink => this.id;
 }
 
 enum _BudgetStatus {

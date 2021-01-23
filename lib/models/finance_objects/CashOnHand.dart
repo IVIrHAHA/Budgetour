@@ -49,4 +49,7 @@ class CashOnHand with CashHandler, TransactionHistory {
     }
   }
 
+static const String _idName = 'com.bugetour.CashOnHand';
+@override
+  double get transactionLink => _idName.hashCode.toDouble();
 }
