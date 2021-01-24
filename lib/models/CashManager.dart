@@ -1,7 +1,6 @@
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 /// Tracks all the cash flowing through the system
 /// Keeping things in sync and accurate

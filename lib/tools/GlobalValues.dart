@@ -29,3 +29,32 @@ class GlobalValues {
   static const double financeTileMargin = 4;
   static const double defaultTilePadding = 16;
 }
+
+class DbRefrence {
+  /// TABLE NAMES
+  // Budget Table
+  static const String bo_TABLE = "BudgetObjectsTable";
+  // FixedPayment Table
+  static const String fx_TABLE = "FixedObjectsTable";
+
+  /// COLUMN NAMES
+  // Budget specific 
+  static const String bo_AllocationAmount = "TargetedAllocation";
+
+  // From Recurrence
+  static const String rec_StartDate = "RecurrenceStartDate";
+  static const String rec_Duration = "RecurrenceDuration";
+
+  // From Finance Object
+  static const String fo_ObjectId = "ID";
+  static const String fo_Category = "Category";
+  static const String fo_Name = "ObjectName";
+
+  // From CashHolder
+  static const String fo_CashReserve = "CashReserved";
+  static const String fo_TransactionLink = "TransactionsLink";
+
+  // From StatMixin
+  static const String fo_Stat1 = "Stat1";
+  static const String fo_Stat2 = "Stat2";
+}

@@ -284,13 +284,31 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   @override
-  // TODO: implement tableName
   String get tableName => throw UnimplementedError();
 
   static String tableCreator() {
-    String tableName;
-    String categoryIdName; // Which Category this instance belongs
-    String transactionsIdName; // The group of transactions that belong to this
+    const String nameTABLE = "BudgetObjectsTable";
+
+    /// COLUMN NAMES
+    // Budget specific 
+    const String nameAllocationAmount = "TargetedAllocation";
+
+    // From Recurrence
+    const String nameStartDate = "RecurrenceStartDate";
+    const String nameDuration = "RecurrenceDuration";
+
+    // From Finance Object
+    const String nameObjectId = "ID";
+    const String nameCategory = "Category";
+    const String nameName = "ObjectName";
+
+    // From CashHolder
+    const String nameCashReserve = "CashReserved";
+    const String nameTransactionLink = "TransactionsLink";
+
+    // From StatMixin
+    const String nameStat1 = "Stat1";
+    const String nameStat2 = "Stat2";
   }
 
   @override
