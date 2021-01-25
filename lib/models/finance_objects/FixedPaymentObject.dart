@@ -107,6 +107,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     if (amount == fixedPayment) {
       _isPaid = true;
       _isReady = false;
+      notifyDates();
     } else {
       return null;
     }
