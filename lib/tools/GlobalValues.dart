@@ -36,10 +36,17 @@ class DbRefrence {
   static const String bo_TABLE = "BudgetObjectsTable";
   // FixedPayment Table
   static const String fx_TABLE = "FixedObjectsTable";
+  // Cash On Hand
+  static const String coh_TABLE = "CashOnHandTable";
+  // Transaction Table
+  static const String trxt_TABLE = "TransactionsTable";
 
   /// COLUMN NAMES
   // Budget specific 
   static const String bo_AllocationAmount = "TargetedAllocation";
+
+  //FixedPayment specific
+  static const String fx_markedAsAutoPay = "AutoPay"; 
 
   // From Recurrence
   static const String rec_StartDate = "RecurrenceStartDate";
