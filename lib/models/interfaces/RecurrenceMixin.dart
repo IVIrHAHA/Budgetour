@@ -10,7 +10,7 @@ enum DefinedOccurence {
 
 /// How to use
 /// 1. set [startingDate]
-/// 2. Give **either** [frequency] or [customFrequency], using [DefinedOccurence]
+/// 2. Give **either** [_definedFrequency] or [_customFrequency], using [DefinedOccurence]
 ///     or [Duration] respectfully.
 /// 3. [nextOccurence] will give you next occurence or will update nextOccurence if
 ///     needed.
@@ -21,14 +21,15 @@ mixin Recurrence {
   DateTime startingDate;
   DateTime _nextOccurence;
 
+  /// If set as DefinedOccurence:
   /// Sets [nextOccurence] with respect to a fixed due-day.
   /// Taking into account the variance of days in a month.
   ///
   /// Example: Monthly? Due Date = Jan. 16th, [nextOccurence] = Feb. 16th
-  DefinedOccurence frequency;
-
+  /// 
+  /// If set as Duration:
   /// Sets [nextOccurence] with disregard of due-day.
-  Duration customFrequency;
+  var recurrence;
 
   notifyDates() {
     /// set startingDate as current _nextOccurence
@@ -55,22 +56,7 @@ mixin Recurrence {
 
     /// _nextOccurence needs to be set or updated
     else if (startingDate != null && this._nextOccurence == null) {
-      var duratedFreq = _getFrequency();
-
-      if (duratedFreq is DefinedOccurence) {
-        this._nextOccurence = _handlePredefined(duratedFreq);
-      } 
-      // Frequency is of a Duration type
-      else if (duratedFreq is Duration) {
-        this._nextOccurence = startingDate.add(duratedFreq);
-      }
-
-      // This should never be called
-      else {
-        throw Exception('Unable to handle defined Frequency');
-      }
-
-      return this._nextOccurence;
+      return _defineOccurence();
     } else {
       throw UndefinedStartingDateException('startingDate is undefined');
     }
@@ -124,15 +110,18 @@ mixin Recurrence {
   }
 
   /// Interprets the Frequency set by dev/user.
-  /// Ensure only one has been defined.
-  _getFrequency() {
-    if (frequency != null && customFrequency == null) {
-      return this.frequency;
-    } else if (customFrequency != null && frequency == null) {
-      return this.customFrequency;
+  _defineOccurence() {
+    /// recurrence is of type DefinedOccurence
+    if (this.recurrence is DefinedOccurence) {
+      this._nextOccurence = _handlePredefined(this.recurrence);
+    } 
+    /// recurrence is of type Duration
+    else if (recurrence is Duration) {
+      this._nextOccurence = startingDate.add(this.recurrence);
     } else {
-      throw MultipleFrequenciesDefinedException(
-          'Multiple Frequencies were defined');
+      throw Exception('Unknown Recurrence type');
     }
+
+    return this._nextOccurence;
   }
 }

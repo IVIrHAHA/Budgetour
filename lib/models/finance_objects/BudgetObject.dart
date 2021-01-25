@@ -42,7 +42,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
           categoryID: categoryID,
         ) {
     this.startingDate = startingDate ?? DateTime.now();
-    this.frequency = definedOccurence ?? DefinedOccurence.monthly;
+    this.recurrence = definedOccurence ?? DefinedOccurence.monthly;
 
     this.firstStat = stat1;
     this.secondStat = stat2;
@@ -275,40 +275,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
         break;
     }
     return null;
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
-  }
-
-  @override
-  String get tableName => throw UnimplementedError();
-
-  static String tableCreator() {
-    const String nameTABLE = "BudgetObjectsTable";
-
-    /// COLUMN NAMES
-    // Budget specific 
-    const String nameAllocationAmount = "TargetedAllocation";
-
-    // From Recurrence
-    const String nameStartDate = "RecurrenceStartDate";
-    const String nameDuration = "RecurrenceDuration";
-
-    // From Finance Object
-    const String nameObjectId = "ID";
-    const String nameCategory = "Category";
-    const String nameName = "ObjectName";
-
-    // From CashHolder
-    const String nameCashReserve = "CashReserved";
-    const String nameTransactionLink = "TransactionsLink";
-
-    // From StatMixin
-    const String nameStat1 = "Stat1";
-    const String nameStat2 = "Stat2";
   }
 
   @override

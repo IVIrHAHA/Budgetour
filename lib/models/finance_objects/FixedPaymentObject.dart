@@ -69,7 +69,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     DefinedOccurence definedOccurence,
   }) : super(name: name, categoryID: categoryID) {
     this.startingDate = lastDueDate ?? DateTime.now();
-    this.frequency = definedOccurence;
+    this.recurrence = definedOccurence ?? DefinedOccurence.monthly;
     this._isPaid = false;
     this._isReady = false;
   }

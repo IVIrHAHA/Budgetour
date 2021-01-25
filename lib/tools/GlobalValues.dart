@@ -30,7 +30,7 @@ class GlobalValues {
   static const double defaultTilePadding = 16;
 }
 
-class DbRefrence {
+class DbNames {
   /// TABLE NAMES
   // Budget Table
   static const String bo_TABLE = "BudgetObjectsTable";

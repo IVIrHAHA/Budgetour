@@ -146,7 +146,9 @@ mixin CashHolder {
   double _cashAccount = 0;
 
   /// Links transactionHistory if there is one to the transactionHistoryTable
-  /// Otherwise, return null
+  /// Otherwise, return null.
+  /// 
+  /// **Implemented here, because of the transfer methods this interface defines.
   double get transactionLink;
 
   /// Returns a validated [Transaction] given a valid [amount]. Otherwise, return null.
