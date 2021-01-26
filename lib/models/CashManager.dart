@@ -213,7 +213,7 @@ class Transaction {
 
   get amount => _validated ? _amount : null;
 
-  bool makePerceptible() {
+  bool isPerceptible() {
     return perceptibleColor != null;
   }
 

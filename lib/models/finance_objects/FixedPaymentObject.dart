@@ -24,9 +24,6 @@ enum _Status {
   late_set_as_manual,
 }
 
-/// TODO: BUG When payment is made really early the _Status remains the same as if
-/// no payment was made
-
 /// FixedPayment what to convey to user
 /// - idle
 ///   not filled but has time before due date

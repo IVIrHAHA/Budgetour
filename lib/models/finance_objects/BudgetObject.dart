@@ -68,6 +68,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
   Transaction spendCash(double amount) {
     Transaction cashTransaction = super.spendCash(amount);
 
+    print('this is json: $json');
+
     if (cashTransaction == null) {
       cashTransaction = _auditTransaction(cashTransaction, amount);
     }
@@ -279,6 +281,13 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   @override
   double get transactionLink => this.id;
+
+  @override
+  Map<String, dynamic> toJson() {
+
+    return super.toJson();
+  }
+
 }
 
 enum _BudgetStatus {

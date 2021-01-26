@@ -1,4 +1,5 @@
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
+import 'dart:convert';
 
 enum DefinedOccurence {
   yearly,
@@ -26,7 +27,7 @@ mixin Recurrence {
   /// Taking into account the variance of days in a month.
   ///
   /// Example: Monthly? Due Date = Jan. 16th, [nextOccurence] = Feb. 16th
-  /// 
+  ///
   /// If set as Duration:
   /// Sets [nextOccurence] with disregard of due-day.
   var recurrence;
@@ -114,7 +115,8 @@ mixin Recurrence {
     /// recurrence is of type DefinedOccurence
     if (this.recurrence is DefinedOccurence) {
       this._nextOccurence = _handlePredefined(this.recurrence);
-    } 
+    }
+
     /// recurrence is of type Duration
     else if (recurrence is Duration) {
       this._nextOccurence = startingDate.add(this.recurrence);
@@ -124,4 +126,30 @@ mixin Recurrence {
 
     return this._nextOccurence;
   }
+
+  test() {
+    /// How to store startingDate
+    int startingDateQ = ((startingDate.millisecondsSinceEpoch) / 1000).round();
+
+    DateTime tester =
+        DateTime.fromMillisecondsSinceEpoch((startingDateQ * 1000).round());
+
+    print('This is original startDate: $startingDate');
+    print('This is tester DateTime: $tester');
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {
+      'startDate': ((startingDate.millisecondsSinceEpoch) / 1000).round(),
+      'duration':
+          (recurrence is Duration) ? (recurrence as Duration).inSeconds : null,
+      'defDuration': (recurrence is DefinedOccurence)
+          ? (recurrence as DefinedOccurence).toString()
+          : null,
+    };
+
+    return json;
+  }
+
+  String get json => jsonEncode(this);
 }
