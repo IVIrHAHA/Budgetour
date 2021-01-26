@@ -28,9 +28,9 @@ class InitTestData {
   static buildEssentialList() {
     dummyEssentialList.add(_buildBudgetObjects(
       'Food',
-      150,
+      4000,
       CategoryType.essential.hashCode,
-      transactionQTY: 0,
+      transactionQTY: 30,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'Gas',

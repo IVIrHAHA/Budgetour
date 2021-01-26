@@ -127,29 +127,29 @@ mixin Recurrence {
     return this._nextOccurence;
   }
 
-  test() {
-    /// How to store startingDate
-    int startingDateQ = ((startingDate.millisecondsSinceEpoch) / 1000).round();
+  // test() {
+  //   /// How to store startingDate
+  //   int startingDateQ = ((startingDate.millisecondsSinceEpoch) / 1000).round();
 
-    DateTime tester =
-        DateTime.fromMillisecondsSinceEpoch((startingDateQ * 1000).round());
+  //   DateTime tester =
+  //       DateTime.fromMillisecondsSinceEpoch((startingDateQ * 1000).round());
 
-    print('This is original startDate: $startingDate');
-    print('This is tester DateTime: $tester');
-  }
+  //   print('This is original startDate: $startingDate');
+  //   print('This is tester DateTime: $tester');
+  // }
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {
-      'startDate': ((startingDate.millisecondsSinceEpoch) / 1000).round(),
-      'duration':
-          (recurrence is Duration) ? (recurrence as Duration).inSeconds : null,
-      'defDuration': (recurrence is DefinedOccurence)
-          ? (recurrence as DefinedOccurence).toString()
-          : null,
-    };
+  // Map<String, dynamic> toJson() {
+  //   Map<String, dynamic> json = {
+  //     'startDate': ((startingDate.millisecondsSinceEpoch) / 1000).round(),
+  //     'duration':
+  //         (recurrence is Duration) ? (recurrence as Duration).inSeconds : null,
+  //     'defDuration': (recurrence is DefinedOccurence)
+  //         ? (recurrence as DefinedOccurence).toString()
+  //         : null,
+  //   };
 
-    return json;
-  }
+  //   return json;
+  // }
 
-  String get json => jsonEncode(this);
+  // String get json => jsonEncode(this);
 }

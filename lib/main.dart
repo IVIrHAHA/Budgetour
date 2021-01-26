@@ -17,7 +17,7 @@ import 'package:common_tools/ColorGenerator.dart';
 void main() {
   CashOnHand cashBag = CashOnHand.instance;
   cashBag.logTransaction(
-      cashBag.reportIncome(1000)..description = 'Initial Deposit');
+      cashBag.reportIncome(10000)..description = 'Initial Deposit');
   runApp(MyApp());
 }
 

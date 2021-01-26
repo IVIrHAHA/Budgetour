@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../CashManager.dart';
 
 /// Creates and manages [FinanceObject]s transaction history
@@ -82,4 +84,15 @@ mixin TransactionHistory {
   }
 
   List<Transaction> get getTransactions => _transactionsList;
+
+  toJson() {
+    var map = Map<String,String>(); 
+
+    for(int i = 0; i<_transactionsList.length; i++) {
+      String key = _transactionsList[i].pertainenceID.toString() + '.$i';
+      map.putIfAbsent(key, () => jsonEncode(_transactionsList[i]));
+    }
+
+    return map;
+  }
 }

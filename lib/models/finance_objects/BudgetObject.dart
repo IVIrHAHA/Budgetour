@@ -8,6 +8,8 @@
  *    2. Track how much user has spent/not spent.
  */
 
+import 'dart:convert';
+
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -36,7 +38,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     BudgetStat stat1,
     BudgetStat stat2,
     DateTime startingDate,
-    DefinedOccurence definedOccurence,
+    var definedOccurence,
   }) : super(
           name: title,
           categoryID: categoryID,
@@ -68,10 +70,14 @@ class BudgetObject extends FinanceObject<BudgetStat>
   Transaction spendCash(double amount) {
     Transaction cashTransaction = super.spendCash(amount);
 
-    print('this is json: $json');
-
     if (cashTransaction == null) {
       cashTransaction = _auditTransaction(cashTransaction, amount);
+    }
+
+    /// TODO: TEMP CODE, REMOVE WHEN DONE
+    else {
+      String jsonString = jsonEncode(this);
+      print('$jsonString');
     }
 
     return cashTransaction;
@@ -283,11 +289,27 @@ class BudgetObject extends FinanceObject<BudgetStat>
   double get transactionLink => this.id;
 
   @override
-  Map<String, dynamic> toJson() {
+  toJson() {
+    String history = super.toJson();
 
-    return super.toJson();
+    return {
+      DbNames.fo_Name: this.name,
+      DbNames.fo_Category: this.categoryID,
+      DbNames.bo_AllocationAmount: this.targetAlloctionAmount,
+      'History': history,
+    };
   }
 
+  BudgetObject.fromJson(Map<String, dynamic> json) {
+    var name = json[DbNames.fo_Name];
+    var categoryId = json[DbNames.fo_Category];
+    this.targetAlloctionAmount = json[DbNames.bo_AllocationAmount];
+
+    BudgetObject(
+        title: name,
+        categoryID: categoryId,
+        targetAlloctionAmount: targetAlloctionAmount);
+  }
 }
 
 enum _BudgetStatus {
