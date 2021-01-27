@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,24 @@ class BudgetourReserve {
   get cashReport => _totalCash;
 
   static double _totalCash = 0;
+
+  static buildHistoryfromJson(String json, TransactionHistory history) {
+    // get list of Transaction json maps
+    List<dynamic> listTrxt = jsonDecode(json);
+
+    // Convert into Transactions
+    for (Map<String, dynamic> obj in listTrxt) {
+      Transaction buildTrans = Transaction(
+        obj['amount'],
+        obj['id'],
+        date: DateTime.fromMillisecondsSinceEpoch(obj['date']),
+        description: obj['description'],
+        perceptibleColor: obj['color']
+      );
+
+      history.logTransaction(_validateTransaction(buildTrans));
+    }
+  }
 
   /// Add to [_totalCash] by the amount passed.
   /// Then return a validatedTransaction where amount is accessable
@@ -198,8 +218,8 @@ class Transaction {
 
   Key key;
   final double pertainenceID;
-  String description;
   final double _amount;
+  String description;
   DateTime date;
   Color perceptibleColor;
 

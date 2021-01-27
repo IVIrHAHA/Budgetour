@@ -74,12 +74,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
       cashTransaction = _auditTransaction(cashTransaction, amount);
     }
 
-    /// TODO: TEMP CODE, REMOVE WHEN DONE
-    else {
-      String jsonString = jsonEncode(this);
-      print('$jsonString');
-    }
-
     return cashTransaction;
   }
 
@@ -288,9 +282,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
   @override
   double get transactionLink => this.id;
 
-  @override
   toJson() {
-    String history = super.toJson();
+    String history = super.historyJson;
 
     return {
       DbNames.fo_Name: this.name,
@@ -300,16 +293,19 @@ class BudgetObject extends FinanceObject<BudgetStat>
     };
   }
 
-  BudgetObject.fromJson(Map<String, dynamic> json) {
-    var name = json[DbNames.fo_Name];
-    var categoryId = json[DbNames.fo_Category];
-    this.targetAlloctionAmount = json[DbNames.bo_AllocationAmount];
+  // BudgetObject.fromJson(Map<String, dynamic> json) {
+  //   print('trying to decode from this');
+  //   var name = json[DbNames.fo_Name];
+  //   var categoryId = json[DbNames.fo_Category];
+  //   this.targetAlloctionAmount = json[DbNames.bo_AllocationAmount];
 
-    BudgetObject(
-        title: name,
-        categoryID: categoryId,
-        targetAlloctionAmount: targetAlloctionAmount);
-  }
+  //   BudgetObject(
+  //       title: name,
+  //       categoryID: categoryId,
+  //       targetAlloctionAmount: targetAlloctionAmount);
+
+  //   BudgetourReserve.buildHistoryfromJson(json['History'], this);
+  // }
 }
 
 enum _BudgetStatus {

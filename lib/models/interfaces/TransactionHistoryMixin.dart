@@ -85,14 +85,11 @@ mixin TransactionHistory {
 
   List<Transaction> get getTransactions => _transactionsList;
 
-  toJson() {
-    var map = Map<String,String>(); 
+  get historyJson => jsonEncode(_transactionsList);
 
-    for(int i = 0; i<_transactionsList.length; i++) {
-      String key = _transactionsList[i].pertainenceID.toString() + '.$i';
-      map.putIfAbsent(key, () => jsonEncode(_transactionsList[i]));
+  createhistory(List<Transaction> list){
+    for(Transaction trxt in list) {
+      logTransaction(trxt);
     }
-
-    return map;
   }
 }

@@ -28,7 +28,7 @@ class InitTestData {
   static buildEssentialList() {
     dummyEssentialList.add(_buildBudgetObjects(
       'Food',
-      4000,
+      150,
       CategoryType.essential.hashCode,
       transactionQTY: 30,
     ));
@@ -107,7 +107,7 @@ class InitTestData {
         stat1: BudgetStat.spent,
         stat2: BudgetStat.remaining,
       );
-      CashOnHand.instance.transferToHolder(obj, 150);
+      CashOnHand.instance.transferToHolder(obj, 1000);
     }
 
     /// Build BudgetObject
