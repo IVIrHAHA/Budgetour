@@ -28,13 +28,10 @@ class BudgetourReserve {
 
     // Convert into Transactions
     for (Map<String, dynamic> obj in listTrxt) {
-      Transaction buildTrans = Transaction(
-        obj['amount'],
-        obj['id'],
-        date: DateTime.fromMillisecondsSinceEpoch(obj['date']),
-        description: obj['description'],
-        perceptibleColor: obj['color']
-      );
+      Transaction buildTrans = Transaction(obj['amount'], obj['id'],
+          date: DateTime.fromMillisecondsSinceEpoch(obj['date']),
+          description: obj['description'],
+          perceptibleColor: obj['color']);
 
       history.logTransaction(_validateTransaction(buildTrans));
     }
@@ -48,6 +45,9 @@ class BudgetourReserve {
   static Transaction _printCash(Transaction transaction) {
     if (transaction._amount > 0) {
       _totalCash += transaction._amount;
+
+      /// TODO: This is where the transaction will be inserted into the table
+      /// The transaction should already have the transactionLink
       return _validateTransaction(transaction);
     }
     throw Exception('when depositing, ensure amount is greater than 0');
@@ -63,6 +63,9 @@ class BudgetourReserve {
   static Transaction _expellCash(Transaction transaction) {
     if (transaction._amount > 0) {
       _totalCash -= transaction._amount;
+
+      /// TODO: This is where the transaction will be inserted into the table
+      /// The transaction should already have the transactionLink
       return _validateTransaction(
           Transaction._copyWithNewAmount(transaction, -transaction._amount));
     }
