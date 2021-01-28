@@ -35,7 +35,7 @@ class DbNames {
   // Total Cash Manager
   static const String fo_TABLE = "FinanceObjectTable";
   // CashHandler Table
-  static const String coh_TABLE = "CashOnHandTable";
+  static const String ch_TABLE = "CashOnHandTable";
   // Transaction Table
   static const String trxt_TABLE = "TransactionsTable";
 
@@ -44,6 +44,7 @@ class DbNames {
   static const String fo_Category = "Category";
   static const String fo_ObjectId = "ID";
   static const String fo_Name = "ObjectName";
+  static const String fo_Object = "ObjectJson";
 
   // From CashHolder
   static const String fo_TransactionLink = "TransactionsLink";

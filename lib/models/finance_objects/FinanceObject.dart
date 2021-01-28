@@ -28,5 +28,9 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
   /// However, the entire (child) object will be stored as a json.
   toJson();
 
+  toMap();
+
+  fromMap(Map map);
+
   double get id => this._objectID;
 }

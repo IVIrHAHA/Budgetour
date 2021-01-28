@@ -86,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             icon: Icon(Icons.unfold_more),
             title: InkWell(
               onTap: () {
+                /// TODO: THIS BLOCK IS ALL A TEST
                 CategoryListManager lMan = CategoryListManager.instance;
                 BudgetObject foodObject = lMan.essentials[0];
 
@@ -98,30 +99,32 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 if (foodObject == null) {
                   throw Exception('did not find food item');
                 } else {
-                  /// We encode, at which point we can save and what not
-                  var jsonString = jsonEncode(foodObject);
+                  // /// We encode, at which point we can save and what not
+                  // var jsonString = jsonEncode(foodObject);
 
-                  /// Here we decode
-                  Map mc = jsonDecode(jsonString);
+                  // /// Here we decode
+                  // Map mc = jsonDecode(jsonString);
 
-                  BudgetObject budgetObject = BudgetObject(
-                    title: mc[DbNames.fo_Name],
-                    categoryID: mc[DbNames.fo_Category],
-                    targetAlloctionAmount: mc[DbNames.bo_AllocationAmount],
-                  );
+                  // BudgetObject budgetObject = BudgetObject(
+                  //   title: mc[DbNames.fo_Name],
+                  //   categoryID: mc[DbNames.fo_Category],
+                  //   targetAlloctionAmount: mc[DbNames.bo_AllocationAmount],
+                  // );
 
-                  BudgetourReserve.buildHistoryfromJson(
-                      mc['History'], budgetObject);
+                  // BudgetourReserve.buildHistoryfromJson(
+                  //     mc['History'], budgetObject);
 
-                  setState(() {
-                    lMan.add(budgetObject, CategoryType.goals);
-                  });
+                  // setState(() {
+                  //   lMan.add(budgetObject, CategoryType.goals);
+                  // });
                 }
 
                 // CategoryListManager.instance.add(
                 //   ,
                 //   CategoryType.goals,
                 // );
+
+                /// TODO: END OF BLOCK
               },
               child: Text('macro'),
             ),

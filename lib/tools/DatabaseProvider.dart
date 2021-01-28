@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:budgetour/models/BudgetourReserve.dart' as br;
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -39,27 +41,46 @@ class DatabaseProvider {
 
     /// Create main tables
     // FinanceObject Table
-    creationBatch.execute("CREATE TABLE ");
+    creationBatch.execute("CREATE TABLE ${DbNames.fo_TABLE}("
+    "${DbNames.fo_Category}"
+    "${DbNames.fo_ObjectId}"
+    "${DbNames.fo_Name}"
+    "${DbNames.fo_Object}"
+    ")");
 
     // CashHandler Table
-    creationBatch.execute("CREATE TABLE");
-    
+    creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
+
     // Transaction Table
-    creationBatch.execute("CREATE TABLE");
-    
+    creationBatch.execute("CREATE TABLE ${DbNames.trxt_TABLE}");
+
     await creationBatch.commit();
   }
 
-  // Future<int> insert(FinanceObject object) async {
-  //   // Connect to database
-  //   Database db = await database;
-  //   int id = await db.insert(object.tableName, object.toMap(),
+  Future<int> insert(Object object, String tablename) async {
+    // Connect to database
+    Database db = await database;
 
-  //       /// TODO: REVISE THIS
-  //       conflictAlgorithm: ConflictAlgorithm.replace);
+    // Trying to save a FinanceObject
+    if (object is FinanceObject && tablename == DbNames.fo_TABLE) {
+      int id = await db.insert(DbNames.fo_TABLE, object.toMap(),
 
-  //   return id;
-  // }
+          /// TODO: REVISE THIS
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      return id;
+    }
+
+    // Trying to save a CashHandler
+    else if (object is br.CashHandler && tablename == DbNames.ch_TABLE) {
+    }
+
+    // Trying to save a Transaction
+    else if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {}
+
+    else {
+      throw Exception('Not a valid dbase insert query');
+    }
+  }
 
   // Future<FinanceObject> query(int id) async {
   //   Database db = await database;
@@ -86,6 +107,7 @@ class DatabaseProvider {
   //   return loadedTask;
   // }
 
+  /// Pretty much the same as insert
   // static save(Task task) async {
   //   DatabaseProvider db = DatabaseProvider.instance;
   //   int id = await db.insert(task);

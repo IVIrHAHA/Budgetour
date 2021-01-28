@@ -283,31 +283,24 @@ class BudgetObject extends FinanceObject<BudgetStat>
   double get transactionLink => this.id;
 
   @override
+  toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
+  }
+
+  @override
+  fromMap(Map map) {
+    // TODO: implement fromMap
+    throw UnimplementedError();
+  }
+
+  @override
   toJson() {
-    String history = super.historyJson;
-
-    return {
-      DbNames.bo_AllocationAmount: this.targetAlloctionAmount,
-
-    };
+    
   }
 
   static const String _allocationColum = 'allocation';
   static const String _sDate = 'starting_date';
-
-  // BudgetObject.fromJson(Map<String, dynamic> json) {
-  //   print('trying to decode from this');
-  //   var name = json[DbNames.fo_Name];
-  //   var categoryId = json[DbNames.fo_Category];
-  //   this.targetAlloctionAmount = json[DbNames.bo_AllocationAmount];
-
-  //   BudgetObject(
-  //       title: name,
-  //       categoryID: categoryId,
-  //       targetAlloctionAmount: targetAlloctionAmount);
-
-  //   BudgetourReserve.buildHistoryfromJson(json['History'], this);
-  // }
 }
 
 enum _BudgetStatus {
