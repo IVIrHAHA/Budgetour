@@ -1,4 +1,6 @@
-import '../CashManager.dart';
+import 'dart:convert';
+
+import '../BudgetourReserve.dart';
 
 /// Creates and manages [FinanceObject]s transaction history
 
@@ -82,4 +84,12 @@ mixin TransactionHistory {
   }
 
   List<Transaction> get getTransactions => _transactionsList;
+
+  get historyJson => jsonEncode(_transactionsList);
+
+  createhistory(List<Transaction> list){
+    for(Transaction trxt in list) {
+      logTransaction(trxt);
+    }
+  }
 }

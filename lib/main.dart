@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
@@ -9,6 +12,7 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
+import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/CashOnHand.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +21,7 @@ import 'package:common_tools/ColorGenerator.dart';
 void main() {
   CashOnHand cashBag = CashOnHand.instance;
   cashBag.logTransaction(
-      cashBag.reportIncome(1000)..description = 'Initial Deposit');
+      cashBag.reportIncome(10000)..description = 'Initial Deposit');
   runApp(MyApp());
 }
 
@@ -80,7 +84,47 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_more),
-            title: Text('macro'),
+            title: InkWell(
+              onTap: () {
+                CategoryListManager lMan = CategoryListManager.instance;
+                BudgetObject foodObject = lMan.essentials[0];
+
+                for (FinanceObject obj in lMan.essentials) {
+                  if (obj.name == 'Food') {
+                    foodObject ??= obj;
+                  }
+                }
+
+                if (foodObject == null) {
+                  throw Exception('did not find food item');
+                } else {
+                  /// We encode, at which point we can save and what not
+                  var jsonString = jsonEncode(foodObject);
+
+                  /// Here we decode
+                  Map mc = jsonDecode(jsonString);
+
+                  BudgetObject budgetObject = BudgetObject(
+                    title: mc[DbNames.fo_Name],
+                    categoryID: mc[DbNames.fo_Category],
+                    targetAlloctionAmount: mc[DbNames.bo_AllocationAmount],
+                  );
+
+                  BudgetourReserve.buildHistoryfromJson(
+                      mc['History'], budgetObject);
+
+                  setState(() {
+                    lMan.add(budgetObject, CategoryType.goals);
+                  });
+                }
+
+                // CategoryListManager.instance.add(
+                //   ,
+                //   CategoryType.goals,
+                // );
+              },
+              child: Text('macro'),
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_less),
@@ -202,7 +246,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return InfoTile(
       title: 'Unallocated',
       padding: const EdgeInsets.symmetric(
-        horizontal: GlobalValues.defaultTilePadding + GlobalValues.financeTileMargin,
+        horizontal:
+            GlobalValues.defaultTilePadding + GlobalValues.financeTileMargin,
       ),
       infoText: '\$ ${Format.formatDouble(
         CashOnHand.instance.cashAmount,

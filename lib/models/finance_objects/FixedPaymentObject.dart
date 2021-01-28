@@ -1,4 +1,4 @@
-import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -301,4 +301,10 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
 
   @override
   double get transactionLink => null;
+
+  @override
+  toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
 }

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Tracks all the cash flowing through the system
 /// Keeping things in sync and accurate
@@ -11,13 +14,28 @@ class BudgetourReserve {
     return _instance;
   }
 
-  BudgetourReserve._internal() {}
+  BudgetourReserve._internal();
 
   static BudgetourReserve get clerk => _instance;
 
   get cashReport => _totalCash;
 
   static double _totalCash = 0;
+
+  static buildHistoryfromJson(String json, TransactionHistory history) {
+    // get list of Transaction json maps
+    List<dynamic> listTrxt = jsonDecode(json);
+
+    // Convert into Transactions
+    for (Map<String, dynamic> obj in listTrxt) {
+      Transaction buildTrans = Transaction(obj['amount'], obj['id'],
+          date: DateTime.fromMillisecondsSinceEpoch(obj['date']),
+          description: obj['description'],
+          perceptibleColor: obj['color']);
+
+      history.logTransaction(_validateTransaction(buildTrans));
+    }
+  }
 
   /// Add to [_totalCash] by the amount passed.
   /// Then return a validatedTransaction where amount is accessable
@@ -27,6 +45,9 @@ class BudgetourReserve {
   static Transaction _printCash(Transaction transaction) {
     if (transaction._amount > 0) {
       _totalCash += transaction._amount;
+
+      /// TODO: This is where the transaction will be inserted into the table
+      /// The transaction should already have the transactionLink
       return _validateTransaction(transaction);
     }
     throw Exception('when depositing, ensure amount is greater than 0');
@@ -42,7 +63,11 @@ class BudgetourReserve {
   static Transaction _expellCash(Transaction transaction) {
     if (transaction._amount > 0) {
       _totalCash -= transaction._amount;
-      return _validateTransaction(Transaction._copy(transaction, -transaction._amount));
+
+      /// TODO: This is where the transaction will be inserted into the table
+      /// The transaction should already have the transactionLink
+      return _validateTransaction(
+          Transaction._copyWithNewAmount(transaction, -transaction._amount));
     }
     throw Exception('when withdrawing, ensure amount is greater than 0');
   }
@@ -91,7 +116,8 @@ mixin CashHandler {
     Transaction reciept;
 
     if (amount > 0) {
-      reciept = BudgetourReserve._printCash(Transaction(amount, this.transactionLink));
+      reciept = BudgetourReserve._printCash(
+          Transaction(amount, this.transactionLink));
       _cashAccount += reciept.amount;
     }
     return reciept;
@@ -112,7 +138,8 @@ mixin CashHandler {
         holder._cashAccount += amount;
 
         this.transferReciept(
-          BudgetourReserve._validateTransaction(Transaction(-amount, this.transactionLink)),
+          BudgetourReserve._validateTransaction(
+              Transaction(-amount, this.transactionLink)),
           holder,
         );
 
@@ -147,7 +174,7 @@ mixin CashHolder {
 
   /// Links transactionHistory if there is one to the transactionHistoryTable
   /// Otherwise, return null.
-  /// 
+  ///
   /// **Implemented here, because of the transfer methods this interface defines.
   double get transactionLink;
 
@@ -155,7 +182,8 @@ mixin CashHolder {
   Transaction spendCash(double amount) {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
-      withdrawlReciept = BudgetourReserve._expellCash(Transaction(amount, this.transactionLink));
+      withdrawlReciept = BudgetourReserve._expellCash(
+          Transaction(amount, this.transactionLink));
 
       /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
       _cashAccount += withdrawlReciept.amount;
@@ -193,8 +221,8 @@ class Transaction {
 
   Key key;
   final double pertainenceID;
-  String description;
   final double _amount;
+  String description;
   DateTime date;
   Color perceptibleColor;
 
@@ -219,7 +247,21 @@ class Transaction {
 
   get isValid => _validated;
 
-  static Transaction _copy(Transaction transaction, double newAmount) {
+  Map<String, dynamic> toJson() {
+    return {
+      'id': pertainenceID,
+      'amount': amount,
+      'description': description,
+      'date': date.millisecondsSinceEpoch,
+      'color': perceptibleColor != null ? perceptibleColor.value : null,
+    };
+  }
+
+  /// Used to for internal manipulation of amount
+  static Transaction _copyWithNewAmount(
+    Transaction transaction,
+    double newAmount,
+  ) {
     return Transaction(
       newAmount,
       transaction.pertainenceID,

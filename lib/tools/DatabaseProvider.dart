@@ -38,10 +38,10 @@ class DatabaseProvider {
     Batch creationBatch = db.batch();
 
     /// Create main tables
-    // Budget Table
+    // FinanceObject Table
     creationBatch.execute("CREATE TABLE ");
 
-    // FixedPayment Table
+    // CashHandler Table
     creationBatch.execute("CREATE TABLE");
     
     // Transaction Table

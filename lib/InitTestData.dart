@@ -5,7 +5,7 @@ import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 
-import 'models/CashManager.dart';
+import 'models/BudgetourReserve.dart';
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'models/finance_objects/GoalObject.dart';
@@ -30,7 +30,7 @@ class InitTestData {
       'Food',
       150,
       CategoryType.essential.hashCode,
-      transactionQTY: 0,
+      transactionQTY: 30,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'Gas',
@@ -107,7 +107,7 @@ class InitTestData {
         stat1: BudgetStat.spent,
         stat2: BudgetStat.remaining,
       );
-      CashOnHand.instance.transferToHolder(obj, 150);
+      CashOnHand.instance.transferToHolder(obj, 1000);
     }
 
     /// Build BudgetObject

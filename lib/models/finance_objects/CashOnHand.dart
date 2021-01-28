@@ -1,4 +1,4 @@
-import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 
 import 'FinanceObject.dart';
