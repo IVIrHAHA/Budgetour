@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
-import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';

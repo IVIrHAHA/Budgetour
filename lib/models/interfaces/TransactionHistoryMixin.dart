@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../CashManager.dart';
+import '../BudgetourReserve.dart';
 
 /// Creates and manages [FinanceObject]s transaction history
 

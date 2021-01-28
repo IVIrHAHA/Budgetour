@@ -1,4 +1,4 @@
-import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';

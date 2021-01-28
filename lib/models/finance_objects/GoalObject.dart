@@ -1,4 +1,4 @@
-import 'package:budgetour/models/CashManager.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/routes/GoalObj_Route.dart';
@@ -102,4 +102,10 @@ class GoalObject extends FinanceObject<GoalStats> {
   @override
   // TODO: implement transactionLink
   double get transactionLink => throw UnimplementedError();
+
+  @override
+  toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
 }

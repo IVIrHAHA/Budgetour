@@ -17,7 +17,7 @@ import 'package:budgetour/routes/BudgetObj_Route.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
-import '../CashManager.dart';
+import '../BudgetourReserve.dart';
 import 'FinanceObject.dart';
 import '../interfaces/TransactionHistoryMixin.dart';
 import 'package:flutter/material.dart';
@@ -282,16 +282,18 @@ class BudgetObject extends FinanceObject<BudgetStat>
   @override
   double get transactionLink => this.id;
 
+  @override
   toJson() {
     String history = super.historyJson;
 
     return {
-      DbNames.fo_Name: this.name,
-      DbNames.fo_Category: this.categoryID,
       DbNames.bo_AllocationAmount: this.targetAlloctionAmount,
-      'History': history,
+
     };
   }
+
+  static const String _allocationColum = 'allocation';
+  static const String _sDate = 'starting_date';
 
   // BudgetObject.fromJson(Map<String, dynamic> json) {
   //   print('trying to decode from this');

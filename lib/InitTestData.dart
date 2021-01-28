@@ -5,7 +5,7 @@ import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 
-import 'models/CashManager.dart';
+import 'models/BudgetourReserve.dart';
 import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'models/finance_objects/GoalObject.dart';

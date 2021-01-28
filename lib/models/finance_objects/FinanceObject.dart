@@ -5,7 +5,7 @@ import 'package:budgetour/models/interfaces/StatMixin.dart';
 import 'package:budgetour/models/interfaces/TilePresentorMixin.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/FinanceTile.dart';
-import '../CashManager.dart';
+import '../BudgetourReserve.dart';
 
 /// with [TilePresenter] allows [FinanceTile] to interface with this behaviour
 abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
@@ -23,9 +23,7 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
     this._objectID = double.parse(('${this.name.hashCode}.${this.categoryID}'));
   }
 
-  // Map<String, dynamic> toMap();
-
-  // String get tableName;
+  toJson();
 
   double get id => this._objectID;
 }
