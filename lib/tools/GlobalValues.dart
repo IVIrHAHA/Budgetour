@@ -33,37 +33,26 @@ class GlobalValues {
 class DbNames {
   /// TABLE NAMES
   // Total Cash Manager
-  static const String br_TABLE = "BudgetourReserveTable";
-  // Budget Table
-  static const String bo_TABLE = "BudgetObjectsTable";
-  // FixedPayment Table
-  static const String fx_TABLE = "FixedObjectsTable";
-  // Cash On Hand
+  static const String fo_TABLE = "FinanceObjectTable";
+  // CashHandler Table
   static const String coh_TABLE = "CashOnHandTable";
   // Transaction Table
   static const String trxt_TABLE = "TransactionsTable";
 
-  /// COLUMN NAMES
-  // Budget specific 
-  static const String bo_AllocationAmount = "TargetedAllocation";
-
-  //FixedPayment specific
-  static const String fx_markedAsAutoPay = "AutoPay"; 
-
-  // From Recurrence (into Json)
-  static const String rec_StartDate = "RecurrenceStartDate";
-  static const String rec_Duration = "RecurrenceDuration";
-
+  /// COLUMN NAMES (In order!)
   // From Finance Object
-  static const String fo_ObjectId = "ID";
   static const String fo_Category = "Category";
+  static const String fo_ObjectId = "ID";
   static const String fo_Name = "ObjectName";
 
   // From CashHolder
-  static const String fo_CashReserve = "CashReserved";
   static const String fo_TransactionLink = "TransactionsLink";
+  static const String fo_CashReserve = "CashReserved";
 
-  // From StatMixin (into Json)
-  static const String fo_Stat1 = "Stat1";
-  static const String fo_Stat2 = "Stat2";
+  // From Transaction
+  static const String trxt_id = "ID";
+  static const String trxt_date = "date";
+  static const String trxt_amount = "amount";
+  static const String trxt_description = "description";
+  static const String trxt_color = "color";
 }
