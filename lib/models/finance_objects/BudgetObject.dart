@@ -274,7 +274,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
         return QuickStat(
             title: 'Spent',
             evaluateValue: Future(() {
-              return Format.formatDouble(-this.getMonthlyExpenses(), 2);
+              return Format.formatDouble(this.getMonthlyExpenses(), 2);
             }));
         break;
     }

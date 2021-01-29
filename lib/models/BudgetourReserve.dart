@@ -42,13 +42,13 @@ class BudgetourReserve {
   /// outside this class.
   ///
   /// ** This is the only method that can add to [_totalCash]
-  static Transaction _printCash(Transaction transaction) {
-    if (transaction._amount > 0) {
-      _totalCash += transaction._amount;
+  static Transaction _printCash(Transaction uncertifiedTrxt) {
+    if (uncertifiedTrxt._amount > 0) {
+      _totalCash += uncertifiedTrxt._amount;
 
       /// TODO: This is where the transaction will be inserted into the table
       /// The transaction should already have the transactionLink
-      return _validateTransaction(transaction);
+      return _validateTransaction(uncertifiedTrxt);
     }
     throw Exception('when depositing, ensure amount is greater than 0');
   }
@@ -60,14 +60,15 @@ class BudgetourReserve {
   /// ** This is the only method that can subtract from [_totalCash]
   ///
   /// ** IMPORTANT: [_expellCash] will make [Transaction.amount] negative
-  static Transaction _expellCash(Transaction transaction) {
-    if (transaction._amount > 0) {
-      _totalCash -= transaction._amount;
+  static Transaction _expellCash(Transaction uncertifiedTrxt) {
+    if (uncertifiedTrxt._amount > 0) {
+      _totalCash -= uncertifiedTrxt._amount;
 
       /// TODO: This is where the transaction will be inserted into the table
+      /// Every transaction goes through his method
       /// The transaction should already have the transactionLink
       return _validateTransaction(
-          Transaction._copyWithNewAmount(transaction, -transaction._amount));
+          Transaction._copyWithNewAmount(uncertifiedTrxt, -uncertifiedTrxt._amount));
     }
     throw Exception('when withdrawing, ensure amount is greater than 0');
   }
