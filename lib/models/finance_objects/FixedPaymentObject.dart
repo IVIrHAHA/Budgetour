@@ -303,6 +303,18 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   double get transactionLink => null;
 
   @override
+  Map<String, dynamic> toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
+  }
+
+  @override
+  fromMap(String name, int categoryID, double cash, Map map) {
+    // TODO: implement fromMap
+    throw UnimplementedError();
+  }
+
+  @override
   toJson() {
     // TODO: implement toJson
     throw UnimplementedError();

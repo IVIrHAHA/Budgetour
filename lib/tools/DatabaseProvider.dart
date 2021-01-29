@@ -44,7 +44,7 @@ class DatabaseProvider {
     creationBatch.execute("CREATE TABLE ${DbNames.fo_TABLE}("
     "${DbNames.fo_Category}"
     "${DbNames.fo_ObjectId}"
-    "${DbNames.fo_Name}"
+    "${DbNames.fo_CashReserve}"
     "${DbNames.fo_Object}"
     ")");
 

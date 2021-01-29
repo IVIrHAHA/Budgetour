@@ -43,12 +43,12 @@ class DbNames {
   // From Finance Object
   static const String fo_Category = "Category";
   static const String fo_ObjectId = "ID";
-  static const String fo_Name = "ObjectName";
+  static const String fo_CashReserve = "CashReserve";
   static const String fo_Object = "ObjectJson";
 
   // From CashHolder
-  static const String fo_TransactionLink = "TransactionsLink";
-  static const String fo_CashReserve = "CashReserved";
+  static const String ch_TransactionLink = "TransactionsLink";
+  static const String ch_CashReserve = "CashReserve";
 
   // From Transaction
   static const String trxt_id = "ID";

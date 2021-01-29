@@ -127,6 +127,16 @@ mixin Recurrence {
     return this._nextOccurence;
   }
 
+  /// Used to interpret and convert to json, when converting any object utilizing this interface
+  dynamic getOccurenceJson() {
+    if (recurrence is Duration) {
+      return (recurrence as Duration).inMilliseconds;
+    } else if (recurrence is DefinedOccurence) {
+      return (recurrence as DefinedOccurence);
+    } else
+      return null;
+  }
+
   // test() {
   //   /// How to store startingDate
   //   int startingDateQ = ((startingDate.millisecondsSinceEpoch) / 1000).round();

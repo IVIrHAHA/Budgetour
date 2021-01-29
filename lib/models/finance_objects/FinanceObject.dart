@@ -23,14 +23,14 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
     this._objectID = double.parse(('${this.name.hashCode}.${this.categoryID}'));
   }
 
-  /// Gets json representative of the financeObject. This way, all finance objects
+  /// Gets json *representative of the financeObject. This way, all finance objects
   /// can be stored in a single table where only key values can be queried via sql.
   /// However, the entire (child) object will be stored as a json.
   toJson();
 
-  toMap();
+  Map<String, dynamic> toMap();
 
-  fromMap(Map map);
+  FinanceObject fromMap(String name, int categoryID, double cash, Map map);
 
   double get id => this._objectID;
 }

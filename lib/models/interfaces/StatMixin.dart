@@ -20,30 +20,22 @@ import 'package:budgetour/models/Meta/QuickStat.dart';
 /// class BudgetObject extends FinanceObject<BudgetStat>{}
 /// ```
 mixin StatMixin<E> {
-  E _stat1, _stat2;
-
-  set firstStat(E stat) {
-    this._stat1 = stat;
-  }
-
-  set secondStat(E stat) {
-    this._stat2 = stat;
-  }
+  E firstStat, secondStat;
 
   QuickStat getFirstStat() {
-    return _stat1 != null ? determineStat(_stat1) : null;
+    return firstStat != null ? determineStat(firstStat) : null;
   }
 
   QuickStat getSecondStat() {
-    return _stat2 != null ? determineStat(_stat2) : null;
+    return secondStat != null ? determineStat(secondStat) : null;
   }
 
   bool hasFirstStat() {
-    return _stat1 != null;
+    return firstStat != null;
   }
 
   bool hasSecondStat() {
-    return _stat2 != null;
+    return secondStat != null;
   }
 
   /// Allow [FinanceObject] to determine how [QuickStat] will

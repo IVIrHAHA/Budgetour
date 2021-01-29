@@ -51,6 +51,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   double targetAlloctionAmount;
+  /// Gets set during auditing process
   bool _overBudget = false;
 
   /// True when auditing a transaction [_auditTransaction]
@@ -283,24 +284,47 @@ class BudgetObject extends FinanceObject<BudgetStat>
   double get transactionLink => this.id;
 
   @override
-  toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+  Map<String, dynamic> toMap() {
+    var map = {
+      DbNames.fo_Category: categoryID,
+      DbNames.fo_ObjectId: id,
+      DbNames.fo_CashReserve: name,
+      DbNames.fo_Object: jsonEncode(this),
+    };
+
+    return map;
   }
 
   @override
-  fromMap(Map map) {
-    // TODO: implement fromMap
-    throw UnimplementedError();
+  fromMap(String name, int categoryID, double cash, Map map) {
+    
   }
 
   @override
   toJson() {
-    
+    Map<String, dynamic> jsonMap = {
+      _nameColumn : this.name,
+      _categoryColumn : this.categoryID,
+      _cashReserveColumn : this.cashReserve,
+      _allocationColumn: this.targetAlloctionAmount,
+      _sDateColumn: this.startingDate.millisecondsSinceEpoch,
+      _defOccurenceColumn: getOccurenceJson(),
+      _stat1Column: this.firstStat,
+      _stat2Column: this.secondStat,
+      _overBudgetColumn : this._overBudget,
+    };
+    return jsonMap;
   }
 
-  static const String _allocationColum = 'allocation';
-  static const String _sDate = 'starting_date';
+  static const String _nameColumn = 'name';
+  static const String _categoryColumn = 'categoryId';
+  static const String _cashReserveColumn = 'cashreserve';
+  static const String _allocationColumn = 'allocation';
+  static const String _sDateColumn = 'starting_date';
+  static const String _defOccurenceColumn = 'definedOccurence';
+  static const String _stat1Column = 'stat1';
+  static const String _stat2Column = 'stat2';
+  static const String _overBudgetColumn = 'budgetStatus';
 }
 
 enum _BudgetStatus {
