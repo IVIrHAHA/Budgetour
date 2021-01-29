@@ -46,7 +46,6 @@ class BudgetourReserve {
     if (uncertifiedTrxt._amount > 0) {
       _totalCash += uncertifiedTrxt._amount;
 
-      /// TODO: This is where the transaction will be inserted into the table
       /// The transaction should already have the transactionLink
       return _validateTransaction(uncertifiedTrxt);
     }
@@ -59,38 +58,15 @@ class BudgetourReserve {
   ///
   /// ** This is the only method that can subtract from [_totalCash]
   ///
-  /// ** IMPORTANT: [_expellCash] will make [Transaction.amount] negative
+  /// ** IMPORTANT: [Transaction.amount] needs to be negative in order
   static Transaction _expellCash(Transaction uncertifiedTrxt) {
-    if (uncertifiedTrxt._amount > 0) {
-      _totalCash -= uncertifiedTrxt._amount;
+    if (uncertifiedTrxt._amount < 0) {
+      _totalCash += uncertifiedTrxt._amount;
 
-      /// TODO: This is where the transaction will be inserted into the table
-      /// Every transaction goes through his method
       /// The transaction should already have the transactionLink
-      return _validateTransaction(
-          Transaction._copyWithNewAmount(uncertifiedTrxt, -uncertifiedTrxt._amount));
+      return _validateTransaction(uncertifiedTrxt);
     }
-    throw Exception('when withdrawing, ensure amount is greater than 0');
-  }
-
-  /// THIS IS ACTUALLY NOT BEING USED ANYMORE
-  /// Mediate the transfer of cash between two [CashHolder] objects.
-  /// This is useful in the case two [FinanceObject] objects want to exchange
-  /// resources.
-  @deprecated
-  Transaction mediateTransfer(
-      CashHolder giver, CashHolder receiver, double amount) {
-    if (giver._cashAccount >= amount && amount > 0) {
-      /// Take amount from giver
-      giver._cashAccount = giver._cashAccount - amount;
-
-      /// Give amount to receiver
-      receiver._cashAccount = receiver._cashAccount + amount;
-      return _validateTransaction(Transaction(amount, null));
-    }
-
-    /// void contract
-    throw Exception('not a valid transfer request');
+    throw Exception('unable to perform withdrawal');
   }
 
   /// Only place a [Transaction] can be validated
@@ -157,8 +133,13 @@ mixin CashHandler {
     throw InvalidTransferException('The transfer was invalid');
   }
 
-  /// Finishes executing before [CashHandler.transferToHolder]
+  /// Determine whether [this] is willing to accept [amount]
+  ///
+  /// *** Executes before [CashHandler.transferToHolder]
   bool acceptTransfer(double amount);
+
+  /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
+  /// transaction will relayed back to both the [CashHolder] and [CashHandler]
   void transferReciept(Transaction transferReciept, CashHolder to);
 
   double get cashAmount => _cashAccount;
@@ -183,10 +164,11 @@ mixin CashHolder {
   Transaction spendCash(double amount) {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
+      // invert the sign to accurately represent mathematics
       withdrawlReciept = BudgetourReserve._expellCash(
-          Transaction(amount, this.transactionLink));
+          Transaction(-amount, this.transactionLink));
 
-      /// '+=' beacuse [BudgetourReserve._expellCash(amount)] inverts [Transaction.amount]
+      /// '+=' beacause of above statement ^^^
       _cashAccount += withdrawlReciept.amount;
       return withdrawlReciept;
     }
@@ -205,8 +187,12 @@ mixin CashHolder {
   }
 
   /// Determine whether [this] is willing to accept [transferAmount]
+  ///
+  /// *** Executes before [CashHandler.transferToHolder]
   bool acceptTransfer(double transferAmount);
 
+  /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
+  /// transaction will relayed back to both the [CashHolder] and [CashHandler]
   void transferReciept(Transaction transferReciept, CashHandler from);
 
   double get cashReserve => _cashAccount;
@@ -256,19 +242,5 @@ class Transaction {
       'date': date.millisecondsSinceEpoch,
       'color': perceptibleColor != null ? perceptibleColor.value : null,
     };
-  }
-
-  /// Used to for internal manipulation of amount
-  static Transaction _copyWithNewAmount(
-    Transaction transaction,
-    double newAmount,
-  ) {
-    return Transaction(
-      newAmount,
-      transaction.pertainenceID,
-      description: transaction.description,
-      date: transaction.date,
-      perceptibleColor: transaction.perceptibleColor,
-    );
   }
 }
