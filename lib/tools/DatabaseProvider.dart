@@ -82,6 +82,7 @@ class DatabaseProvider {
     }
   }
 
+  /// TODO: When done loading verity with BudgetReserve that cash is in sync
   // Future<FinanceObject> query(int id) async {
   //   Database db = await database;
   //   List<Map> maps = await db.query('TASKTABLE',

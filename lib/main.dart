@@ -100,29 +100,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 if (foodObject == null) {
                   throw Exception('did not find food item');
                 } else {
-                  var jsonString;
+                  var tableMap;
                   // try to encode
                   try {
-                    jsonString = jsonEncode(foodObject);
+                    tableMap = foodObject.toMap();
                     print('encoding successful');
 
                     // Try to decode
                     try {
-                      var mc = jsonDecode(jsonString);
+                      var something = FinanceObject.fromMap(tableMap);
 
-                      /// Find instance of mc
-                      if (mc is Map) {
-                        BudgetObject obj = BudgetObject.fromJson(mc);
-                        setState(() {
-                          lMan.add(obj, CategoryType.goals);
-                        });
-                      } else if (mc is BudgetObject) {
-                        print('is budget object');
-                        setState(() {
-                          lMan.add(mc, CategoryType.goals);
-                        });
-                      } else {
-                        print('couldnt figure it out');
+                      if(something is BudgetObject) {
+                        print('got it');
+                        lMan.add(something, CategoryType.goals);
                       }
                     } catch (Exception) {
                       print('failed to decode');

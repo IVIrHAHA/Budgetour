@@ -309,7 +309,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   }
 
   @override
-  fromMap(String name, int categoryID, double cash, Map map) {
+  fromMap(Map map) {
     // TODO: implement fromMap
     throw UnimplementedError();
   }

@@ -45,6 +45,7 @@ class DbNames {
   static const String fo_ObjectId = "ID";
   static const String fo_CashReserve = "CashReserve";
   static const String fo_Object = "ObjectJson";
+  static const String fo_Type = "ClassType";
 
   // From CashHolder
   static const String ch_TransactionLink = "TransactionsLink";

@@ -281,23 +281,46 @@ class BudgetObject extends FinanceObject<BudgetStat>
     return null;
   }
 
+  /* --------------------------------------------------------------------------------------------
+   *  PERSISTENCE METHODS
+   * --------------------------------------------------------------------------------------------
+   */
+
+  static const String _nameColumn = 'name';
+  static const String _categoryColumn = 'categoryId';
+  static const String _cashReserveColumn = 'cashreserve';
+  static const String _allocationColumn = 'allocation';
+  static const String _sDateColumn = 'starting_date';
+  static const String _defOccurenceColumn = 'definedOccurence';
+  static const String _stat1Column = 'stat1';
+  static const String _stat2Column = 'stat2';
+  static const String _overBudgetColumn = 'budgetStatus';
+
   @override
   double get transactionLink => this.id;
 
-  @override
-  Map<String, dynamic> toMap() {
-    var map = {
-      DbNames.fo_Category: categoryID,
-      DbNames.fo_ObjectId: id,
-      DbNames.fo_CashReserve: name,
-      DbNames.fo_Object: jsonEncode(this),
-    };
+  // @override
+  // Map<String, dynamic> toMap() {
+  //   var map = {
+  //     DbNames.fo_Category: categoryID,
+  //     DbNames.fo_ObjectId: id,
+  //     DbNames.fo_CashReserve: cashReserve,
+  //     DbNames.fo_Object: jsonEncode(this),
+  //   };
 
-    return map;
-  }
+  //   return map;
+  // }
 
-  @override
-  fromMap(String name, int categoryID, double cash, Map map) {}
+  // @override
+  // fromMap(Map map) {
+  //   BudgetourReserve clerk = BudgetourReserve.clerk;
+
+  //   BudgetObject obj = BudgetObject.fromJson(map);
+  //   /// Sets cash amount
+  //   clerk.assign(obj, map[_cashReserveColumn]);
+
+  //   return obj;
+  // }
 
   @override
   Map<String, dynamic> toJson() {
@@ -319,23 +342,12 @@ class BudgetObject extends FinanceObject<BudgetStat>
       : super(name: map[_nameColumn], categoryID: map[_categoryColumn]) {
     this.targetAlloctionAmount =
         this.targetAlloctionAmount = map[_allocationColumn];
-    this.firstStat = statEnumFromString( BudgetStat.values, map[_stat1Column]);
-    this.secondStat = statEnumFromString( BudgetStat.values, map[_stat2Column]);
+    this.firstStat = statEnumFromString(BudgetStat.values, map[_stat1Column]);
+    this.secondStat = statEnumFromString(BudgetStat.values, map[_stat2Column]);
     this.startingDate = DateTime.fromMillisecondsSinceEpoch(map[_sDateColumn]);
     this.recurrence = occurenceEnumFromString(map[_defOccurenceColumn]);
     this._overBudget = map[_overBudgetColumn] == 1 ? true : false;
-    // TODO: figure out cash reserve
   }
-
-  static const String _nameColumn = 'name';
-  static const String _categoryColumn = 'categoryId';
-  static const String _cashReserveColumn = 'cashreserve';
-  static const String _allocationColumn = 'allocation';
-  static const String _sDateColumn = 'starting_date';
-  static const String _defOccurenceColumn = 'definedOccurence';
-  static const String _stat1Column = 'stat1';
-  static const String _stat2Column = 'stat2';
-  static const String _overBudgetColumn = 'budgetStatus';
 }
 
 enum _BudgetStatus {

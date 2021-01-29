@@ -20,7 +20,23 @@ class BudgetourReserve {
 
   get cashReport => _totalCash;
 
+  assign(Object cashObject, double cashAmount) {
+    if (cashObject is CashHolder) {
+      _totalFromHolders += cashAmount;
+      cashObject._cashAccount = cashAmount;
+    }
+    else if(cashObject is CashHandler) {
+      _totalFromHandlers += cashAmount;
+      cashObject._cashAccount = cashAmount;
+    }
+    else {
+      throw Exception('Unknown CashObject');
+    }
+  }
+
   static double _totalCash = 0;
+  static double _totalFromHandlers = 0;
+  static double _totalFromHolders = 0;
 
   static buildHistoryfromJson(String json, TransactionHistory history) {
     // get list of Transaction json maps
@@ -84,7 +100,11 @@ mixin CashHandler {
   double _cashAccount = 0;
 
   /// Links transactionHistory if there is one to the transactionHistoryTable
-  /// Otherwise, return null
+  /// Otherwise, return null.
+  ///
+  /// **Implemented here, because of the transfer methods this interface defines.
+  /// Otherwise [Transaction] would have no way of obtaining the key, since
+  /// this is the only place [Transaction] objects are able to be created.
   double get transactionLink;
 
   /// This brings cash into the system and provides a validated [Transaction]
@@ -158,6 +178,8 @@ mixin CashHolder {
   /// Otherwise, return null.
   ///
   /// **Implemented here, because of the transfer methods this interface defines.
+  /// Otherwise [Transaction] would have no way of obtaining the key, since
+  /// this is the only place [Transaction] objects are able to be created.
   double get transactionLink;
 
   /// Returns a validated [Transaction] given a valid [amount]. Otherwise, return null.

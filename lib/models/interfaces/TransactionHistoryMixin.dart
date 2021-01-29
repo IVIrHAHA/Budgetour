@@ -83,7 +83,11 @@ mixin TransactionHistory {
     _transactionsList.sort((a, b) => b.date.compareTo(a.date));
   }
 
-  List<Transaction> get getTransactions => _transactionsList;
+  /// Here we will load the transaction history
+  List<Transaction> getTransactions() {
+    // (this as FinanceObject).transactionLink;
+    return _transactionsList;
+  }
 
   get historyJson => jsonEncode(_transactionsList);
 

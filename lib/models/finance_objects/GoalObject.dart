@@ -116,7 +116,7 @@ class GoalObject extends FinanceObject<GoalStats> {
   }
 
   @override
-  fromMap(String name, int categoryID, double cash, Map map) {
+  fromMap(Map map) {
     // TODO: implement fromMap
     throw UnimplementedError();
   }
