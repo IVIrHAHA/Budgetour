@@ -42,17 +42,18 @@ class DatabaseProvider {
     /// Create main tables
     // FinanceObject Table
     creationBatch.execute("CREATE TABLE ${DbNames.fo_TABLE}("
-    "${DbNames.fo_Category}"
-    "${DbNames.fo_ObjectId}"
-    "${DbNames.fo_CashReserve}"
-    "${DbNames.fo_Object}"
+    "${DbNames.fo_Category} INTEGER"
+    "${DbNames.fo_ObjectId} REAL PRIMARY KEY"
+    "${DbNames.fo_CashReserve} REAL"
+    "${DbNames.fo_Object} TEXT NOT NULL"
+    "${DbNames.fo_Type} TEXT NOT NULL"
     ")");
 
-    // CashHandler Table
-    creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
+    // // CashHandler Table
+    // creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
 
-    // Transaction Table
-    creationBatch.execute("CREATE TABLE ${DbNames.trxt_TABLE}");
+    // // Transaction Table
+    // creationBatch.execute("CREATE TABLE ${DbNames.trxt_TABLE}");
 
     await creationBatch.commit();
   }

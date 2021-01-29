@@ -99,7 +99,7 @@ class TransactionHistoryPage extends StatelessWidget {
   SingleChildScrollView _buildTransactionListView(int workingMonth) {
     return SingleChildScrollView(
       child: Column(
-        children: history.getTransactions().map((transaction) {
+        children: history.transactions.map((transaction) {
           // Keep working month the same if already assigned
           // otherwise working month goes to first element in list
           workingMonth = workingMonth ?? transaction.date.month;

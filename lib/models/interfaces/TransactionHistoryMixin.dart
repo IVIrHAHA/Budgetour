@@ -84,12 +84,11 @@ mixin TransactionHistory {
   }
 
   /// Here we will load the transaction history
-  List<Transaction> getTransactions() {
-    // (this as FinanceObject).transactionLink;
-    return _transactionsList;
-  }
+  List<Transaction> get transactions => _transactionsList;
 
-  get historyJson => jsonEncode(_transactionsList);
+  loadTransaction() {
+    
+  }
 
   createhistory(List<Transaction> list){
     for(Transaction trxt in list) {
