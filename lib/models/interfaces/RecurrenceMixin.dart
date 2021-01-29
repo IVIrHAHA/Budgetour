@@ -132,9 +132,20 @@ mixin Recurrence {
     if (recurrence is Duration) {
       return (recurrence as Duration).inMilliseconds;
     } else if (recurrence is DefinedOccurence) {
-      return (recurrence as DefinedOccurence);
+      return (recurrence as DefinedOccurence).toString();
     } else
       return null;
+  }
+
+  occurenceEnumFromString(var enumString) {
+    if (enumString is String) {
+      return DefinedOccurence.values.singleWhere(
+          (element) => element.toString() == (enumString), orElse: () {
+        return null;
+      });
+    } else {
+      return enumString;
+    }
   }
 
   // test() {

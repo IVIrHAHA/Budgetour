@@ -93,36 +93,44 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 for (FinanceObject obj in lMan.essentials) {
                   if (obj.name == 'Food') {
                     foodObject ??= obj;
+                    break;
                   }
                 }
 
                 if (foodObject == null) {
                   throw Exception('did not find food item');
                 } else {
-                  // /// We encode, at which point we can save and what not
-                  // var jsonString = jsonEncode(foodObject);
+                  var jsonString;
+                  // try to encode
+                  try {
+                    jsonString = jsonEncode(foodObject);
+                    print('encoding successful');
 
-                  // /// Here we decode
-                  // Map mc = jsonDecode(jsonString);
+                    // Try to decode
+                    try {
+                      var mc = jsonDecode(jsonString);
 
-                  // BudgetObject budgetObject = BudgetObject(
-                  //   title: mc[DbNames.fo_Name],
-                  //   categoryID: mc[DbNames.fo_Category],
-                  //   targetAlloctionAmount: mc[DbNames.bo_AllocationAmount],
-                  // );
-
-                  // BudgetourReserve.buildHistoryfromJson(
-                  //     mc['History'], budgetObject);
-
-                  // setState(() {
-                  //   lMan.add(budgetObject, CategoryType.goals);
-                  // });
+                      /// Find instance of mc
+                      if (mc is Map) {
+                        BudgetObject obj = BudgetObject.fromJson(mc);
+                        setState(() {
+                          lMan.add(obj, CategoryType.goals);
+                        });
+                      } else if (mc is BudgetObject) {
+                        print('is budget object');
+                        setState(() {
+                          lMan.add(mc, CategoryType.goals);
+                        });
+                      } else {
+                        print('couldnt figure it out');
+                      }
+                    } catch (Exception) {
+                      print('failed to decode');
+                    }
+                  } catch (Exception) {
+                    print('failed to encode');
+                  }
                 }
-
-                // CategoryListManager.instance.add(
-                //   ,
-                //   CategoryType.goals,
-                // );
 
                 /// TODO: END OF BLOCK
               },

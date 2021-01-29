@@ -38,6 +38,11 @@ mixin StatMixin<E> {
     return secondStat != null;
   }
 
+  E statEnumFromString(List<E> values, String enumString) {
+    return values.singleWhere((element) => element.toString() == enumString,
+        orElse: () => null);
+  }
+
   /// Allow [FinanceObject] to determine how [QuickStat] will
   /// be created and handled.
   ///

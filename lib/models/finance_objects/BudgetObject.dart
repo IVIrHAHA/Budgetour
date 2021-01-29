@@ -51,6 +51,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   double targetAlloctionAmount;
+
   /// Gets set during auditing process
   bool _overBudget = false;
 
@@ -296,24 +297,34 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   @override
-  fromMap(String name, int categoryID, double cash, Map map) {
-    
-  }
+  fromMap(String name, int categoryID, double cash, Map map) {}
 
   @override
-  toJson() {
+  Map<String, dynamic> toJson() {
     Map<String, dynamic> jsonMap = {
-      _nameColumn : this.name,
-      _categoryColumn : this.categoryID,
-      _cashReserveColumn : this.cashReserve,
+      _nameColumn: this.name,
+      _categoryColumn: this.categoryID,
+      _cashReserveColumn: this.cashReserve,
       _allocationColumn: this.targetAlloctionAmount,
       _sDateColumn: this.startingDate.millisecondsSinceEpoch,
       _defOccurenceColumn: getOccurenceJson(),
-      _stat1Column: this.firstStat,
-      _stat2Column: this.secondStat,
-      _overBudgetColumn : this._overBudget,
+      _stat1Column: this.firstStat.toString(),
+      _stat2Column: this.secondStat.toString(),
+      _overBudgetColumn: this._overBudget ? 1 : 0,
     };
     return jsonMap;
+  }
+
+  BudgetObject.fromJson(Map map)
+      : super(name: map[_nameColumn], categoryID: map[_categoryColumn]) {
+    this.targetAlloctionAmount =
+        this.targetAlloctionAmount = map[_allocationColumn];
+    this.firstStat = statEnumFromString( BudgetStat.values, map[_stat1Column]);
+    this.secondStat = statEnumFromString( BudgetStat.values, map[_stat2Column]);
+    this.startingDate = DateTime.fromMillisecondsSinceEpoch(map[_sDateColumn]);
+    this.recurrence = occurenceEnumFromString(map[_defOccurenceColumn]);
+    this._overBudget = map[_overBudgetColumn] == 1 ? true : false;
+    // TODO: figure out cash reserve
   }
 
   static const String _nameColumn = 'name';
