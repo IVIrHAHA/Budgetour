@@ -45,7 +45,7 @@ class DatabaseProvider {
     creationBatch.execute(
       "CREATE TABLE ${DbNames.fo_TABLE}("
       "${DbNames.fo_Category} INTEGER,"
-      "${DbNames.fo_ObjectId} REAL,"
+      "${DbNames.fo_ObjectId} REAL PRIMARY KEY,"
       "${DbNames.fo_CashReserve} REAL,"
       "${DbNames.fo_Object} TEXT,"
       "${DbNames.fo_Type} TEXT"
@@ -62,6 +62,7 @@ class DatabaseProvider {
   }
 
   Future<int> insert(Object object, String tablename) async {
+    print('trying to save');
     // Connect to database
     Database db = await database;
 
@@ -91,41 +92,18 @@ class DatabaseProvider {
     print('Success');
   }
 
-  static loadObjects() async {
-    List<FinanceObject> list = List();
-
-    await instance.query();
-
-    // FutureBuilder(
-    //   future: instance.query(),
-    //   builder: (_, snapshot) {
-    //     /// should be List<Map>
-    //     if(snapshot.hasData) {
-    //       (snapshot.data as List).forEach((element) {
-    //         FinanceObject.fromMap(element);
-    //         list.add(FinanceObject.fromMap(element));
-    //       });
-    //     }
-    //     else if(snapshot.error) {
-    //       print('was an error');
-    //     }
-    //   },
-    // );
-
-    return list;
-  }
-
-  Future<List<Map>> query() async {
+  Future<List<Map>> loadAll() async {
     Database db = await database;
-    List<Map> maps = await db.query(DbNames.fo_TABLE, columns: [
+    List<Map> mapList = await db.query(DbNames.fo_TABLE, columns: [
       DbNames.fo_Object,
       DbNames.fo_Type,
       DbNames.fo_CashReserve,
+      DbNames.fo_Category,
     ]);
 
-    if (maps.length > 0) {
-      print('loaded something');
-      return maps;
+    if (mapList.length > 0) {
+      print('map length: ${mapList.length}');
+      return mapList;
     }
     return null;
   }

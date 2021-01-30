@@ -29,33 +29,33 @@ class InitTestData {
     dummyEssentialList.add(_buildBudgetObjects(
       'Food',
       150,
-      CategoryType.essential.hashCode,
+      CategoryType.values.indexOf(CategoryType.essential),
       transactionQTY: 30,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'Gas',
       135,
-      CategoryType.essential.hashCode,
+      CategoryType.values.indexOf(CategoryType.essential),
       transactionQTY: 4,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'House Bills',
       120,
-      CategoryType.essential.hashCode,
+      CategoryType.values.indexOf(CategoryType.essential),
       transactionQTY: 0,
     ));
     dummyEssentialList.add(_buildFixedPaymentObject(
       'Rent',
       578,
       DateTime(2021, 1, 1),
-      CategoryType.essential.hashCode,
+      CategoryType.values.indexOf(CategoryType.essential),
     ));
     dummyEssentialList.add(
       _buildFixedPaymentObject(
         'Car Insurance',
         42,
         DateTime(2021, 1, 8),
-        CategoryType.essential.hashCode,
+        CategoryType.values.indexOf(CategoryType.essential),
       ),
     );
   }
@@ -65,7 +65,7 @@ class InitTestData {
       'Fidelity',
       200,
       DateTime(2021, 1, 14),
-      CategoryType.security.hashCode,
+      CategoryType.values.indexOf(CategoryType.security),
     ));
   }
 
@@ -76,23 +76,31 @@ class InitTestData {
       'Spotify',
       9.99,
       DateTime(2021, 1, 21),
-      CategoryType.lifestyle.hashCode,
+      CategoryType.values.indexOf(CategoryType.lifestyle),
     ));
     dummyLifeStyleList.add(_buildFixedPaymentObject(
       'Quip',
       5.41,
       DateTime(2021, 1, 26),
-      CategoryType.lifestyle.hashCode,
+      CategoryType.values.indexOf(CategoryType.lifestyle),
     ));
     dummyLifeStyleList.add(_buildFixedPaymentObject(
       'Nuero Gum',
       20.27,
       DateTime(2021, 1, 3),
-      CategoryType.lifestyle.hashCode,
+      CategoryType.values.indexOf(CategoryType.lifestyle),
     ));
   }
 
-  static buildMiscList() {}
+  static buildMiscList() {
+    dummyLifeStyleList.add(BudgetObject(
+      title: 'Toilet Stuffs',
+      categoryID: CategoryType.values.indexOf(CategoryType.lifestyle),
+      definedOccurence: DefinedOccurence.monthly,
+      stat1: BudgetStat.allocated,
+      targetAlloctionAmount: 30,
+    ));
+  }
 
   static BudgetObject _buildBudgetObjects(
       String title, double allocationAmount, int categoryID,

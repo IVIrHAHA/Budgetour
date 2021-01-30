@@ -23,6 +23,7 @@ void main() {
   CashOnHand cashBag = CashOnHand.instance;
   cashBag.logTransaction(
       cashBag.reportIncome(10000)..description = 'Initial Deposit');
+  InitTestData.initTileList();
   runApp(MyApp());
 }
 
@@ -65,8 +66,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       length: 5,
       vsync: this,
     );
-    InitTestData.initTileList();
+    _loadData();
     super.initState();
+  }
+
+  _loadData() async {
+    await DatabaseProvider.instance.loadAll().then((value) {
+      if (value != null) {
+        value.forEach((element) {
+          FinanceObject obj = FinanceObject.fromMap(element);
+          int categoryIndex = element[DbNames.fo_Category];
+          CategoryListManager.instance
+              .add(obj, CategoryType.values[categoryIndex]);
+        });
+        setState(() {});
+      } else {
+        print('PROCESS: NOTHING TO LOAD');
+      }
+    });
   }
 
   @override
@@ -85,22 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_more),
-            title: InkWell(
-              onTap: () async {
-                List<Map> queryList = List();
-                Future<List<Map>> future = DatabaseProvider.instance.query();
-                queryList = await future;
-                future.then((value) {
-                  value.forEach((element) {
-                    FinanceObject obj = FinanceObject.fromMap(element);
-                    CategoryListManager.instance
-                        .add(obj, CategoryType.essential);
-                  });
-                  setState(() {});
-                });
-              },
-              child: Text('macro'),
-            ),
+            title: Text('macro'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_less),
@@ -108,6 +110,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () {
                 /// call InitTest and save data
                 InitTestData.dummyEssentialList.forEach((element) {
+                  if (element is BudgetObject)
+                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);}
+                );
+
+                InitTestData.dummySecurityList.forEach((element) {
+                  if (element is BudgetObject)
+                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                });
+
+                InitTestData.dummyGoalList.forEach((element) {
+                  if (element is BudgetObject)
+                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                });
+
+                InitTestData.dummyLifeStyleList.forEach((element) {
+                  if (element is BudgetObject)
+                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                });
+
+                InitTestData.dummyMiscList.forEach((element) {
                   if (element is BudgetObject)
                     DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
                 });

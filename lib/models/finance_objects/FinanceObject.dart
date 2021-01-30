@@ -54,7 +54,6 @@ abstract class FinanceObject<E> with CashHolder, TilePresenter, StatMixin<E> {
 
     if (classType == (BudgetObject).toString()) {
       loadedObject = BudgetObject.fromJson(jsonMap);
-      print('loaded');
     }
     else if(classType == (FixedPaymentObject).toString()) {
       /// TODO: Implement this

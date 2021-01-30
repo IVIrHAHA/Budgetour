@@ -55,7 +55,8 @@ class CategoryListManager extends _CategoryListBase {
   add(FinanceObject what, CategoryType where) {
     switch (where) {
       case CategoryType.essential:
-        _essentialList.add(what);
+        if(!_essentialList.any((element) => element.id == what .id))
+          _essentialList.add(what);
         break;
 
       case CategoryType.security:
