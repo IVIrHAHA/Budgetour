@@ -29,33 +29,33 @@ class InitTestData {
     dummyEssentialList.add(_buildBudgetObjects(
       'Food',
       150,
-      CategoryType.values.indexOf(CategoryType.essential),
+      CategoryType.essential,
       transactionQTY: 30,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'Gas',
       135,
-      CategoryType.values.indexOf(CategoryType.essential),
+      CategoryType.essential,
       transactionQTY: 4,
     ));
     dummyEssentialList.add(_buildBudgetObjects(
       'House Bills',
       120,
-      CategoryType.values.indexOf(CategoryType.essential),
+      CategoryType.essential,
       transactionQTY: 0,
     ));
     dummyEssentialList.add(_buildFixedPaymentObject(
       'Rent',
       578,
       DateTime(2021, 1, 1),
-      CategoryType.values.indexOf(CategoryType.essential),
+      CategoryType.essential,
     ));
     dummyEssentialList.add(
       _buildFixedPaymentObject(
         'Car Insurance',
         42,
         DateTime(2021, 1, 8),
-        CategoryType.values.indexOf(CategoryType.essential),
+        CategoryType.essential,
       ),
     );
   }
@@ -65,7 +65,7 @@ class InitTestData {
       'Fidelity',
       200,
       DateTime(2021, 1, 14),
-      CategoryType.values.indexOf(CategoryType.security),
+      CategoryType.security,
     ));
   }
 
@@ -76,26 +76,26 @@ class InitTestData {
       'Spotify',
       9.99,
       DateTime(2021, 1, 21),
-      CategoryType.values.indexOf(CategoryType.lifestyle),
+      CategoryType.lifestyle,
     ));
     dummyLifeStyleList.add(_buildFixedPaymentObject(
       'Quip',
       5.41,
       DateTime(2021, 1, 26),
-      CategoryType.values.indexOf(CategoryType.lifestyle),
+      CategoryType.lifestyle,
     ));
     dummyLifeStyleList.add(_buildFixedPaymentObject(
       'Nuero Gum',
       20.27,
       DateTime(2021, 1, 3),
-      CategoryType.values.indexOf(CategoryType.lifestyle),
+      CategoryType.lifestyle,
     ));
   }
 
   static buildMiscList() {
     dummyLifeStyleList.add(BudgetObject(
       title: 'Toilet Stuffs',
-      categoryID: CategoryType.values.indexOf(CategoryType.lifestyle),
+      categoryType: CategoryType.lifestyle,
       definedOccurence: DefinedOccurence.monthly,
       stat1: BudgetStat.allocated,
       targetAlloctionAmount: 30,
@@ -103,14 +103,14 @@ class InitTestData {
   }
 
   static BudgetObject _buildBudgetObjects(
-      String title, double allocationAmount, int categoryID,
+      String title, double allocationAmount, CategoryType categoryID,
       {int transactionQTY}) {
     BudgetObject obj;
     // Explicitly target an Object
     if (title == 'Food') {
       obj = BudgetObject(
         title: title,
-        categoryID: categoryID,
+        categoryType: categoryID,
         targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.spent,
         stat2: BudgetStat.remaining,
@@ -122,7 +122,7 @@ class InitTestData {
     else {
       obj = BudgetObject(
         title: title,
-        categoryID: categoryID,
+        categoryType: categoryID,
         targetAlloctionAmount: allocationAmount,
         stat1: BudgetStat.allocated,
         stat2: BudgetStat.spent,
@@ -147,10 +147,10 @@ class InitTestData {
 
   // Eventually have history, labels and due dates
   static FixedPaymentObject _buildFixedPaymentObject(
-      String title, double amount, DateTime lastDue, int categoryID) {
+      String title, double amount, DateTime lastDue, CategoryType categoryID) {
     FixedPaymentObject obj = FixedPaymentObject(
       name: title,
-      categoryID: categoryID,
+      categoryType: categoryID,
       fixedPayment: amount,
       definedOccurence: DefinedOccurence.monthly,
       lastDueDate: lastDue,

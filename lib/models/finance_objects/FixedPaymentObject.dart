@@ -1,4 +1,5 @@
 import 'package:budgetour/models/BudgetourReserve.dart';
+import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -44,7 +45,7 @@ enum _Status {
 class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     with Recurrence {
   /// Recurring payment amount
-  final double fixedPayment;
+  double fixedPayment;
 
   /// This gets set as true when spendCash is equal to fixedPayment
   /// Gets set as false when _isReady is set as true during [transferReciept]
@@ -60,11 +61,14 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   FixedPaymentObject({
     @required String name,
     @required this.fixedPayment,
-    @required int categoryID,
+    @required CategoryType categoryType,
     this.markAsAutoPay = false,
     DateTime lastDueDate,
     DefinedOccurence definedOccurence,
-  }) : super(name: name, categoryID: categoryID) {
+  }) : super(
+          name: name,
+          categoryIndex: CategoryType.values.indexOf(categoryType),
+        ) {
     this.startingDate = lastDueDate ?? DateTime.now();
     this.recurrence = definedOccurence ?? DefinedOccurence.monthly;
     this._isPaid = false;
@@ -299,24 +303,57 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
     );
   }
 
+  /* --------------------------------------------------------------------------------------------
+   *  PERSISTENCE METHODS
+   * --------------------------------------------------------------------------------------------
+   */
+
+  static const String _nameColumn = 'name';
+  static const String _categoryColumn = 'categoryId';
+  static const String _sDateColumn = 'starting_date';
+  static const String _defOccurenceColumn = 'definedOccurence';
+  static const String _stat1Column = 'stat1';
+  static const String _stat2Column = 'stat2';
+  // This specific
+  static const String _fixedPaymentColumn = 'fixed_payment';
+  static const String _markedAsAutoPayColumn = 'auto_pay';
+  static const String _markedAsReadyColumn = 'is_ready';
+  static const String _isPaidColumn = 'is_paid';
+
   @override
   double get transactionLink => null;
 
   @override
-  Map<String, dynamic> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> jsonMap = {
+      _nameColumn: this.name,
+      _categoryColumn: this.categoryIndex,
+      _sDateColumn: this.startingDate.millisecondsSinceEpoch,
+      _defOccurenceColumn: getOccurenceJson(),
+      _stat1Column: this.firstStat.toString(),
+      _stat2Column: this.secondStat.toString(),
+      _fixedPaymentColumn: this.fixedPayment,
+      _markedAsAutoPayColumn: this.markAsAutoPay ? 1 : 0,
+      _markedAsReadyColumn: this._isReady ? 1 : 0,
+      _isPaidColumn: this._isPaid ? 1 : 0,
+    };
+    return jsonMap;
   }
 
-  @override
-  fromMap(Map map) {
-    // TODO: implement fromMap
-    throw UnimplementedError();
-  }
-
-  @override
-  toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+  FixedPaymentObject.fromJson(Map map)
+      : super(
+          name: map[_nameColumn],
+          categoryIndex: map[_categoryColumn],
+        ) {
+    this.startingDate = DateTime.fromMillisecondsSinceEpoch(map[_sDateColumn]);
+    this.recurrence = occurenceEnumFromString(map[_defOccurenceColumn]);
+    this.firstStat =
+        statEnumFromString(FixedPaymentStats.values, map[_stat1Column]);
+    this.secondStat =
+        statEnumFromString(FixedPaymentStats.values, map[_stat2Column]);
+    this.fixedPayment = map[_fixedPaymentColumn];
+    this.markAsAutoPay = map[_markedAsAutoPayColumn] == 1 ? true : false;
+    this._isReady = map[_markedAsReadyColumn] == 1 ? true : false;
+    this._isPaid = map[_isPaidColumn] == 1 ? true : false;
   }
 }

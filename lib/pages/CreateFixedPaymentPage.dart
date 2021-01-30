@@ -176,7 +176,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
       CategoryListManager.instance.add(
         FixedPaymentObject(
           name: _billName,
-          categoryID: widget.targetCategory.hashCode,
+          categoryType: widget.targetCategory,
           fixedPayment: _calcValue,
           lastDueDate: DateTime(2020, 12, 1, 0, 0),
 

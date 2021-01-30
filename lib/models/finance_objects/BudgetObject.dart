@@ -10,6 +10,7 @@
 
 import 'dart:convert';
 
+import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
@@ -33,7 +34,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     with TransactionHistory, Recurrence {
   BudgetObject({
     @required String title,
-    @required int categoryID,
+    @required CategoryType categoryType,
     this.targetAlloctionAmount = 0,
     BudgetStat stat1,
     BudgetStat stat2,
@@ -41,7 +42,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     var definedOccurence,
   }) : super(
           name: title,
-          categoryID: categoryID,
+          categoryIndex: CategoryType.values.indexOf(categoryType),
         ) {
     this.startingDate = startingDate ?? DateTime.now();
     this.recurrence = definedOccurence ?? DefinedOccurence.monthly;
@@ -288,7 +289,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
   static const String _nameColumn = 'name';
   static const String _categoryColumn = 'categoryId';
-  static const String _cashReserveColumn = 'cashreserve';
   static const String _allocationColumn = 'allocation';
   static const String _sDateColumn = 'starting_date';
   static const String _defOccurenceColumn = 'definedOccurence';
@@ -299,35 +299,11 @@ class BudgetObject extends FinanceObject<BudgetStat>
   @override
   double get transactionLink => this.id;
 
-  // @override
-  // Map<String, dynamic> toMap() {
-  //   var map = {
-  //     DbNames.fo_Category: categoryID,
-  //     DbNames.fo_ObjectId: id,
-  //     DbNames.fo_CashReserve: cashReserve,
-  //     DbNames.fo_Object: jsonEncode(this),
-  //   };
-
-  //   return map;
-  // }
-
-  // @override
-  // fromMap(Map map) {
-  //   BudgetourReserve clerk = BudgetourReserve.clerk;
-
-  //   BudgetObject obj = BudgetObject.fromJson(map);
-  //   /// Sets cash amount
-  //   clerk.assign(obj, map[_cashReserveColumn]);
-
-  //   return obj;
-  // }
-
   @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> jsonMap = {
       _nameColumn: this.name,
-      _categoryColumn: this.categoryID,
-      _cashReserveColumn: this.cashReserve,
+      _categoryColumn: this.categoryIndex,
       _allocationColumn: this.targetAlloctionAmount,
       _sDateColumn: this.startingDate.millisecondsSinceEpoch,
       _defOccurenceColumn: getOccurenceJson(),
@@ -339,9 +315,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   BudgetObject.fromJson(Map map)
-      : super(name: map[_nameColumn], categoryID: map[_categoryColumn]) {
-    this.targetAlloctionAmount =
-        this.targetAlloctionAmount = map[_allocationColumn];
+      : super(name: map[_nameColumn], categoryIndex: map[_categoryColumn]) {
+    this.targetAlloctionAmount = map[_allocationColumn];
     this.firstStat = statEnumFromString(BudgetStat.values, map[_stat1Column]);
     this.secondStat = statEnumFromString(BudgetStat.values, map[_stat2Column]);
     this.startingDate = DateTime.fromMillisecondsSinceEpoch(map[_sDateColumn]);

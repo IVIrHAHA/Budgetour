@@ -96,6 +96,17 @@ class CategoryListManager extends _CategoryListBase {
         break;
     }
   }
+
+  List<FinanceObject> getAllObjects() {
+    List<FinanceObject> list = List();
+
+    list.addAll(_essentialList);
+    list.addAll(_securityList);
+    list.addAll(_goalList);
+    list.addAll(_lifeStyleList);
+    list.addAll(_miscList);
+    return list;
+  }
 }
 
 /// The 5 Category lists.

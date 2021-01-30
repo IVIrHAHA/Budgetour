@@ -102,36 +102,36 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_more),
-            title: Text('macro'),
+            title: InkWell(
+              onTap: () {
+                DatabaseProvider.instance.saveAll();
+              },
+              child: Text('macro'),
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_less),
             title: InkWell(
               onTap: () {
-                /// call InitTest and save data
+                /// --- TEST BLOCK --- (save dummy data)
                 InitTestData.dummyEssentialList.forEach((element) {
-                  if (element is BudgetObject)
-                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);}
-                );
+                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                });
 
                 InitTestData.dummySecurityList.forEach((element) {
-                  if (element is BudgetObject)
-                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
                 });
 
                 InitTestData.dummyGoalList.forEach((element) {
-                  if (element is BudgetObject)
-                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
                 });
 
                 InitTestData.dummyLifeStyleList.forEach((element) {
-                  if (element is BudgetObject)
-                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
                 });
 
                 InitTestData.dummyMiscList.forEach((element) {
-                  if (element is BudgetObject)
-                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
                 });
               },
               child: Text('micro'),

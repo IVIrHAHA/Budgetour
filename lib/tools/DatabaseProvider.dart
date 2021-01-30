@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:budgetour/models/BudgetourReserve.dart' as br;
+import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:flutter/cupertino.dart';
@@ -62,7 +63,6 @@ class DatabaseProvider {
   }
 
   Future<int> insert(Object object, String tablename) async {
-    print('trying to save');
     // Connect to database
     Database db = await database;
 
@@ -72,7 +72,6 @@ class DatabaseProvider {
 
           /// TODO: REVISE THIS
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print('saved: ${object.name}');
       return id;
     }
 
@@ -92,6 +91,19 @@ class DatabaseProvider {
     print('Success');
   }
 
+  Future saveAll() async {
+    print('saving all');
+    Database db = await database;
+    Batch batch = db.batch();
+
+    CategoryListManager.instance.getAllObjects().forEach((element) {
+      print('saving ${element.name}');
+      db.insert(DbNames.fo_TABLE, element.toMap());
+    });
+
+    batch.commit();
+  }
+
   Future<List<Map>> loadAll() async {
     Database db = await database;
     List<Map> mapList = await db.query(DbNames.fo_TABLE, columns: [
@@ -102,7 +114,6 @@ class DatabaseProvider {
     ]);
 
     if (mapList.length > 0) {
-      print('map length: ${mapList.length}');
       return mapList;
     }
     return null;
