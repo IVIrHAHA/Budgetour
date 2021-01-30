@@ -8,6 +8,7 @@ import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
 import 'package:budgetour/pages/MenuListPage.dart';
 import 'package:budgetour/routes/Income_Route.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
@@ -100,26 +101,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 if (foodObject == null) {
                   throw Exception('did not find food item');
                 } else {
-                  var tableMap;
-                  // try to encode
-                  try {
-                    tableMap = foodObject.toMap();
-                    print('encoding successful');
-
-                    // Try to decode
-                    try {
-                      var something = FinanceObject.fromMap(tableMap);
-
-                      if(something is BudgetObject) {
-                        print('got it');
-                        lMan.add(something, CategoryType.goals);
-                      }
-                    } catch (Exception) {
-                      print('failed to decode');
-                    }
-                  } catch (Exception) {
-                    print('failed to encode');
-                  }
+                  DatabaseProvider db = DatabaseProvider.instance;
+                  DatabaseProvider.save(foodObject);
                 }
 
                 /// TODO: END OF BLOCK

@@ -41,13 +41,15 @@ class DatabaseProvider {
 
     /// Create main tables
     // FinanceObject Table
-    creationBatch.execute("CREATE TABLE ${DbNames.fo_TABLE}("
-    "${DbNames.fo_Category} INTEGER"
-    "${DbNames.fo_ObjectId} REAL PRIMARY KEY"
-    "${DbNames.fo_CashReserve} REAL"
-    "${DbNames.fo_Object} TEXT NOT NULL"
-    "${DbNames.fo_Type} TEXT NOT NULL"
-    ")");
+    creationBatch.execute(
+      "CREATE TABLE ${DbNames.fo_TABLE}("
+      "${DbNames.fo_Category} INTEGER,"
+      "${DbNames.fo_ObjectId} REAL,"
+      "${DbNames.fo_CashReserve} REAL,"
+      "${DbNames.fo_Object} TEXT,"
+      "${DbNames.fo_Type} TEXT"
+      ")",
+    );
 
     // // CashHandler Table
     // creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
@@ -76,43 +78,40 @@ class DatabaseProvider {
     }
 
     // Trying to save a Transaction
-    else if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {}
-
-    else {
+    else if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {
+    } else {
       throw Exception('Not a valid dbase insert query');
     }
   }
 
-  /// TODO: When done loading verity with BudgetReserve that cash is in sync
-  // Future<FinanceObject> query(int id) async {
-  //   Database db = await database;
-  //   List<Map> maps = await db.query('TASKTABLE',
-  //       columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
-  //       where: '\$TASK_ID = ?',
-  //       whereArgs: [id]);
-
-  //   if (maps.length > 0) {
-  //     //FinanceObject task = FinanceObject.fromMap(maps.first);
-  //     //return task;
-  //   }
-  //   return null;
-  // }
-
-  // static Future<FinanceObject> read(FinanceObject task) async {
-  //   DatabaseProvider db = DatabaseProvider.instance;
-  //   FinanceObject loadedTask = await db.query(task.getId());
-  //   if (loadedTask == null) {
-  //     //print('failed to load: ${task.getTitle()}');
-  //   } else {
-  //     print('loaded: ${loadedTask.getTitle()} @ ${loadedTask.getTime()}');
-  //   }
-  //   return loadedTask;
-  // }
-
-  /// Pretty much the same as insert
-  // static save(Task task) async {
-  //   DatabaseProvider db = DatabaseProvider.instance;
-  //   int id = await db.insert(task);
-  //   print('save successful: $id verification: ${task.getId()}');
-  // }
+  static save(FinanceObject obj) async {
+    instance.insert(obj, DbNames.fo_TABLE);
+    print('Success');
+  }
 }
+
+/// TODO: When done loading verity with BudgetReserve that cash is in sync
+// Future<FinanceObject> query(int id) async {
+//   Database db = await database;
+//   List<Map> maps = await db.query('TASKTABLE',
+//       columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
+//       where: '\$TASK_ID = ?',
+//       whereArgs: [id]);
+
+//   if (maps.length > 0) {
+//     //FinanceObject task = FinanceObject.fromMap(maps.first);
+//     //return task;
+//   }
+//   return null;
+// }
+
+// static Future<FinanceObject> read(FinanceObject task) async {
+//   DatabaseProvider db = DatabaseProvider.instance;
+//   FinanceObject loadedTask = await db.query(task.getId());
+//   if (loadedTask == null) {
+//     //print('failed to load: ${task.getTitle()}');
+//   } else {
+//     print('loaded: ${loadedTask.getTitle()} @ ${loadedTask.getTime()}');
+//   }
+//   return loadedTask;
+// }
