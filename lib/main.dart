@@ -86,33 +86,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_more),
             title: InkWell(
-              onTap: () {
-                /// TODO: THIS BLOCK IS ALL A TEST
-                CategoryListManager lMan = CategoryListManager.instance;
-                BudgetObject foodObject = lMan.essentials[0];
-
-                for (FinanceObject obj in lMan.essentials) {
-                  if (obj.name == 'Food') {
-                    foodObject ??= obj;
-                    break;
-                  }
-                }
-
-                if (foodObject == null) {
-                  throw Exception('did not find food item');
-                } else {
-                  DatabaseProvider db = DatabaseProvider.instance;
-                  DatabaseProvider.save(foodObject);
-                }
-
-                /// TODO: END OF BLOCK
+              onTap: () async {
+                List<Map> queryList = List();
+                Future<List<Map>> future = DatabaseProvider.instance.query();
+                queryList = await future;
+                future.then((value) {
+                  value.forEach((element) {
+                    FinanceObject obj = FinanceObject.fromMap(element);
+                    CategoryListManager.instance
+                        .add(obj, CategoryType.essential);
+                  });
+                  setState(() {});
+                });
               },
               child: Text('macro'),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_less),
-            title: Text('micro'),
+            title: InkWell(
+              onTap: () {
+                /// call InitTest and save data
+                InitTestData.dummyEssentialList.forEach((element) {
+                  if (element is BudgetObject)
+                    DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                });
+              },
+              child: Text('micro'),
+            ),
           )
         ],
       ),

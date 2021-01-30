@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:budgetour/models/BudgetourReserve.dart' as br;
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -70,6 +71,7 @@ class DatabaseProvider {
 
           /// TODO: REVISE THIS
           conflictAlgorithm: ConflictAlgorithm.replace);
+      print('saved: ${object.name}');
       return id;
     }
 
@@ -87,6 +89,45 @@ class DatabaseProvider {
   static save(FinanceObject obj) async {
     instance.insert(obj, DbNames.fo_TABLE);
     print('Success');
+  }
+
+  static loadObjects() async {
+    List<FinanceObject> list = List();
+
+    await instance.query();
+
+    // FutureBuilder(
+    //   future: instance.query(),
+    //   builder: (_, snapshot) {
+    //     /// should be List<Map>
+    //     if(snapshot.hasData) {
+    //       (snapshot.data as List).forEach((element) {
+    //         FinanceObject.fromMap(element);
+    //         list.add(FinanceObject.fromMap(element));
+    //       });
+    //     }
+    //     else if(snapshot.error) {
+    //       print('was an error');
+    //     }
+    //   },
+    // );
+
+    return list;
+  }
+
+  Future<List<Map>> query() async {
+    Database db = await database;
+    List<Map> maps = await db.query(DbNames.fo_TABLE, columns: [
+      DbNames.fo_Object,
+      DbNames.fo_Type,
+      DbNames.fo_CashReserve,
+    ]);
+
+    if (maps.length > 0) {
+      print('loaded something');
+      return maps;
+    }
+    return null;
   }
 }
 

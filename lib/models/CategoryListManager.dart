@@ -41,11 +41,11 @@ class CategoryListManager extends _CategoryListBase {
 
   // Initialize the category lists
   CategoryListManager._internal() {
-    _essentialList = InitTestData.dummyEssentialList;
-    _securityList = InitTestData.dummySecurityList;
-    _goalList = InitTestData.dummyGoalList;
-    _lifeStyleList = InitTestData.dummyLifeStyleList;
-    _miscList = InitTestData.dummyMiscList;
+    // _essentialList = InitTestData.dummyEssentialList;
+    // _securityList = InitTestData.dummySecurityList;
+    // _goalList = InitTestData.dummyGoalList;
+    // _lifeStyleList = InitTestData.dummyLifeStyleList;
+    // _miscList = InitTestData.dummyMiscList;
   }
 
   /// Get this [_instance]
@@ -75,6 +75,26 @@ class CategoryListManager extends _CategoryListBase {
         break;
     }
   }
+
+  remove(FinanceObject what, CategoryType where) {
+    switch (where) {
+      case CategoryType.essential:
+        _essentialList.removeWhere((element) => element.id == what.id);
+        break;
+      case CategoryType.security:
+        _securityList.removeWhere((element) => element.id == what.id);
+        break;
+      case CategoryType.goals:
+        _goalList.removeWhere((element) => element.id == what.id);
+        break;
+      case CategoryType.lifestyle:
+        _lifeStyleList.removeWhere((element) => element.id == what.id);
+        break;
+      case CategoryType.miscellaneous:
+        _miscList.removeWhere((element) => element.id == what.id);
+        break;
+    }
+  }
 }
 
 /// The 5 Category lists.
@@ -83,11 +103,11 @@ class CategoryListManager extends _CategoryListBase {
 /// overly complicated.
 
 abstract class _CategoryListBase {
-  List<FinanceObject> _essentialList,
-      _securityList,
-      _goalList,
-      _lifeStyleList,
-      _miscList;
+  List<FinanceObject> _essentialList = List(),
+      _securityList = List(),
+      _goalList = List(),
+      _lifeStyleList = List(),
+      _miscList = List();
 
   get essentials => _essentialList;
 

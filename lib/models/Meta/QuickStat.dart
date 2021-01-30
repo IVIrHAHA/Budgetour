@@ -42,7 +42,7 @@ class QuickStat {
           } else if (snapshot.hasError) {
             return Text('errr', style: style);
           } else {
-            return Text('berr', style: style);
+            return Text('err', style: style);
           }
         },
       );
