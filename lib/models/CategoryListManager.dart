@@ -1,6 +1,8 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/finance_objects/FixedPaymentObject.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 
 import 'finance_objects/BudgetObject.dart';
 
@@ -51,28 +53,38 @@ class CategoryListManager extends _CategoryListBase {
   /// Get this [_instance]
   static CategoryListManager get instance => _instance;
 
+  _verifyInsertion(
+      List<FinanceObject> list, FinanceObject financeObject, bool loading) {
+    if (!list.any((element) => element.id == financeObject.id)) {
+      /// Save object, assuming it was created and not loaded
+      if (!loading) {
+        DatabaseProvider.instance.insert(financeObject, DbNames.fo_TABLE);
+      }
+      list.add(financeObject);
+    }
+  }
+
   /// Adds [FinanceObject] to specified Category list using [CategoryType]
-  add(FinanceObject what, CategoryType where) {
+  add(FinanceObject what, CategoryType where, {bool loading = false}) {
     switch (where) {
       case CategoryType.essential:
-        if(!_essentialList.any((element) => element.id == what .id))
-          _essentialList.add(what);
+        _verifyInsertion(_essentialList, what, loading);
         break;
 
       case CategoryType.security:
-        _securityList.add(what);
+        _verifyInsertion(_securityList, what, loading);
         break;
 
       case CategoryType.goals:
-        _goalList.add(what);
+        _verifyInsertion(_goalList, what, loading);
         break;
 
       case CategoryType.lifestyle:
-        _lifeStyleList.add(what);
+        _verifyInsertion(_lifeStyleList, what, loading);
         break;
 
       case CategoryType.miscellaneous:
-        _miscList.add(what);
+        _verifyInsertion(_miscList, what, loading);
         break;
     }
   }

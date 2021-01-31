@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
+import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,6 +23,7 @@ class BudgetourReserve {
 
   get cashReport => _totalCash;
 
+  /// TODO: create a verify method to ensure cash amount are correct
   assign(Object cashObject, double cashAmount) {
     if (cashObject is CashHolder) {
       _totalFromHolders += cashAmount;
@@ -37,21 +41,6 @@ class BudgetourReserve {
   static double _totalCash = 0;
   static double _totalFromHandlers = 0;
   static double _totalFromHolders = 0;
-
-  static buildHistoryfromJson(String json, TransactionHistory history) {
-    // get list of Transaction json maps
-    List<dynamic> listTrxt = jsonDecode(json);
-
-    // Convert into Transactions
-    for (Map<String, dynamic> obj in listTrxt) {
-      Transaction buildTrans = Transaction(obj['amount'], obj['id'],
-          date: DateTime.fromMillisecondsSinceEpoch(obj['date']),
-          description: obj['description'],
-          perceptibleColor: obj['color']);
-
-      history.logTransaction(_validateTransaction(buildTrans));
-    }
-  }
 
   /// Add to [_totalCash] by the amount passed.
   /// Then return a validatedTransaction where amount is accessable
@@ -145,6 +134,12 @@ mixin CashHandler {
               Transaction(amount, holder.transactionLink)),
           this,
         );
+
+        FinanceObject object = (holder as FinanceObject);
+
+        /// Save object after transfer has been completed
+        DatabaseProvider.instance.insert(object, DbNames.fo_TABLE);
+
         return;
       } else {
         throw PartisanException('Both parties did not agree to transfer');
@@ -192,6 +187,10 @@ mixin CashHolder {
 
       /// '+=' beacause of above statement ^^^
       _cashAccount += withdrawlReciept.amount;
+
+      /// Save FinanceObject after cash has been spent
+      DatabaseProvider.instance.insert(this, DbNames.fo_TABLE);
+
       return withdrawlReciept;
     }
     return null;

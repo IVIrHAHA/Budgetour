@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
-import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
@@ -13,17 +10,12 @@ import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/InfoTile.dart';
 import 'package:common_tools/StringFormater.dart';
 import 'package:flutter/foundation.dart';
-import 'models/finance_objects/BudgetObject.dart';
 import 'models/finance_objects/CashOnHand.dart';
 import 'models/finance_objects/FinanceObject.dart';
 import 'package:flutter/material.dart';
 import 'package:common_tools/ColorGenerator.dart';
 
 void main() {
-  CashOnHand cashBag = CashOnHand.instance;
-  cashBag.logTransaction(
-      cashBag.reportIncome(10000)..description = 'Initial Deposit');
-  InitTestData.initTileList();
   runApp(MyApp());
 }
 
@@ -66,6 +58,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       length: 5,
       vsync: this,
     );
+    CashOnHand cashBag = CashOnHand.instance;
+    cashBag.logTransaction(
+        cashBag.reportIncome(10000)..description = 'Initial Deposit');
+    // InitTestData.initTileList();
     _loadData();
     super.initState();
   }
