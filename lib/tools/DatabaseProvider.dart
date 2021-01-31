@@ -68,63 +68,46 @@ class DatabaseProvider {
     await creationBatch.commit();
   }
 
-  Future<int> insert(Object object, String tablename) async {
+  Future<int> insert(Object object) async {
     // Connect to database
     Database db = await database;
 
     // Trying to save a FinanceObject
-    if (object is FinanceObject && tablename == DbNames.fo_TABLE) {
+    if (object is FinanceObject) {
       int id = await db.insert(DbNames.fo_TABLE, object.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
+
       return id;
     }
 
     // Trying to save a CashHandler
-    else if (object is br.CashHandler && tablename == DbNames.ch_TABLE) {
+    else if (object is br.CashHandler) {
     }
 
     // Trying to save a Transaction
-    else if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {
-      Database db = await database;
+    else if (object is br.Transaction) {
+      int id = await db.insert(DbNames.trxt_TABLE, object.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
 
-      if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {
-        int id = await db.insert(DbNames.trxt_TABLE, object.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-
-        print('transaction has been saved');
-        return id;
-      }
+      print('saved transaction');
+      return id;
     } else {
       throw Exception('Not a valid dbase insert query');
     }
   }
 
-  static save(FinanceObject obj) async {
-    instance.insert(obj, DbNames.fo_TABLE);
-    print('Success');
-  }
-
-  Future saveAll() async {
-    print('saving all');
+  Future<int> getTransactionQty() async {
     Database db = await database;
-    Batch batch = db.batch();
-
-    CategoryListManager.instance.getAllObjects().forEach((element) {
-      print('saving ${element.name}');
-      db.insert(DbNames.fo_TABLE, element.toMap());
-    });
-
-    batch.commit();
+    int count = Sqflite.firstIntValue(
+        await db.rawQuery("SELECT COUNT(*) FROM ${DbNames.trxt_TABLE}"));
+    return count;
   }
 
   Future<List<Map>> loadAll() async {
     Database db = await database;
-    List<Map> mapList = await db.query(DbNames.fo_TABLE, columns: [
-      DbNames.fo_Object,
-      DbNames.fo_Type,
-      DbNames.fo_CashReserve,
-      DbNames.fo_Category,
-    ]);
+    List<Map> mapList = await db
+        .rawQuery("SELECT * FROM ${DbNames.fo_TABLE}")
+        .whenComplete(() {});
 
     if (mapList.length > 0) {
       return mapList;
@@ -153,30 +136,4 @@ class DatabaseProvider {
       return List();
     }
   }
-
-  // /// TODO: When done loading verity with BudgetReserve that cash is in sync
-  // Future<FinanceObject> aquery(int id) async {
-  //   Database db = await database;
-  //   List<Map> maps = await db.query('TASKTABLE',
-  //       columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
-  //       where: '\$TASK_ID = ?',
-  //       whereArgs: [id]);
-
-  //   if (maps.length > 0) {
-  //     //FinanceObject task = FinanceObject.fromMap(maps.first);
-  //     //return task;
-  //   }
-  //   return null;
-  // }
 }
-
-// static Future<FinanceObject> read(FinanceObject task) async {
-//   DatabaseProvider db = DatabaseProvider.instance;
-//   FinanceObject loadedTask = await db.query(task.getId());
-//   if (loadedTask == null) {
-//     //print('failed to load: ${task.getTitle()}');
-//   } else {
-//     print('loaded: ${loadedTask.getTitle()} @ ${loadedTask.getTime()}');
-//   }
-//   return loadedTask;
-// }

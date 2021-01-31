@@ -100,13 +100,13 @@ class BudgetourReserve {
   /// Only place a [Transaction] can be validated
   static Transaction _validateTransaction(Transaction contract) {
     contract._validated = true;
-    _transactionCount++;
-    contract._transactionKey = _transactionCount;
-    DatabaseProvider.instance.insert(contract, DbNames.trxt_TABLE);
+    transactionCount++;
+    contract._transactionKey = transactionCount;
+    DatabaseProvider.instance.insert(contract);
     return contract;
   }
 
-  static int _transactionCount = 0;
+  static int transactionCount = 0;
 }
 
 /* -----------------------------------------------------------------------------
@@ -165,10 +165,10 @@ mixin CashHandler {
           this,
         );
 
-        FinanceObject object = (holder as FinanceObject);
-
+        print("Trying to save an object");
         /// Save object after transfer has been completed
-        DatabaseProvider.instance.insert(object, DbNames.fo_TABLE);
+        FinanceObject object = (holder as FinanceObject);
+        DatabaseProvider.instance.insert(object);
 
         return;
       } else {
@@ -218,8 +218,9 @@ mixin CashHolder {
       /// '+=' beacause of above statement ^^^
       _cashAccount += withdrawlReciept.amount;
 
+      print('Trying to save after spending');
       /// Save FinanceObject after cash has been spent
-      DatabaseProvider.instance.insert(this, DbNames.fo_TABLE);
+      DatabaseProvider.instance.insert(this);
 
       return withdrawlReciept;
     }

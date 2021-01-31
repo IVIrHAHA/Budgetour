@@ -1,5 +1,6 @@
 import 'package:budgetour/InitTestData.dart';
 import 'package:budgetour/Widgets/FinanceTile.dart';
+import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/pages/CreateFixedPaymentPage.dart';
 import 'package:budgetour/pages/CreateBudgetPage.dart';
@@ -69,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           FinanceObject obj = FinanceObject.fromMap(element);
           int categoryIndex = element[DbNames.fo_Category];
           CategoryListManager.instance
-              .add(obj, CategoryType.values[categoryIndex]);
+              .add(obj, CategoryType.values[categoryIndex], loading: true);
         });
         setState(() {});
       } else {
@@ -93,13 +94,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.unfold_more),
-            title: InkWell(
-              onTap: () {
-                DatabaseProvider.instance.saveAll();
+            icon: InkWell(
+              onTap: () async {
+                Future<int> future =
+                    DatabaseProvider.instance.getTransactionQty();
+                
+                await future;
+                future.then((value) {
+                  BudgetourReserve.transactionCount = value;
+                  print('this is amount of transactions: $value');
+                });
               },
-              child: Text('macro'),
+              child: Icon(Icons.unfold_more),
             ),
+            title: Text('macro'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.unfold_less),
@@ -107,23 +115,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () {
                 /// --- TEST BLOCK --- (save dummy data)
                 InitTestData.dummyEssentialList.forEach((element) {
-                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element);
                 });
 
                 InitTestData.dummySecurityList.forEach((element) {
-                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element);
                 });
 
                 InitTestData.dummyGoalList.forEach((element) {
-                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element);
                 });
 
                 InitTestData.dummyLifeStyleList.forEach((element) {
-                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element);
                 });
 
                 InitTestData.dummyMiscList.forEach((element) {
-                  DatabaseProvider.instance.insert(element, DbNames.fo_TABLE);
+                  DatabaseProvider.instance.insert(element);
                 });
               },
               child: Text('micro'),

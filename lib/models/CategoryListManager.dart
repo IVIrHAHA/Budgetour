@@ -54,12 +54,16 @@ class CategoryListManager extends _CategoryListBase {
   static CategoryListManager get instance => _instance;
 
   _verifyInsertion(
-      List<FinanceObject> list, FinanceObject financeObject, bool loading) {
+      List<FinanceObject> list, FinanceObject financeObject, bool loading) async {
     if (!list.any((element) => element.id == financeObject.id)) {
       /// Save object, assuming it was created and not loaded
       if (!loading) {
-        DatabaseProvider.instance.insert(financeObject, DbNames.fo_TABLE);
+        await DatabaseProvider.instance.insert(financeObject).whenComplete(() {
+          list.add(financeObject);
+        });
       }
+      /// If retrieving from database, no need to save therefore add directly to the list
+      else
       list.add(financeObject);
     }
   }
