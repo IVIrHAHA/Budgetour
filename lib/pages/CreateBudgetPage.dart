@@ -153,11 +153,10 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         title: _budgetName,
         categoryType: widget.targetCategory,
         targetAlloctionAmount: _calcController.getEntry(),
+        stat1: _selectedStat1,
+        stat2: _selectedStat2,
       );
 
-      // Add labels
-        // TODO: ADD LABELS
-    
       CategoryListManager.instance.add(
         _theBudgetObject,
         widget.targetCategory,
@@ -197,11 +196,47 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('selection 1'),
-            Text('selection 2'),
+            DropdownButton<BudgetStat>(
+              value: _selectedStat1,
+              hint: Text(
+                'Stat 1',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: Icon(Icons.arrow_drop_down),
+              onChanged: (newValue) {
+                _selectedStat1 = newValue;
+              },
+              items:
+                  BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {
+                return DropdownMenuItem<BudgetStat>(
+                  value: stat,
+                  child: Text(stat.toString().split('.').last),
+                );
+              }).toList(),
+            ),
+            DropdownButton<BudgetStat>(
+              value: _selectedStat2,
+              hint: Text(
+                'Stat 2',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: Icon(Icons.arrow_drop_down),
+              onChanged: (newValue) {
+                _selectedStat2 = newValue;
+              },
+              items:
+                  BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {
+                return DropdownMenuItem<BudgetStat>(
+                  value: stat,
+                  child: Text(stat.toString().split('.').last),
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
     );
   }
+
+  var _selectedStat1, _selectedStat2;
 }
