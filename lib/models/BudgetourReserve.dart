@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:budgetour/models/Meta/Exceptions/CustomExceptions.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
@@ -7,6 +5,8 @@ import 'package:budgetour/tools/DatabaseProvider.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+
+const String TRXT_KEY = "TransactionKEY";
 
 /// Tracks all the cash flowing through the system
 /// Keeping things in sync and accurate
@@ -28,14 +28,37 @@ class BudgetourReserve {
     if (cashObject is CashHolder) {
       _totalFromHolders += cashAmount;
       cashObject._cashAccount = cashAmount;
-    }
-    else if(cashObject is CashHandler) {
+    } else if (cashObject is CashHandler) {
       _totalFromHandlers += cashAmount;
       cashObject._cashAccount = cashAmount;
-    }
-    else {
+    } else {
       throw Exception('Unknown CashObject');
     }
+  }
+
+  Future<List<Transaction>> obtainHistory(Object cashObject) async {
+    List<Transaction> trxtList = List();
+    if (cashObject is CashHolder) {
+      Future<List<Map>> future = DatabaseProvider.instance
+          .loadTransactions(cashObject.transactionLink);
+      await future;
+      future.then((trxtMapList) {
+        /// Build Transaction Object
+        trxtMapList.forEach((trxtMap) {
+          Transaction trxtCopy = Transaction._fromMap(trxtMap);
+
+          /// Make data accessable, these are copies of saved validated Transactions
+          trxtCopy._transactionKey = trxtMap[TRXT_KEY];
+          trxtCopy._validated = true;
+          trxtList.add(trxtCopy);
+        });
+        print('Transaction load successful');
+        return trxtList;
+      });
+    } else if (cashObject is CashHandler) {
+      return null;
+    }
+    return null;
   }
 
   static double _totalCash = 0;
@@ -77,8 +100,13 @@ class BudgetourReserve {
   /// Only place a [Transaction] can be validated
   static Transaction _validateTransaction(Transaction contract) {
     contract._validated = true;
+    _transactionCount++;
+    contract._transactionKey = _transactionCount;
+    DatabaseProvider.instance.insert(contract, DbNames.trxt_TABLE);
     return contract;
   }
+
+  static int _transactionCount = 0;
 }
 
 /* -----------------------------------------------------------------------------
@@ -94,6 +122,8 @@ mixin CashHandler {
   /// **Implemented here, because of the transfer methods this interface defines.
   /// Otherwise [Transaction] would have no way of obtaining the key, since
   /// this is the only place [Transaction] objects are able to be created.
+  /// In addition, [Transaction] is saved regardless if [FinanceObject] utilizes
+  /// [TransactionHistory] mixin.
   double get transactionLink;
 
   /// This brings cash into the system and provides a validated [Transaction]
@@ -227,6 +257,8 @@ mixin CashHolder {
 class Transaction {
   static const String defaultMessage = '*missing note';
 
+  int _transactionKey;
+
   Key key;
   final double pertainenceID;
   final double _amount;
@@ -247,21 +279,33 @@ class Transaction {
     this.date = this.date ?? DateTime.now();
   }
 
-  get amount => _validated ? _amount : null;
+  get amount => _validated && _transactionKey != null ? _amount : null;
 
   bool isPerceptible() {
     return perceptibleColor != null;
   }
 
-  get isValid => _validated;
+  get isValid => _validated && _transactionKey != null;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': pertainenceID,
-      'amount': amount,
-      'description': description,
-      'date': date.millisecondsSinceEpoch,
-      'color': perceptibleColor != null ? perceptibleColor.value : null,
+      '${DbNames.trxt_id}': pertainenceID,
+      '${DbNames.trxt_amount}': amount,
+      '${DbNames.trxt_description}': description,
+      '${DbNames.trxt_date}': date.millisecondsSinceEpoch,
+      '${DbNames.trxt_color}':
+          perceptibleColor != null ? perceptibleColor.value : null,
+      TRXT_KEY: _transactionKey,
     };
+  }
+
+  static Transaction _fromMap(Map map) {
+    Transaction(
+      map['${DbNames.trxt_amount}'],
+      map['${DbNames.trxt_id}'],
+      description: map['${DbNames.trxt_description}'],
+      date: DateTime.fromMillisecondsSinceEpoch(map['${DbNames.trxt_date}']),
+      perceptibleColor: Color(map['${DbNames.trxt_color}']),
+    );
   }
 }

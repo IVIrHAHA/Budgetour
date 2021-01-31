@@ -53,8 +53,8 @@ class DbNames {
 
   // From Transaction
   static const String trxt_id = "ID";
-  static const String trxt_date = "date";
   static const String trxt_amount = "amount";
   static const String trxt_description = "description";
+  static const String trxt_date = "date";
   static const String trxt_color = "color";
 }

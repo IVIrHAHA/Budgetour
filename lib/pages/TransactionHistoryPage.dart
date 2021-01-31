@@ -99,35 +99,39 @@ class TransactionHistoryPage extends StatelessWidget {
   SingleChildScrollView _buildTransactionListView(int workingMonth) {
     return SingleChildScrollView(
       child: Column(
-        children: history.transactions.map((transaction) {
-          // Keep working month the same if already assigned
-          // otherwise working month goes to first element in list
-          workingMonth = workingMonth ?? transaction.date.month;
+        children: FutureBuilder(
+          builder: null,
+        ),
 
-          bool monthChanged = false;
-          // Month has changed
-          if (transaction.date.month != workingMonth) {
-            monthChanged = true;
-            workingMonth = transaction.date.month;
-          }
+        // history.transactions.map((transaction) {
+        //   // Keep working month the same if already assigned
+        //   // otherwise working month goes to first element in list
+        //   workingMonth = workingMonth ?? transaction.date.month;
 
-          return monthChanged
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child:
+        //   bool monthChanged = false;
+        //   // Month has changed
+        //   if (transaction.date.month != workingMonth) {
+        //     monthChanged = true;
+        //     workingMonth = transaction.date.month;
+        //   }
 
-                          /// (Full name of month) + (*space*) + (year)
-                          Text(DateFormat('LLLL y').format(transaction.date)),
-                    ),
-                    TransactionTile(
-                      transaction: transaction,
-                    ),
-                  ],
-                )
-              : TransactionTile(transaction: transaction);
-        }).toList(),
+        //   return monthChanged
+        //       ? Column(
+        //           children: [
+        //             Padding(
+        //               padding: const EdgeInsets.all(16.0),
+        //               child:
+
+        //                   /// (Full name of month) + (*space*) + (year)
+        //                   Text(DateFormat('LLLL y').format(transaction.date)),
+        //             ),
+        //             TransactionTile(
+        //               transaction: transaction,
+        //             ),
+        //           ],
+        //         )
+        //       : TransactionTile(transaction: transaction);
+        // }).toList(),
       ),
     );
   }

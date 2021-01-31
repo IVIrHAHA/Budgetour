@@ -3,7 +3,6 @@ import 'package:budgetour/models/BudgetourReserve.dart' as br;
 import 'package:budgetour/models/CategoryListManager.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -53,11 +52,18 @@ class DatabaseProvider {
       ")",
     );
 
+    // Transaction Table
+    creationBatch.execute("CREATE TABLE ${DbNames.trxt_TABLE}("
+        "${DbNames.trxt_id} REAL,"
+        "${DbNames.trxt_amount} REAL,"
+        "${DbNames.trxt_description} TEXT,"
+        "${DbNames.trxt_date} INTEGER,"
+        "${DbNames.trxt_color} INTEGER,"
+        "${br.TRXT_KEY} INTEGER PRIMARY KEY"
+        ")");
+
     // // CashHandler Table
     // creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
-
-    // // Transaction Table
-    // creationBatch.execute("CREATE TABLE ${DbNames.trxt_TABLE}");
 
     await creationBatch.commit();
   }
@@ -69,8 +75,6 @@ class DatabaseProvider {
     // Trying to save a FinanceObject
     if (object is FinanceObject && tablename == DbNames.fo_TABLE) {
       int id = await db.insert(DbNames.fo_TABLE, object.toMap(),
-
-          /// TODO: REVISE THIS
           conflictAlgorithm: ConflictAlgorithm.replace);
       return id;
     }
@@ -81,6 +85,15 @@ class DatabaseProvider {
 
     // Trying to save a Transaction
     else if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {
+      Database db = await database;
+
+      if (object is br.Transaction && tablename == DbNames.trxt_TABLE) {
+        int id = await db.insert(DbNames.trxt_TABLE, object.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+
+        print('transaction has been saved');
+        return id;
+      }
     } else {
       throw Exception('Not a valid dbase insert query');
     }
@@ -118,22 +131,39 @@ class DatabaseProvider {
     }
     return null;
   }
+
+  Future<List<Map>> loadTransactions(double transactionLink) async {
+    Database db = await database;
+    List<Map> mapList = await db.query(DbNames.trxt_TABLE,
+        columns: ["*"],
+        where: "\$${DbNames.trxt_id} = ?",
+        whereArgs: [transactionLink]);
+
+    if(mapList.length > 0) {
+      print('Transactintable has ${mapList.length}');
+      return mapList;
+    }
+    else {
+      print('nothing loaded from ${DbNames.trxt_TABLE}');
+      return null;
+    }
+  }
+
+  // /// TODO: When done loading verity with BudgetReserve that cash is in sync
+  // Future<FinanceObject> aquery(int id) async {
+  //   Database db = await database;
+  //   List<Map> maps = await db.query('TASKTABLE',
+  //       columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
+  //       where: '\$TASK_ID = ?',
+  //       whereArgs: [id]);
+
+  //   if (maps.length > 0) {
+  //     //FinanceObject task = FinanceObject.fromMap(maps.first);
+  //     //return task;
+  //   }
+  //   return null;
+  // }
 }
-
-/// TODO: When done loading verity with BudgetReserve that cash is in sync
-// Future<FinanceObject> query(int id) async {
-//   Database db = await database;
-//   List<Map> maps = await db.query('TASKTABLE',
-//       columns: ['TASK_ID', 'TASK_NAME', 'TASK_TIME', 'TASK_CONTEXT'],
-//       where: '\$TASK_ID = ?',
-//       whereArgs: [id]);
-
-//   if (maps.length > 0) {
-//     //FinanceObject task = FinanceObject.fromMap(maps.first);
-//     //return task;
-//   }
-//   return null;
-// }
 
 // static Future<FinanceObject> read(FinanceObject task) async {
 //   DatabaseProvider db = DatabaseProvider.instance;

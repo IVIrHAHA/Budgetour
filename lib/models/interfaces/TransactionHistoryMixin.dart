@@ -84,15 +84,11 @@ mixin TransactionHistory {
   }
 
   /// Here we will load the transaction history
-  List<Transaction> get transactions => _transactionsList;
+  // List<Transaction> get transactions => _transactionsList;
 
-  loadTransaction() {
-    
-  }
-
-  createhistory(List<Transaction> list){
-    for(Transaction trxt in list) {
-      logTransaction(trxt);
-    }
+  /// Returns a [Future<List<Transaction>>] which contains a copy of
+  /// pass [Transacion]s
+  loadTransaction() async {
+    return BudgetourReserve.clerk.obtainHistory(this);
   }
 }
