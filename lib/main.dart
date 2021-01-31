@@ -58,10 +58,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       length: 5,
       vsync: this,
     );
-    CashOnHand cashBag = CashOnHand.instance;
-    cashBag.logTransaction(
-        cashBag.reportIncome(10000)..description = 'Initial Deposit');
-    // InitTestData.initTileList();
     _loadData();
     super.initState();
   }

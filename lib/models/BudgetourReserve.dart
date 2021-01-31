@@ -36,29 +36,29 @@ class BudgetourReserve {
     }
   }
 
-  Future<List<Transaction>> obtainHistory(Object cashObject) async {
-    List<Transaction> trxtList = List();
-    if (cashObject is CashHolder) {
-      Future<List<Map>> future = DatabaseProvider.instance
-          .loadTransactions(cashObject.transactionLink);
-      await future;
-      future.then((trxtMapList) {
-        /// Build Transaction Object
-        trxtMapList.forEach((trxtMap) {
-          Transaction trxtCopy = Transaction._fromMap(trxtMap);
+  Future<List<Transaction>> obtainHistory(Object cashObject) {
+    return Future<List<Transaction>>(() async {
+      List<Transaction> trxtList = List();
+      if (cashObject is CashHolder) {
+        Future<List<Map>> future = DatabaseProvider.instance
+            .loadTransactions(cashObject.transactionLink);
+        await future;
+        future.then((trxtMapList) {
+          /// Build Transaction Object
+          trxtMapList.forEach((trxtMap) {
+            Transaction trxtCopy = Transaction._fromMap(trxtMap);
 
-          /// Make data accessable, these are copies of saved validated Transactions
-          trxtCopy._transactionKey = trxtMap[TRXT_KEY];
-          trxtCopy._validated = true;
-          trxtList.add(trxtCopy);
+            /// Make data accessable, these are copies of saved validated Transactions
+            trxtCopy._transactionKey = trxtMap[TRXT_KEY];
+            trxtCopy._validated = true;
+            trxtList.add(trxtCopy);
+          });
+
+          return trxtList;
         });
-        print('Transaction load successful');
-        return trxtList;
-      });
-    } else if (cashObject is CashHandler) {
-      return null;
-    }
-    return null;
+      }
+      return trxtList;
+    });
   }
 
   static double _totalCash = 0;
@@ -114,7 +114,7 @@ class BudgetourReserve {
  *------------------------------------------------------------------------------*/
 /// Can bring money into the system but can't expell it
 mixin CashHandler {
-  double _cashAccount = 0;
+  double _cashAccount = 10010;
 
   /// Links transactionHistory if there is one to the transactionHistoryTable
   /// Otherwise, return null.
@@ -300,12 +300,20 @@ class Transaction {
   }
 
   static Transaction _fromMap(Map map) {
-    Transaction(
-      map['${DbNames.trxt_amount}'],
-      map['${DbNames.trxt_id}'],
-      description: map['${DbNames.trxt_description}'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['${DbNames.trxt_date}']),
-      perceptibleColor: Color(map['${DbNames.trxt_color}']),
-    );
+    return Transaction(map['${DbNames.trxt_amount}'], map['${DbNames.trxt_id}'],
+        description: map['${DbNames.trxt_description}'],
+        date: DateTime.fromMillisecondsSinceEpoch(map['${DbNames.trxt_date}']),
+        perceptibleColor: map['${DbNames.trxt_color}'] != null
+            ? Color(map['${DbNames.trxt_color}'])
+            : null);
   }
+
+  @override
+  bool operator ==(other) {
+    return (other is Transaction) &&
+        other._transactionKey == this._transactionKey;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }

@@ -12,10 +12,10 @@ mixin TransactionHistory {
   /// Logs transactions according to date. Latest to oldest.
   ///
   /// *** By default, this does not update the [FinanceObject.cashReserve]
-  bool logTransaction(Transaction transaction) {
+  bool _logTransaction(Transaction transaction) {
     /// TODO: Can make this more efficient
 
-    if (transaction.isValid) {
+    if (transaction.isValid && !_transactionsList.contains(transaction)) {
       // Add wherever if list is empty
       if (_transactionsList.isEmpty) {
         _transactionsList.add(transaction);
@@ -84,11 +84,19 @@ mixin TransactionHistory {
   }
 
   /// Here we will load the transaction history
-  // List<Transaction> get transactions => _transactionsList;
+  List<Transaction> get transactions => _transactionsList;
 
   /// Returns a [Future<List<Transaction>>] which contains a copy of
   /// pass [Transacion]s
   loadTransaction() async {
-    return BudgetourReserve.clerk.obtainHistory(this);
+    Future<List<Transaction>> future =
+        BudgetourReserve.clerk.obtainHistory(this);
+
+    await future;
+    future.then((trxtList) {
+      trxtList.forEach((element) {
+        this._logTransaction(element);
+      });
+    });
   }
 }

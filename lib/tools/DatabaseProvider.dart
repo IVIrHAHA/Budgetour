@@ -135,17 +135,22 @@ class DatabaseProvider {
   Future<List<Map>> loadTransactions(double transactionLink) async {
     Database db = await database;
     List<Map> mapList = await db.query(DbNames.trxt_TABLE,
-        columns: ["*"],
-        where: "\$${DbNames.trxt_id} = ?",
+        columns: [
+          DbNames.trxt_id,
+          DbNames.trxt_amount,
+          DbNames.trxt_description,
+          DbNames.trxt_date,
+          DbNames.trxt_color,
+          br.TRXT_KEY,
+        ],
+        where: "${DbNames.trxt_id} = ?",
         whereArgs: [transactionLink]);
 
-    if(mapList.length > 0) {
-      print('Transactintable has ${mapList.length}');
+    if (mapList.length > 0) {
       return mapList;
-    }
-    else {
+    } else {
       print('nothing loaded from ${DbNames.trxt_TABLE}');
-      return null;
+      return List();
     }
   }
 

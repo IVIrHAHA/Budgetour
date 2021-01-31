@@ -11,12 +11,17 @@ import 'package:flutter/material.dart';
 class BudgetObjRoute extends StatelessWidget {
   final BudgetObject budgetObject;
 
-  BudgetObjRoute(this.budgetObject);
+  BudgetObjRoute(this.budgetObject) {
+    _loadHistory();
+  }
+
+  _loadHistory() async {
+    await this.budgetObject.loadTransaction();
+  }
 
   void _addTransaction(double valueEntered, BuildContext ctx) {
     Transaction transaction = budgetObject.spendCash(valueEntered);
     if (transaction != null) {
-      budgetObject.logTransaction(transaction);
       Navigator.of(ctx).pop();
     } else
       /// TODO: TELL USER NOT ENOUGH FUNDS TO COVER TRANSACTION

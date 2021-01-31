@@ -132,8 +132,6 @@ class BudgetObject extends FinanceObject<BudgetStat>
           ColorGenerator.fromHex(GColors.blueish);
       _thisRequested = false;
     }
-
-    logTransaction(transferReciept);
   }
 
   /* ----------------------------------------------------------------------------

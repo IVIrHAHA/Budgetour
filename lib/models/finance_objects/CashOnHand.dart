@@ -28,7 +28,7 @@ class CashOnHand with CashHandler, TransactionHistory {
   /// String value 'Deposited'
   void autoLogDeposit(double amount) {
     Transaction report = this.reportIncome(amount);
-    logTransaction(report);
+    // logTransaction(report);
   }
 
   static CashOnHand get instance => _instance;
@@ -36,7 +36,7 @@ class CashOnHand with CashHandler, TransactionHistory {
   @override
   void transferReciept(Transaction transferReciept, CashHolder to) {
     transferReciept.description = 'refilled ${(to as FinanceObject).name}';
-    logTransaction(transferReciept);
+    // logTransaction(transferReciept);
   }
 
   @override
