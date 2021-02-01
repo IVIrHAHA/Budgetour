@@ -59,12 +59,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       length: 5,
       vsync: this,
     );
-    _loadData();
+    _loadProjectData();
     super.initState();
   }
 
-  _loadData() async {
-    await DatabaseProvider.instance.loadAll().then((value) {
+  _loadProjectData() async {
+    /// Load BudgetReserve fundamental values
+
+    /// Load FinanceObjects into FinanceTiles on main page
+    await DatabaseProvider.instance.loadAllHolders().then((value) {
       if (value != null) {
         value.forEach((element) {
           FinanceObject obj = FinanceObject.fromMap(element);
@@ -74,9 +77,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         });
         setState(() {});
       } else {
-        print('PROCESS: NOTHING TO LOAD');
+        print('PROCESS: NO FINANCE OBJECT WERE LOADED');
       }
     });
+
+    /// Load Income based Objects
+    // await DatabaseProvider.instance.loadAllHandlers();
   }
 
   @override
@@ -101,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 
                 await future;
                 future.then((value) {
-                  BudgetourReserve.transactionCount = value;
+                  // BudgetourReserve.transactionCount = value;
                   print('this is amount of transactions: $value');
                 });
               },

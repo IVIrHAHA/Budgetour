@@ -100,13 +100,24 @@ class BudgetourReserve {
   /// Only place a [Transaction] can be validated
   static Transaction _validateTransaction(Transaction contract) {
     contract._validated = true;
-    transactionCount++;
-    contract._transactionKey = transactionCount;
-    DatabaseProvider.instance.insert(contract);
+    _saveTransaction(contract);
     return contract;
   }
 
-  static int transactionCount = 0;
+  /// ONLY TO BE USED BY [_validateTransaction]
+  static _saveTransaction(Transaction transaction) async {
+    Future<int> future = DatabaseProvider.instance.getTransactionQty();
+    await future;
+    future.then((trxtQTY) async {
+      transaction._transactionKey = trxtQTY + 1;
+      print(
+        'saving ${transaction.pertainenceID}' +
+            '${transaction._transactionKey} ' +
+            'des: ${transaction.description}',
+      );
+      await DatabaseProvider.instance.insert(transaction);
+    });
+  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -165,8 +176,8 @@ mixin CashHandler {
           this,
         );
 
-        print("Trying to save an object");
         /// Save object after transfer has been completed
+        /// TODO: change to an update query function
         FinanceObject object = (holder as FinanceObject);
         DatabaseProvider.instance.insert(object);
 
@@ -218,7 +229,6 @@ mixin CashHolder {
       /// '+=' beacause of above statement ^^^
       _cashAccount += withdrawlReciept.amount;
 
-      print('Trying to save after spending');
       /// Save FinanceObject after cash has been spent
       DatabaseProvider.instance.insert(this);
 
@@ -280,13 +290,13 @@ class Transaction {
     this.date = this.date ?? DateTime.now();
   }
 
-  get amount => _validated && _transactionKey != null ? _amount : null;
+  get amount => _validated ? _amount : null;
 
   bool isPerceptible() {
     return perceptibleColor != null;
   }
 
-  get isValid => _validated && _transactionKey != null;
+  get isValid => _validated;
 
   Map<String, dynamic> toMap() {
     return {

@@ -89,7 +89,6 @@ class DatabaseProvider {
       int id = await db.insert(DbNames.trxt_TABLE, object.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
 
-      print('saved transaction');
       return id;
     } else {
       throw Exception('Not a valid dbase insert query');
@@ -103,7 +102,7 @@ class DatabaseProvider {
     return count;
   }
 
-  Future<List<Map>> loadAll() async {
+  Future<List<Map>> loadAllHolders() async {
     Database db = await database;
     List<Map> mapList = await db
         .rawQuery("SELECT * FROM ${DbNames.fo_TABLE}")
@@ -113,6 +112,11 @@ class DatabaseProvider {
       return mapList;
     }
     return null;
+  }
+
+  Future<List<Map>> loadAllHandlers() async {
+    Database db = await database;
+    // List<Map> mapList = await db.
   }
 
   Future<List<Map>> loadTransactions(double transactionLink) async {

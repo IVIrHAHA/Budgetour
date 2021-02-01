@@ -15,6 +15,9 @@ class CashOnHand with CashHandler, TransactionHistory {
     // TODO: Load CashOnHand
   }
 
+  static const String _idName = 'com.bugetour.CashOnHand';
+  static CashOnHand get instance => _instance;
+
   /// Produces a [Transaction] object with an automated 'Deposited' description.
   /// However, does not log the transaction.
   @override
@@ -24,14 +27,12 @@ class CashOnHand with CashHandler, TransactionHistory {
     return report;
   }
 
-  /// Auto Logs the amount deposited and gives [Transaction.description] the 
+  /// Auto Logs the amount deposited and gives [Transaction.description] the
   /// String value 'Deposited'
   void autoLogDeposit(double amount) {
     Transaction report = this.reportIncome(amount);
     // logTransaction(report);
   }
-
-  static CashOnHand get instance => _instance;
 
   @override
   void transferReciept(Transaction transferReciept, CashHolder to) {
@@ -41,15 +42,13 @@ class CashOnHand with CashHandler, TransactionHistory {
 
   @override
   bool acceptTransfer(double amount) {
-    if(amount <= this.cashAmount) {
+    if (amount <= this.cashAmount) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
-static const String _idName = 'com.bugetour.CashOnHand';
-@override
+  @override
   double get transactionLink => _idName.hashCode.toDouble();
 }

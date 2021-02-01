@@ -74,6 +74,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
     Transaction cashTransaction = super.spendCash(amount);
 
     if (cashTransaction == null) {
+      print('auditing');
       cashTransaction = _auditTransaction(cashTransaction, amount);
     }
 
