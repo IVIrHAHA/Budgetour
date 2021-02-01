@@ -15,6 +15,7 @@ import 'package:budgetour/models/Meta/QuickStat.dart';
 import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/interfaces/RecurrenceMixin.dart';
 import 'package:budgetour/routes/BudgetObj_Route.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:common_tools/StringFormater.dart';
@@ -113,25 +114,33 @@ class BudgetObject extends FinanceObject<BudgetStat>
   }
 
   @override
-  void transferReciept(Transaction transferReciept, CashHandler from) {
+  Future<Transaction> transferReciept(
+      Future<Transaction> transferReciept, CashHandler from) {
     /// [this] did not request the transfer, rather an external object initiated the
     /// transfer
     if (!_thisRequested) {
-      transferReciept.description = 'refill';
-
       if (isDue && cashReserve >= targetAlloctionAmount) {
         _reset();
       }
+
+      return transferReciept.then((value) {
+        value.description = 'refill';
+        return value;
+      });
     }
 
     /// Only enters when auditing a transaction.
     /// Mark transaction as 'went overbudget'.
     else if (_thisRequested) {
-      transferReciept.description = 'went overbudget';
-      transferReciept.perceptibleColor =
-          ColorGenerator.fromHex(GColors.blueish);
-      _thisRequested = false;
+      return transferReciept.then((value) {
+        _thisRequested = false;
+        value.description = 'went overbudget';
+        value.perceptibleColor = ColorGenerator.fromHex(GColors.blueish);
+
+        return value;
+      });
     }
+    return null;
   }
 
   /* ----------------------------------------------------------------------------

@@ -116,12 +116,13 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   }
 
   @override
-  void transferReciept(Transaction transferReciept, CashHandler from) {
+  transferReciept(Future<Transaction> transferReciept, CashHandler from) {
     /// Recieved amount needed to complete [fixedPayment]
     if (cashReserve == fixedPayment) {
       _isReady = true;
       _isPaid = false;
     }
+    return transferReciept;
   }
 
   @override

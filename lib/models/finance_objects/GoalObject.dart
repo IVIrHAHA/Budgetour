@@ -85,8 +85,8 @@ class GoalObject extends FinanceObject<GoalStats> {
   }
 
   @override
-  void transferReciept(Transaction transferReciept, CashHandler from) {
-    // Do nothing
+  transferReciept(Future<Transaction> transferReciept, CashHandler from) {
+    return transferReciept;
   }
 
   @override

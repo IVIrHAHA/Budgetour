@@ -1,5 +1,6 @@
 import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
 
 import 'FinanceObject.dart';
 
@@ -36,9 +37,12 @@ class CashOnHand with CashHandler, TransactionHistory {
   }
 
   @override
-  void transferReciept(Transaction transferReciept, CashHolder to) {
-    transferReciept.description = 'refilled ${(to as FinanceObject).name}';
-    // logTransaction(transferReciept);
+  Future <Transaction> transferReciept(Future<Transaction> transferReciept, CashHolder to) {
+
+    return transferReciept.then((value) {
+      value.description = 'refilled ${(to as FinanceObject).name}';
+      return value;
+    });
   }
 
   @override

@@ -49,7 +49,7 @@ class BudgetourReserve {
             Transaction trxtCopy = Transaction._fromMap(trxtMap);
 
             /// Make data accessable, these are copies of saved validated Transactions
-            trxtCopy._transactionKey = trxtMap[TRXT_KEY];
+            trxtCopy.transactionKey = trxtMap[TRXT_KEY];
             trxtCopy._validated = true;
             trxtList.add(trxtCopy);
           });
@@ -100,11 +100,11 @@ class BudgetourReserve {
   /// Only place a [Transaction] can be validated
   static Future<Transaction> _validateTransaction(Transaction contract) async {
     contract._validated = true;
-    contract._transactionKey =
+    contract.transactionKey =
         await DatabaseProvider.instance.getTransactionQty();
 
-    if (contract._transactionKey != null) {
-      contract._transactionKey++;
+    if (contract.transactionKey != null) {
+      contract.transactionKey++;
       return contract;
     } else {
       throw Exception('Transaction was unable to be validated!');
@@ -116,10 +116,10 @@ class BudgetourReserve {
     Future<int> future = DatabaseProvider.instance.getTransactionQty();
     await future;
     future.then((trxtQTY) async {
-      transaction._transactionKey = trxtQTY + 1;
+      transaction.transactionKey = trxtQTY + 1;
       print(
         'saving ${transaction.pertainenceID}' +
-            '${transaction._transactionKey} ' +
+            '${transaction.transactionKey} ' +
             'des: ${transaction.description}',
       );
       await DatabaseProvider.instance.insert(transaction);
@@ -183,17 +183,25 @@ mixin CashHandler {
         /// Transfer [amount] to holder
         holder._cashAccount += amount;
 
-        // this.transferReciept(
-        //   BudgetourReserve._validateTransaction(
-        //       Transaction(-amount, this.transactionLink)),
-        //   holder,
-        // );
-
-        // holder.transferReciept(
-        //   BudgetourReserve._validateTransaction(
-        //       Transaction(amount, holder.transactionLink)),
-        //   this,
-        // );
+        this
+            .transferReciept(
+          BudgetourReserve._validateTransaction(
+              Transaction(-amount, this.transactionLink)),
+          holder,
+        )
+            .then((handlerReciept) {
+          DatabaseProvider.instance.insert(handlerReciept).whenComplete(() {
+            holder.transferReciept(
+              BudgetourReserve._validateTransaction(
+                  Transaction(amount, holder.transactionLink)),
+              this,
+            ).then((holderReceipt) {
+              DatabaseProvider.instance.insert(holderReceipt).whenComplete(() {
+                print('save should be successful');
+              });
+            });
+          });
+        });
 
         /// Save object after transfer has been completed
         /// TODO: change to an update query function
@@ -215,7 +223,11 @@ mixin CashHandler {
 
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]
-  void transferReciept(Transaction transferReciept, CashHolder to);
+  ///
+  /// When make any changes to transferReciept and pass it pack, [BudgetReserve] will
+  /// archive it.
+  Future<Transaction> transferReciept(
+      Future<Transaction> transferReciept, CashHolder to);
 
   double get cashAmount => _cashAccount;
 }
@@ -282,7 +294,11 @@ mixin CashHolder {
 
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]
-  void transferReciept(Transaction transferReciept, CashHandler from);
+  ///
+  /// When make any changes to transferReciept and pass it pack, [BudgetReserve] will
+  /// archive it.
+  Future<Transaction> transferReciept(
+      Future<Transaction> transferReciept, CashHandler from);
 
   double get cashReserve => _cashAccount;
 }
@@ -295,7 +311,7 @@ mixin CashHolder {
 class Transaction {
   static const String defaultMessage = '*missing note';
 
-  int _transactionKey;
+  int transactionKey;
 
   Key key;
   final double pertainenceID;
@@ -333,7 +349,7 @@ class Transaction {
       '${DbNames.trxt_date}': date.millisecondsSinceEpoch,
       '${DbNames.trxt_color}':
           perceptibleColor != null ? perceptibleColor.value : null,
-      TRXT_KEY: _transactionKey,
+      TRXT_KEY: transactionKey,
     };
   }
 
@@ -349,7 +365,7 @@ class Transaction {
   @override
   bool operator ==(other) {
     return (other is Transaction) &&
-        other._transactionKey == this._transactionKey;
+        other.transactionKey == this.transactionKey;
   }
 
   @override
