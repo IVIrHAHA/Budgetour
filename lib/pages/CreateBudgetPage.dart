@@ -9,6 +9,7 @@ import '../widgets/standardized/InfoTile.dart';
 import '../widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateBudgetPage extends StatefulWidget {
   final CategoryType targetCategory;
@@ -83,12 +84,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
       appBar: _buildAppBar(context),
       body: Column(
         children: [
-          Flexible(
-            flex: 1,
-            child: InfoTile(
-              title: 'Budget',
-            ),
-          ),
           Flexible(
             flex: 6,
             child: _buildPromptContent(context),
@@ -168,6 +163,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
     }
   }
 
+  double _toolBarHeight;
   /// BUILD_APP_BAR METHOD
   /// ------------------------------------------
   /// builds the appBar used.
@@ -175,68 +171,83 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   /// subtle changes.
   /// ------------------------------------------
   AppBar _buildAppBar(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    _toolBarHeight = MediaQuery.of(context).size.height * GlobalValues.creationAppBarHeightRatio;
     return AppBar(
-      title: ListTile(
-        leading: NameInputBox(
-          defaultWidth: MediaQuery.of(context).size.width / 3,
-          title: Text(_budgetName ?? 'Enter Name'),
-          errorMessage: 'invalid',
-          inputHint: 'Enter New Name',
-          backgroundColor: headerColor,
-          isValidFunction: (testTxt) {
-            if (testTxt.isNotEmpty && testTxt != 'Enter Name') {
-              return true;
-            } else
-              return false;
-          },
-          onSubmitted: (text) {
-            _budgetName = text;
-          },
-        ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+      title: NameInputBox(
+        defaultWidth: MediaQuery.of(context).size.width / 3,
+        title: Text(_budgetName ?? 'Enter Name'),
+        errorMessage: 'invalid',
+        inputHint: 'Enter New Name',
+        backgroundColor: headerColor,
+        isValidFunction: (testTxt) {
+          if (testTxt.isNotEmpty && testTxt != 'Enter Name') {
+            return true;
+          } else
+            return false;
+        },
+        onSubmitted: (text) {
+          _budgetName = text;
+        },
+      ),
+      actions: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButton<BudgetStat>(
-              value: _selectedStat1,
-              style: TextStyle(color: Colors.grey),
-              hint: Text(
-                'Stat 1',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: Icon(Icons.arrow_drop_down),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedStat1 = newValue;
-                });
-              },
-              items:
-                  BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {
-                return DropdownMenuItem<BudgetStat>(
-                  value: stat,
-                  child: Text(stat.toString().split('.').last),
-                );
-              }).toList(),
+            _buildSelection(
+              hint: 'Stat1',
+              selection: _selectedStat1,
+              onSelected: (newValue) => _selectedStat1 = newValue,
             ),
-            DropdownButton<BudgetStat>(
-              value: _selectedStat2,
-              hint: Text(
-                'Stat 2',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: Icon(Icons.arrow_drop_down),
-              onChanged: (newValue) {
-                _selectedStat2 = newValue;
-              },
-              items:
-                  BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {
-                return DropdownMenuItem<BudgetStat>(
-                  value: stat,
-                  child: Text(stat.toString().split('.').last),
-                );
-              }).toList(),
+            _buildSelection(
+              hint: 'Stat2',
+              selection: _selectedStat2,
+              onSelected: (newValue) => _selectedStat2 = newValue,
             ),
           ],
         ),
+      ],
+      toolbarHeight: _toolBarHeight,
+    );
+  }
+
+  Widget _buildSelection(
+      {String hint, var selection, Function(BudgetStat) onSelected}) {
+    return Container(
+      height: _toolBarHeight * .3,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        border: Border.all(
+          color: ColorGenerator.fromHex(GColors.borderColor),
+          width: 1,
+          style: BorderStyle.solid,
+        ),
+        borderRadius: BorderRadius.circular(
+          GlobalValues.roundedEdges,
+        ),
+      ),
+      child: DropdownButton<BudgetStat>(
+        underline: Container(),
+        style: TextStyle(color: Colors.grey),
+        value: selection,
+        hint: Text(
+          hint,
+          style: TextStyle(color: Colors.white),
+        ),
+        icon: Icon(Icons.arrow_drop_down),
+        onChanged: (newValue) {
+          /// should work as pointer?
+          setState(() {
+            onSelected(newValue);
+          });
+        },
+        items: BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {
+          return DropdownMenuItem<BudgetStat>(
+            value: stat,
+            child: Text(stat.toString().split('.').last),
+          );
+        }).toList(),
       ),
     );
   }

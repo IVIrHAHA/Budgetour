@@ -28,6 +28,7 @@ class GlobalValues {
   static const double defaultMargin = 24;
   static const double financeTileMargin = 4;
   static const double defaultTilePadding = 16;
+  static const double creationAppBarHeightRatio = .15;
 }
 
 class DbNames {
