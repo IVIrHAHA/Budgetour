@@ -126,7 +126,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   }
 
   @override
-  bool acceptTransfer(double amount) {
+  bool agreeToTransfer(double amount) {
     /// Ensure cashReserve never exceeds fixedPayment
     if ((amount + cashReserve) <= fixedPayment) {
       return true;

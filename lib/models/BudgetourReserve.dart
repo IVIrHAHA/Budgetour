@@ -144,8 +144,14 @@ mixin CashHandler {
   /// [TransactionHistory] mixin.
   double get transactionLink;
 
+  Map<String, dynamic> toMap();
+
   /// This brings cash into the system and provides a validated [Transaction]
   /// with [Transaction.amount] equalling the amount passed.
+  /// 
+  /// If [this.CashHandler] has a [TransactionHistory] mixin, then saving 
+  /// [Transaction] reciept must be handled externally.
+  /// Otherwise, this saves the reciept.
   Future<Transaction> reportIncome(double amount) async {
     Transaction reciept;
 
@@ -176,7 +182,7 @@ mixin CashHandler {
   void transferToHolder(CashHolder holder, double amount) {
     if (_cashAccount >= amount && amount > 0) {
       /// Verify with each object to agree to the transfer
-      if (this.acceptTransfer(amount) && holder.acceptTransfer(amount)) {
+      if (this.agreeToTransfer(amount) && holder.agreeToTransfer(amount)) {
         /// Remove [amount] from [_cashAccount]
         this._cashAccount -= amount;
 
@@ -219,7 +225,7 @@ mixin CashHandler {
   /// Determine whether [this] is willing to accept [amount]
   ///
   /// *** Executes before [CashHandler.transferToHolder]
-  bool acceptTransfer(double amount);
+  bool agreeToTransfer(double amount);
 
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]
@@ -290,7 +296,7 @@ mixin CashHolder {
   /// Determine whether [this] is willing to accept [transferAmount]
   ///
   /// *** Executes before [CashHandler.transferToHolder]
-  bool acceptTransfer(double transferAmount);
+  bool agreeToTransfer(double transferAmount);
 
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]

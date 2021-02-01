@@ -68,7 +68,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
   ///   3a. Budget is almost out and still has a lot of time left
   /// 4. User went over targeted budget
 
-  /// Does not logTransaction, in case user wants to add a note
+  /// Does not log or save [Transaction], in case user wants to add a note
   /// of their own.
   @override
   Future<Transaction> spendCash(double amount) async {
@@ -147,7 +147,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
    *  Tile Formating and misc methods
    * --------------------------------------------------------------------------*/
   @override
-  bool acceptTransfer(double transferAmount) {
+  bool agreeToTransfer(double transferAmount) {
     return true;
   }
 

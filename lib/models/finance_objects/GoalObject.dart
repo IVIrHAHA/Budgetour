@@ -90,7 +90,7 @@ class GoalObject extends FinanceObject<GoalStats> {
   }
 
   @override
-  bool acceptTransfer(double amount) {
+  bool agreeToTransfer(double amount) {
     return true;
   }
 

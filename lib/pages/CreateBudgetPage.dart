@@ -198,13 +198,16 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
           children: [
             DropdownButton<BudgetStat>(
               value: _selectedStat1,
+              style: TextStyle(color: Colors.grey),
               hint: Text(
                 'Stat 1',
                 style: TextStyle(color: Colors.white),
               ),
               icon: Icon(Icons.arrow_drop_down),
               onChanged: (newValue) {
-                _selectedStat1 = newValue;
+                setState(() {
+                  _selectedStat1 = newValue;
+                });
               },
               items:
                   BudgetStat.values.map<DropdownMenuItem<BudgetStat>>((stat) {

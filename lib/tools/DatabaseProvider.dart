@@ -62,8 +62,11 @@ class DatabaseProvider {
         "${br.TRXT_KEY} INTEGER PRIMARY KEY"
         ")");
 
-    // // CashHandler Table
-    // creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}");
+    // CashHandler Table
+    creationBatch.execute("CREATE TABLE ${DbNames.ch_TABLE}("
+        "${DbNames.ch_TransactionLink} REAL PRIMARY KEY,"
+        "${DbNames.ch_CashReserve} REAL"
+        ")");
 
     await creationBatch.commit();
   }
@@ -82,6 +85,7 @@ class DatabaseProvider {
 
     // Trying to save a CashHandler
     else if (object is br.CashHandler) {
+      
     }
 
     // Trying to save a Transaction

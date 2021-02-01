@@ -1,6 +1,7 @@
 import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/tools/DatabaseProvider.dart';
+import 'package:budgetour/tools/GlobalValues.dart';
 
 import 'FinanceObject.dart';
 
@@ -13,7 +14,7 @@ class CashOnHand with CashHandler, TransactionHistory {
   }
 
   CashOnHand._internal() {
-    // TODO: Load CashOnHand
+
   }
 
   static const String _idName = 'com.bugetour.CashOnHand';
@@ -22,7 +23,7 @@ class CashOnHand with CashHandler, TransactionHistory {
   /// Produces a [Transaction] object with an automated 'Deposited' description.
   /// However, does not log the transaction.
   @override
-  reportIncome(double amount) async {
+  Future<Transaction> reportIncome(double amount) async {
     return await super.reportIncome(amount).then((report) {
       report.description = 'Deposited';
       return report;
@@ -33,12 +34,11 @@ class CashOnHand with CashHandler, TransactionHistory {
   /// String value 'Deposited'
   void autoLogDeposit(double amount) {
     this.reportIncome(amount);
-    // logTransaction(report);
   }
 
   @override
-  Future <Transaction> transferReciept(Future<Transaction> transferReciept, CashHolder to) {
-
+  Future<Transaction> transferReciept(
+      Future<Transaction> transferReciept, CashHolder to) {
     return transferReciept.then((value) {
       value.description = 'refilled ${(to as FinanceObject).name}';
       return value;
@@ -46,7 +46,7 @@ class CashOnHand with CashHandler, TransactionHistory {
   }
 
   @override
-  bool acceptTransfer(double amount) {
+  bool agreeToTransfer(double amount) {
     if (amount <= this.cashAmount) {
       return true;
     } else {
@@ -56,4 +56,12 @@ class CashOnHand with CashHandler, TransactionHistory {
 
   @override
   double get transactionLink => _idName.hashCode.toDouble();
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      DbNames.ch_TransactionLink: transactionLink,
+      DbNames.ch_CashReserve: cashAmount,
+    };
+  }
 }
