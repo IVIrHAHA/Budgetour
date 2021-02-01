@@ -98,10 +98,12 @@ class BudgetourReserve {
   }
 
   /// Only place a [Transaction] can be validated
-  static Transaction _validateTransaction(Transaction contract) {
+  static Future<Transaction> _validateTransaction(Transaction contract) async {
     contract._validated = true;
-    _saveTransaction(contract);
-    return contract;
+    DatabaseProvider.instance.getTransactionQty().then((trxtQTY) {
+      contract._transactionKey = trxtQTY;
+      
+    });
   }
 
   /// ONLY TO BE USED BY [_validateTransaction]
