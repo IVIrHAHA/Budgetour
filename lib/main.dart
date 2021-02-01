@@ -59,12 +59,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       length: 5,
       vsync: this,
     );
-    _loadProjectData();
+
+    /// Check to see how much total cash there actually is
+    _loadProjectData().then((value) {
+      
+    });
     super.initState();
   }
 
-  _loadProjectData() async {
-    /// Load BudgetReserve fundamental values
+  Future<bool> _loadProjectData() async {
+    bool load1Complete = false;
+    bool load2Complete = false;
+
+    /// Load CashOnHand
+    await DatabaseProvider.instance
+        .loadCOH(CashOnHand.instance.transactionLink)
+        .then((cohMap) {
+      BudgetourReserve.clerk.assign(
+        CashOnHand.instance,
+        cohMap[DbNames.ch_CashReserve],
+      );
+      load1Complete = true;
+    });
 
     /// Load FinanceObjects into FinanceTiles on main page
     await DatabaseProvider.instance.loadAllHolders().then((value) {
@@ -76,13 +92,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               .add(obj, CategoryType.values[categoryIndex], loading: true);
         });
         setState(() {});
-      } else {
-        print('PROCESS: NO FINANCE OBJECT WERE LOADED');
       }
+      load2Complete = true;
     });
 
-    /// Load Income based Objects
-    // await DatabaseProvider.instance.loadAllHandlers();
+    if(load2Complete && load1Complete) {
+      return true;
+    }
+    else {
+      throw Exception('Failed to load something');
+    }
   }
 
   @override
@@ -104,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () async {
                 Future<int> future =
                     DatabaseProvider.instance.getTransactionQty();
-                
+
                 await future;
                 future.then((value) {
                   // BudgetourReserve.transactionCount = value;

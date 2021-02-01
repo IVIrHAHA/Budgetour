@@ -21,7 +21,7 @@ class BudgetourReserve {
 
   static BudgetourReserve get clerk => _instance;
 
-  get cashReport => _totalCash;
+  get cashReport => _totalFromHandlers + _totalFromHolders;
 
   /// TODO: create a verify method to ensure cash amount are correct
   assign(Object cashObject, double cashAmount) {
@@ -39,24 +39,32 @@ class BudgetourReserve {
   Future<List<Transaction>> obtainHistory(Object cashObject) {
     return Future<List<Transaction>>(() async {
       List<Transaction> trxtList = List();
+      double trxtLink;
+
       if (cashObject is CashHolder) {
-        Future<List<Map>> future = DatabaseProvider.instance
-            .loadTransactions(cashObject.transactionLink);
-        await future;
-        future.then((trxtMapList) {
-          /// Build Transaction Object
-          trxtMapList.forEach((trxtMap) {
-            Transaction trxtCopy = Transaction._fromMap(trxtMap);
-
-            /// Make data accessable, these are copies of saved validated Transactions
-            trxtCopy.transactionKey = trxtMap[TRXT_KEY];
-            trxtCopy._validated = true;
-            trxtList.add(trxtCopy);
-          });
-
-          return trxtList;
-        });
+        trxtLink = cashObject.transactionLink;
+      } else if (cashObject is CashHandler) {
+        trxtLink = cashObject.transactionLink;
       }
+      
+      Future<List<Map>> future =
+          DatabaseProvider.instance.loadTransactions(trxtLink);
+      await future;
+      future.then((trxtMapList) {
+        /// Build Transaction Object
+        trxtMapList.forEach((trxtMap) {
+          Transaction trxtCopy = Transaction._fromMap(trxtMap);
+
+          /// Make data accessable, these are copies of saved validated Transactions
+          trxtCopy.transactionKey = trxtMap[TRXT_KEY];
+          trxtCopy._validated = true;
+          trxtList.add(trxtCopy);
+        });
+
+        return trxtList;
+      });
+
+      /// Otherwise return an empty list
       return trxtList;
     });
   }
@@ -110,21 +118,6 @@ class BudgetourReserve {
       throw Exception('Transaction was unable to be validated!');
     }
   }
-
-  /// ONLY TO BE USED BY [_validateTransaction]
-  static _saveTransaction(Transaction transaction) async {
-    Future<int> future = DatabaseProvider.instance.getTransactionQty();
-    await future;
-    future.then((trxtQTY) async {
-      transaction.transactionKey = trxtQTY + 1;
-      print(
-        'saving ${transaction.pertainenceID}' +
-            '${transaction.transactionKey} ' +
-            'des: ${transaction.description}',
-      );
-      await DatabaseProvider.instance.insert(transaction);
-    });
-  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -132,7 +125,7 @@ class BudgetourReserve {
  *------------------------------------------------------------------------------*/
 /// Can bring money into the system but can't expell it
 mixin CashHandler {
-  double _cashAccount = 10010;
+  double _cashAccount = 0;
 
   /// Links transactionHistory if there is one to the transactionHistoryTable
   /// Otherwise, return null.
@@ -148,8 +141,8 @@ mixin CashHandler {
 
   /// This brings cash into the system and provides a validated [Transaction]
   /// with [Transaction.amount] equalling the amount passed.
-  /// 
-  /// If [this.CashHandler] has a [TransactionHistory] mixin, then saving 
+  ///
+  /// If [this.CashHandler] has a [TransactionHistory] mixin, then saving
   /// [Transaction] reciept must be handled externally.
   /// Otherwise, this saves the reciept.
   Future<Transaction> reportIncome(double amount) async {
@@ -167,6 +160,9 @@ mixin CashHandler {
         if (!(this is TransactionHistory)) {
           DatabaseProvider.instance.insert(reciept);
         }
+
+        // Save this handler since cashAccount has been altered
+        DatabaseProvider.instance.insert(this);
 
         return reciept;
       } else
@@ -197,22 +193,23 @@ mixin CashHandler {
         )
             .then((handlerReciept) {
           DatabaseProvider.instance.insert(handlerReciept).whenComplete(() {
-            holder.transferReciept(
+            holder
+                .transferReciept(
               BudgetourReserve._validateTransaction(
                   Transaction(amount, holder.transactionLink)),
               this,
-            ).then((holderReceipt) {
+            )
+                .then((holderReceipt) {
               DatabaseProvider.instance.insert(holderReceipt).whenComplete(() {
-                print('save should be successful');
+                print('transfer completed');
               });
             });
           });
         });
 
-        /// Save object after transfer has been completed
-        /// TODO: change to an update query function
-        FinanceObject object = (holder as FinanceObject);
-        DatabaseProvider.instance.insert(object);
+        /// Save objects since both cash amounts have been altered
+        DatabaseProvider.instance.insert(holder);
+        DatabaseProvider.instance.insert(this);
 
         return;
       } else {
@@ -230,7 +227,7 @@ mixin CashHandler {
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]
   ///
-  /// When make any changes to transferReciept and pass it pack, [BudgetReserve] will
+  /// When any changes are made to transferReciept, pass it pack, [BudgetourReserve] will
   /// archive it.
   Future<Transaction> transferReciept(
       Future<Transaction> transferReciept, CashHolder to);
@@ -242,8 +239,6 @@ mixin CashHandler {
  * CASH HOLDER
  *--------------------------------------------------------------------------------------*/
 /// Can expell money out of the system, but can't bring it in
-///
-/// CashHolder can be filled however, using [BudgetReserve]'s [mediateTransfer] method
 mixin CashHolder {
   double _cashAccount = 0;
 
@@ -301,7 +296,7 @@ mixin CashHolder {
   /// When a transfer to a [CashHolder] was successfully exectuted, a copy of the
   /// transaction will relayed back to both the [CashHolder] and [CashHandler]
   ///
-  /// When make any changes to transferReciept and pass it pack, [BudgetReserve] will
+  /// When any changes are made to transferReciept, pass it pack, [BudgetourReserve] will
   /// archive it.
   Future<Transaction> transferReciept(
       Future<Transaction> transferReciept, CashHandler from);

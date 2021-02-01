@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:budgetour/models/BudgetourReserve.dart' as br;
-import 'package:budgetour/models/CategoryListManager.dart';
+import 'package:budgetour/models/finance_objects/CashOnHand.dart';
 import 'package:budgetour/models/finance_objects/FinanceObject.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:path/path.dart';
@@ -38,6 +38,7 @@ class DatabaseProvider {
   }
 
   Future _onCreate(Database db, int version) async {
+    print('DB-PROCESS: INITIALIZING DATABASE');
     Batch creationBatch = db.batch();
 
     /// Create main tables
@@ -85,7 +86,10 @@ class DatabaseProvider {
 
     // Trying to save a CashHandler
     else if (object is br.CashHandler) {
-      
+      int id = await db.insert(DbNames.ch_TABLE, object.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+
+      return id;
     }
 
     // Trying to save a Transaction
@@ -108,19 +112,35 @@ class DatabaseProvider {
 
   Future<List<Map>> loadAllHolders() async {
     Database db = await database;
-    List<Map> mapList = await db
-        .rawQuery("SELECT * FROM ${DbNames.fo_TABLE}")
-        .whenComplete(() {});
+    List<Map> mapList = await db.rawQuery("SELECT * FROM ${DbNames.fo_TABLE}");
 
     if (mapList.length > 0) {
       return mapList;
-    }
+    }  else {
+        print('DB-PROCESS: NO FINANCE OBJECTS TO LOAD');
+      }
     return null;
   }
 
-  Future<List<Map>> loadAllHandlers() async {
+  Future<Map> loadCOH(double id) async {
     Database db = await database;
-    // List<Map> mapList = await db.
+    List<Map> list = await db.query(
+      DbNames.ch_TABLE,
+      columns: [DbNames.ch_TransactionLink, DbNames.ch_CashReserve],
+      where: "${DbNames.ch_TransactionLink} = ?",
+      whereArgs: [id],
+    );
+
+    if (list.length > 0) {
+      return list.first;
+    } 
+    /// No data was saved yet
+    else {
+      await insert(CashOnHand.instance).whenComplete(() {
+        print('DB-PROCESS: INITIALIZED CASH ON HAND INTO DATABASE');
+      });
+      return CashOnHand.instance.toMap();
+    }
   }
 
   Future<List<Map>> loadTransactions(double transactionLink) async {
@@ -140,7 +160,7 @@ class DatabaseProvider {
     if (mapList.length > 0) {
       return mapList;
     } else {
-      print('nothing loaded from ${DbNames.trxt_TABLE}');
+      print('DB-PROCESS: NO TRANSACTIONS IN ${DbNames.trxt_TABLE}');
       return List();
     }
   }
