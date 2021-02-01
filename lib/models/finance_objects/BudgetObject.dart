@@ -70,15 +70,13 @@ class BudgetObject extends FinanceObject<BudgetStat>
   /// Does not logTransaction, in case user wants to add a note
   /// of their own.
   @override
-  Transaction spendCash(double amount) {
-    Transaction cashTransaction = super.spendCash(amount);
-
-    if (cashTransaction == null) {
-      print('auditing');
-      cashTransaction = _auditTransaction(cashTransaction, amount);
-    }
-
-    return cashTransaction;
+  Future<Transaction> spendCash(double amount) async {
+    return await super.spendCash(amount).then((trxt) async {
+      if (trxt == null) {
+        return await _auditTransaction(trxt, amount);
+      } else
+        return trxt;
+    });
   }
 
   /// Determines if the transaction will cause this budget to go over.
@@ -91,7 +89,8 @@ class BudgetObject extends FinanceObject<BudgetStat>
   ///              As a result, user must manually unallocate resources from other
   ///              [FinanceObject]s. At which point, this [BudgetObject] will try again
   ///              to process the Transaction.
-  Transaction _auditTransaction(Transaction fromSuper, double amount) {
+  Future<Transaction> _auditTransaction(
+      Transaction fromSuper, double amount) async {
     // Try and get unallocated resources to cover this transaction
     try {
       _overBudget = true;
@@ -103,7 +102,7 @@ class BudgetObject extends FinanceObject<BudgetStat>
 
       // Transfer was successful
       // Re-do Transaction
-      return super.spendCash(amount);
+      return await super.spendCash(amount);
     }
     // Transfer was unsuccessful, cannot spend cash
     catch (Exception) {

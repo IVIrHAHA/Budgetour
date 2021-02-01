@@ -1,5 +1,6 @@
 import 'package:budgetour/models/BudgetourReserve.dart';
 import 'package:budgetour/pages/TransactionHistoryPage.dart';
+import 'package:budgetour/tools/DatabaseProvider.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:budgetour/widgets/standardized/MyAppBarView.dart';
 import 'package:common_tools/ColorGenerator.dart';
@@ -19,8 +20,9 @@ class BudgetObjRoute extends StatelessWidget {
     await this.budgetObject.loadTransaction();
   }
 
-  void _addTransaction(double valueEntered, BuildContext ctx) {
-    Transaction transaction = budgetObject.spendCash(valueEntered);
+  void _addTransaction(double valueEntered, BuildContext ctx) async {
+    Transaction transaction = await budgetObject.spendCash(valueEntered);
+    DatabaseProvider.instance.insert(transaction);
     if (transaction != null) {
       Navigator.of(ctx).pop();
     } else

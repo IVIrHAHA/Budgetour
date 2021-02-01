@@ -21,16 +21,17 @@ class CashOnHand with CashHandler, TransactionHistory {
   /// Produces a [Transaction] object with an automated 'Deposited' description.
   /// However, does not log the transaction.
   @override
-  reportIncome(double amount) {
-    Transaction report = super.reportIncome(amount);
-    report.description = 'Deposited';
-    return report;
+  reportIncome(double amount) async {
+    return await super.reportIncome(amount).then((report) {
+      report.description = 'Deposited';
+      return report;
+    });
   }
 
   /// Auto Logs the amount deposited and gives [Transaction.description] the
   /// String value 'Deposited'
   void autoLogDeposit(double amount) {
-    Transaction report = this.reportIncome(amount);
+    this.reportIncome(amount);
     // logTransaction(report);
   }
 

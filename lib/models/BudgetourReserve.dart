@@ -70,12 +70,12 @@ class BudgetourReserve {
   /// outside this class.
   ///
   /// ** This is the only method that can add to [_totalCash]
-  static Transaction _printCash(Transaction uncertifiedTrxt) {
+  static Future<Transaction> _printCash(Transaction uncertifiedTrxt) async {
     if (uncertifiedTrxt._amount > 0) {
       _totalCash += uncertifiedTrxt._amount;
 
       /// The transaction should already have the transactionLink
-      return _validateTransaction(uncertifiedTrxt);
+      return await _validateTransaction(uncertifiedTrxt);
     }
     throw Exception('when depositing, ensure amount is greater than 0');
   }
@@ -87,12 +87,12 @@ class BudgetourReserve {
   /// ** This is the only method that can subtract from [_totalCash]
   ///
   /// ** IMPORTANT: [Transaction.amount] needs to be negative in order
-  static Transaction _expellCash(Transaction uncertifiedTrxt) {
+  static Future<Transaction> _expellCash(Transaction uncertifiedTrxt) async {
     if (uncertifiedTrxt._amount < 0) {
       _totalCash += uncertifiedTrxt._amount;
 
       /// The transaction should already have the transactionLink
-      return _validateTransaction(uncertifiedTrxt);
+      return await _validateTransaction(uncertifiedTrxt);
     }
     throw Exception('unable to perform withdrawal');
   }
@@ -100,10 +100,15 @@ class BudgetourReserve {
   /// Only place a [Transaction] can be validated
   static Future<Transaction> _validateTransaction(Transaction contract) async {
     contract._validated = true;
-    DatabaseProvider.instance.getTransactionQty().then((trxtQTY) {
-      contract._transactionKey = trxtQTY;
-      
-    });
+    contract._transactionKey =
+        await DatabaseProvider.instance.getTransactionQty();
+
+    if (contract._transactionKey != null) {
+      contract._transactionKey++;
+      return contract;
+    } else {
+      throw Exception('Transaction was unable to be validated!');
+    }
   }
 
   /// ONLY TO BE USED BY [_validateTransaction]
@@ -141,15 +146,27 @@ mixin CashHandler {
 
   /// This brings cash into the system and provides a validated [Transaction]
   /// with [Transaction.amount] equalling the amount passed.
-  Transaction reportIncome(double amount) {
+  Future<Transaction> reportIncome(double amount) async {
     Transaction reciept;
 
     if (amount > 0) {
-      reciept = BudgetourReserve._printCash(
+      reciept = await BudgetourReserve._printCash(
           Transaction(amount, this.transactionLink));
-      _cashAccount += reciept.amount;
+
+      if (reciept != null) {
+        _cashAccount += reciept.amount;
+
+        // If this doesn't have transaction history to showcase
+        // then save here
+        if (!(this is TransactionHistory)) {
+          DatabaseProvider.instance.insert(reciept);
+        }
+
+        return reciept;
+      } else
+        return null;
     }
-    return reciept;
+    return null;
   }
 
   /// Transfers [amount] from [this] to [holder] and provides each
@@ -166,17 +183,17 @@ mixin CashHandler {
         /// Transfer [amount] to holder
         holder._cashAccount += amount;
 
-        this.transferReciept(
-          BudgetourReserve._validateTransaction(
-              Transaction(-amount, this.transactionLink)),
-          holder,
-        );
+        // this.transferReciept(
+        //   BudgetourReserve._validateTransaction(
+        //       Transaction(-amount, this.transactionLink)),
+        //   holder,
+        // );
 
-        holder.transferReciept(
-          BudgetourReserve._validateTransaction(
-              Transaction(amount, holder.transactionLink)),
-          this,
-        );
+        // holder.transferReciept(
+        //   BudgetourReserve._validateTransaction(
+        //       Transaction(amount, holder.transactionLink)),
+        //   this,
+        // );
 
         /// Save object after transfer has been completed
         /// TODO: change to an update query function
@@ -221,20 +238,28 @@ mixin CashHolder {
   double get transactionLink;
 
   /// Returns a validated [Transaction] given a valid [amount]. Otherwise, return null.
-  Transaction spendCash(double amount) {
+  Future<Transaction> spendCash(double amount) async {
     Transaction withdrawlReciept;
     if (amount > 0 && _cashAccount >= amount) {
       // invert the sign to accurately represent mathematics
-      withdrawlReciept = BudgetourReserve._expellCash(
+      withdrawlReciept = await BudgetourReserve._expellCash(
           Transaction(-amount, this.transactionLink));
 
       /// '+=' beacause of above statement ^^^
-      _cashAccount += withdrawlReciept.amount;
+      if (withdrawlReciept != null) {
+        _cashAccount += withdrawlReciept.amount;
 
-      /// Save FinanceObject after cash has been spent
-      DatabaseProvider.instance.insert(this);
+        /// Save FinanceObject after cash has been spent
+        DatabaseProvider.instance.insert(this);
 
-      return withdrawlReciept;
+        // If this doesn't have transaction history to showcase
+        // then save here
+        if (!(this is TransactionHistory)) {
+          DatabaseProvider.instance.insert(withdrawlReciept);
+        }
+        return withdrawlReciept;
+      }
+      return null;
     }
     return null;
   }

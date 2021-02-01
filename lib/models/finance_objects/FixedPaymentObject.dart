@@ -104,7 +104,7 @@ class FixedPaymentObject extends FinanceObject<FixedPaymentStats>
   }
 
   @override
-  Transaction spendCash(double amount) {
+  Future<Transaction> spendCash(double amount) {
     if (amount == fixedPayment) {
       _isPaid = true;
       _isReady = false;
