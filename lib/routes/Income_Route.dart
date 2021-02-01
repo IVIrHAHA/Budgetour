@@ -11,6 +11,10 @@ import 'package:flutter/material.dart';
 class IncomeRoute extends StatelessWidget {
   final CashOnHand cashOnHand = CashOnHand.instance;
 
+  IncomeRoute() {
+    cashOnHand.loadTransaction();
+  }
+
   @override
   Widget build(BuildContext context) {
     const TextStyle style = TextStyle(color: Colors.black);
@@ -30,6 +34,7 @@ class IncomeRoute extends StatelessWidget {
           /// User reported Income
           onEnterPressed: (enteredDouble, _) {
             _userEnteredIncome(enteredDouble);
+            Navigator.of(context).pop();
           },
           headerTitle: 'Income',
           headerColorAccent: ColorGenerator.fromHex(GColors.greenish),
