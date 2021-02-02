@@ -4,7 +4,6 @@ import 'package:budgetour/models/interfaces/TransactionHistoryMixin.dart';
 import 'package:budgetour/tools/DatabaseProvider.dart';
 import 'package:budgetour/tools/GlobalValues.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 const String TRXT_KEY = "TransactionKEY";
 

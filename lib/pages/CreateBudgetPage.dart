@@ -5,7 +5,6 @@ import '../models/finance_objects/BudgetObject.dart';
 import '../tools/GlobalValues.dart';
 import '../widgets/standardized/CalculatorView.dart';
 import '../widgets/standardized/EnteredHeader.dart';
-import '../widgets/standardized/InfoTile.dart';
 import '../widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
@@ -191,21 +190,24 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
         },
       ),
       actions: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSelection(
-              hint: 'Stat1',
-              selection: _selectedStat1,
-              onSelected: (newValue) => _selectedStat1 = newValue,
-            ),
-            _buildSelection(
-              hint: 'Stat2',
-              selection: _selectedStat2,
-              onSelected: (newValue) => _selectedStat2 = newValue,
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GlobalValues.defaultMargin),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSelection(
+                hint: 'Stat1',
+                selection: _selectedStat1,
+                onSelected: (newValue) => _selectedStat1 = newValue,
+              ),
+              _buildSelection(
+                hint: 'Stat2',
+                selection: _selectedStat2,
+                onSelected: (newValue) => _selectedStat2 = newValue,
+              ),
+            ],
+          ),
         ),
       ],
       toolbarHeight: _toolBarHeight,
@@ -215,6 +217,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage>
   Widget _buildSelection(
       {String hint, var selection, Function(BudgetStat) onSelected}) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       height: _toolBarHeight * .3,
       decoration: BoxDecoration(
         color: Colors.transparent,

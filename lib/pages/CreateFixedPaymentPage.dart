@@ -8,6 +8,7 @@ import 'package:budgetour/widgets/standardized/EnteredHeader.dart';
 import 'package:budgetour/widgets/standardized/CalculatorInputDisplay.dart';
 import 'package:common_tools/ColorGenerator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
@@ -375,6 +376,7 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
     );
   }
 
+    double _toolBarHeight;
   /// BUILD_APP_BAR METHOD
   /// ------------------------------------------
   /// builds the appBar used.
@@ -382,32 +384,90 @@ class _CreateFixedPaymentPageState extends State<CreateFixedPaymentPage>
   /// subtle changes.
   /// ------------------------------------------
   AppBar _buildAppBar(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    _toolBarHeight = MediaQuery.of(context).size.height * GlobalValues.creationAppBarHeightRatio;
     return AppBar(
-      title: ListTile(
-        leading: NameInputBox(
-          defaultWidth: MediaQuery.of(context).size.width / 3,
-          title: Text(_billName ?? 'Enter Name'),
-          errorMessage: 'invalid',
-          inputHint: 'Enter New Name',
-          backgroundColor: headerColor,
-          isValidFunction: (testTxt) {
-            if (testTxt.isNotEmpty && testTxt != 'Enter Name') {
-              return true;
-            } else
-              return false;
-          },
-          onSubmitted: (text) {
-            _billName = text;
-          },
+      title: NameInputBox(
+        defaultWidth: MediaQuery.of(context).size.width / 3,
+        title: Text(_billName ?? 'Enter Name'),
+        errorMessage: 'invalid',
+        inputHint: 'Enter New Name',
+        backgroundColor: headerColor,
+        isValidFunction: (testTxt) {
+          if (testTxt.isNotEmpty && testTxt != 'Enter Name') {
+            return true;
+          } else
+            return false;
+        },
+        onSubmitted: (text) {
+          _billName = text;
+        },
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GlobalValues.defaultMargin),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSelection(
+                hint: 'Stat1',
+                selection: _selectedStat1,
+                onSelected: (newValue) => _selectedStat1 = newValue,
+              ),
+              _buildSelection(
+                hint: 'Stat2',
+                selection: _selectedStat2,
+                onSelected: (newValue) => _selectedStat2 = newValue,
+              ),
+            ],
+          ),
         ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text('selection 1'),
-            Text('selection 2'),
-          ],
+      ],
+      toolbarHeight: _toolBarHeight,
+    );
+  }
+
+  Widget _buildSelection(
+      {String hint, var selection, Function(FixedPaymentStats) onSelected}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      height: _toolBarHeight * .3,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        border: Border.all(
+          color: ColorGenerator.fromHex(GColors.borderColor),
+          width: 1,
+          style: BorderStyle.solid,
         ),
+        borderRadius: BorderRadius.circular(
+          GlobalValues.roundedEdges,
+        ),
+      ),
+      child: DropdownButton<FixedPaymentStats>(
+        underline: Container(),
+        style: TextStyle(color: Colors.grey),
+        value: selection,
+        hint: Text(
+          hint,
+          style: TextStyle(color: Colors.white),
+        ),
+        icon: Icon(Icons.arrow_drop_down),
+        onChanged: (newValue) {
+          /// should work as pointer?
+          setState(() {
+            onSelected(newValue);
+          });
+        },
+        items: FixedPaymentStats.values.map<DropdownMenuItem<FixedPaymentStats>>((stat) {
+          return DropdownMenuItem<FixedPaymentStats>(
+            value: stat,
+            child: Text(stat.toString().split('.').last),
+          );
+        }).toList(),
       ),
     );
   }
+
+  var _selectedStat1, _selectedStat2;
 }
